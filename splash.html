@@ -4,6 +4,29 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Layouris — Where Layouts Come Alive.</title>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+  <!-- Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/three.min.js"></script>
+
+  <!-- tsparticles -->
+  <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/dist/tsparticles.min.js"></script>
+
+  <!-- Typed.js -->
+  <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+
+  <!-- Anime.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+  <!-- Lottie -->
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+  <!-- Barba.js (para transições) -->
+  <script src="https://unpkg.com/barba.js@1.0.0-beta.11/dist/barba.min.js"></script>
+
+  <!-- Styles -->
   <style>
     :root {
       --primary-purple: #6e44ff;
@@ -12,6 +35,8 @@
       --white: #ffffff;
       --shadow: rgba(0, 0, 0, 0.3);
       --glow: rgba(255, 255, 255, 0.2);
+      --glass-bg: rgba(255, 255, 255, 0.1);
+      --glass-border: rgba(255, 255, 255, 0.2);
     }
 
     * {
@@ -32,12 +57,15 @@
       position: relative;
       color: var(--white);
       transition: all 1s ease-out;
+      backdrop-filter: blur(10px);
     }
 
     .container {
       text-align: center;
       z-index: 10;
       animation: fadeIn 1.5s ease-out;
+      padding: 2rem;
+      max-width: 90%;
     }
 
     .logo {
@@ -48,8 +76,8 @@
       text-shadow: 8px 8px 16px var(--shadow), 0 0 20px var(--glow);
       transform: scale(0.8);
       opacity: 0;
-      animation: popIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
       filter: drop-shadow(0 0 10px rgba(255,255,255,0.5));
+      position: relative;
     }
 
     .title {
@@ -57,31 +85,30 @@
       font-weight: 700;
       margin-top: 0.5rem;
       opacity: 0;
-      transform: translateY(20px);
-      animation: slideUp 1s ease-out 0.5s forwards;
       letter-spacing: 1px;
+      position: relative;
     }
 
     .slogan {
       font-size: 1.3rem;
       margin-top: 0.5rem;
       opacity: 0;
-      transform: translateY(20px);
-      animation: slideUp 1s ease-out 0.8s forwards;
       font-style: italic;
       font-weight: 300;
+      position: relative;
     }
 
-    .loader {
-      width: 60px;
-      height: 60px;
+    .loader-container {
+      width: 100px;
+      height: 100px;
       margin: 2rem auto;
-      border: 4px solid rgba(255,255,255,0.3);
-      border-radius: 50%;
-      border-top-color: var(--white);
-      animation: spin 1s ease-in-out infinite;
       opacity: 0;
-      animation: fadeIn 0.5s ease-out 1.5s forwards;
+      position: relative;
+    }
+
+    .lottie-loader {
+      width: 100%;
+      height: 100%;
     }
 
     /* Fluid Background Shapes */
@@ -125,25 +152,20 @@
       to { opacity: 1; }
     }
 
-    @keyframes popIn {
-      0% { transform: scale(0.8); opacity: 0; }
-      70% { transform: scale(1.1); }
-      100% { transform: scale(1); opacity: 1; }
-    }
-
-    @keyframes slideUp {
-      from { transform: translateY(20px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
     @keyframes float {
       0% { transform: translate(0px, 0px) rotate(0deg); }
       50% { transform: translate(10px, -10px) rotate(180deg); }
       100% { transform: translate(0px, 0px) rotate(360deg); }
+    }
+
+    /* Glassmorphism */
+    .glass {
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
     }
 
     /* Responsive */
@@ -182,15 +204,23 @@
   <div class="shape shape-3"></div>
 
   <!-- Main Content -->
-  <div class="container">
+  <div class="container glass">
     <div class="logo">Ly</div>
     <div class="title">Layouris</div>
     <div class="slogan">Where Layouts Come Alive.</div>
-    <div class="loader"></div>
+    <div class="loader-container">
+      <lottie-player
+        src="https://assets1.lottiefiles.com/packages/lf20_4bqjxk7r.json"
+        background="transparent"
+        speed="1"
+        class="lottie-loader"
+        loop
+        autoplay
+      ></lottie-player>
+    </div>
   </div>
 
   <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/dist/tsparticles.min.js"></script>
   <script>
     // Inicializa tsParticles
     tsParticles.load("tsparticles", {
@@ -214,7 +244,7 @@
       retina_detect: true,
     });
 
-    // Som ambiente (gerado dinamicamente)
+    // Som ambiente
     function playAmbientSound() {
       const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       const oscillator = audioCtx.createOscillator();
@@ -228,7 +258,7 @@
       gainNode.connect(audioCtx.destination);
 
       oscillator.start();
-      setTimeout(() => oscillator.stop(), 3000);
+      setTimeout(() => oscillator.stop(), 5000);
     }
 
     // Som de entrada do logo
@@ -248,18 +278,64 @@
       oscillator.stop(audioCtx.currentTime + 1);
     }
 
-    // Executa sons ao carregar
+    // Animações com GSAP
     document.addEventListener('DOMContentLoaded', () => {
       playAmbientSound();
       setTimeout(playLogoSound, 1000);
 
-      // Redireciona após 3 segundos
-      setTimeout(() => {
-        document.body.style.opacity = 0;
-        setTimeout(() => {
-          window.location.href = 'app.html';
-        }, 500);
-      }, 3000);
+      // Animação do logo
+      gsap.from(".logo", {
+        scale: 0.8,
+        opacity: 0,
+        duration: 1,
+        ease: "back.out(1.7)",
+        delay: 0.5
+      });
+
+      // Animação do título
+      gsap.from(".title", {
+        y: 50,
+        opacity: 0,
+        duration: 1,
+        ease: "power2.out",
+        delay: 1
+      });
+
+      // Animação do slogan
+      gsap.from(".slogan", {
+        y: 50,
+        opacity: 0,
+        duration: 1,
+        ease: "power2.out",
+        delay: 1.5
+      });
+
+      // Animação do loader
+      gsap.from(".loader-container", {
+        scale: 0,
+        opacity: 0,
+        duration: 1,
+        ease: "back.out(1.7)",
+        delay: 2
+      });
+
+      // Digitação do slogan (Typed.js)
+      new Typed('.slogan', {
+        strings: ["Where Layouts Come Alive."],
+        typeSpeed: 50,
+        backSpeed: 30,
+        loop: false,
+        showCursor: false,
+        onComplete: () => {
+          // Redireciona após 3 segundos
+          setTimeout(() => {
+            document.body.style.opacity = 0;
+            setTimeout(() => {
+              window.location.href = 'app.html';
+            }, 500);
+          }, 3000);
+        }
+      });
     });
   </script>
 </body>
