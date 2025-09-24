@@ -57,12 +57,18 @@
                 0 0 30px rgba(255, 255, 255, 0.5),
                 0 0 50px rgba(255, 255, 255, 0.3);
             letter-spacing: clamp(1px, 3px, 2px);
-            animation: pulse 3s infinite alternate;
-            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.5));
             line-height: 1;
             perspective: 1000px;
             display: inline-block;
             position: relative;
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.5);
+            transition: all 1.5s ease-out;
+        }
+
+        .logo.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
         }
 
         .logo-letter {
@@ -98,36 +104,6 @@
             filter: blur(5px);
             opacity: 0.5;
             z-index: -1;
-        }
-
-        .subtitle-container {
-            margin-top: clamp(10px, 3vw, 20px);
-            position: relative;
-            display: inline-block;
-            max-width: 80vw;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .subtitle {
-            font-size: clamp(2vw, 4vw, 1.5vw);
-            color: rgba(255, 255, 255, 0.8);
-            letter-spacing: 1px;
-            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
-            display: inline-block;
-            position: relative;
-        }
-
-        .subtitle-letter {
-            display: inline-block;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.5s ease-out;
-        }
-
-        .subtitle-letter.show {
-            opacity: 1;
-            transform: translateY(0);
         }
 
         .color-palette {
@@ -233,11 +209,6 @@
                 font-size: clamp(15vw, 25vw, 20vw);
             }
             
-            .subtitle {
-                font-size: clamp(3vw, 6vw, 4vw);
-                margin-top: clamp(15px, 5vw, 30px);
-            }
-            
             .color-palette {
                 bottom: clamp(15px, 5vw, 25px);
             }
@@ -278,11 +249,6 @@
                 font-size: clamp(20vw, 30vw, 25vw);
             }
             
-            .subtitle {
-                font-size: clamp(4vw, 8vw, 6vw);
-                margin-top: clamp(20px, 8vw, 40px);
-            }
-            
             .color-palette {
                 bottom: clamp(20px, 8vw, 30px);
                 gap: clamp(3px, 1.5vw, 8px);
@@ -299,12 +265,9 @@
     <div id="canvas-container"></div>
     
     <div class="logo-container">
-        <div class="logo">
+        <div class="logo" id="logo">
             <span class="logo-letter logo-l">L</span>
             <span class="logo-letter logo-y">y</span>
-        </div>
-        <div class="subtitle-container">
-            <div class="subtitle" id="subtitle"></div>
         </div>
     </div>
 
@@ -679,10 +642,17 @@
             adjustForDevice();
             animate();
             
-            // Start subtitle animation after a delay
+            // Start logo animation after a delay
             setTimeout(() => {
-                createSubtitleAnimation();
-            }, 1000);
+                const logo = document.getElementById('logo');
+                logo.classList.add('show');
+                
+                // After animation completes, redirect to login.html
+                setTimeout(() => {
+                    // Redirect to GitHub Pages login page
+                    window.location.href = "login.html";
+                }, 3000); // Wait 3 seconds after animation
+            }, 500);
         });
 
         // Add performance optimization for mobile
@@ -733,77 +703,6 @@
                 logoY.style.transform = 'scale(1) rotateY(0deg) rotateX(0deg)';
                 logoY.style.textShadow = '0 0 10px rgba(255, 255, 255, 0.7), 0 0 30px rgba(255, 255, 255, 0.5), 0 0 50px rgba(255, 255, 255, 0.3)';
             });
-        }
-
-        // Create subtitle animation with particles
-        function createSubtitleAnimation() {
-            const subtitleText = "Experiência Visual Avançada";
-            const subtitleElement = document.getElementById('subtitle');
-            
-            // Create individual letters
-            for (let i = 0; i < subtitleText.length; i++) {
-                const letter = document.createElement('span');
-                letter.textContent = subtitleText[i];
-                letter.className = 'subtitle-letter';
-                letter.style.transitionDelay = `${i * 0.05}s`;
-                subtitleElement.appendChild(letter);
-            }
-            
-            // Animate letters appearing
-            setTimeout(() => {
-                const letters = subtitleElement.querySelectorAll('.subtitle-letter');
-                letters.forEach((letter, index) => {
-                    setTimeout(() => {
-                        letter.classList.add('show');
-                    }, index * 50);
-                });
-            }, 500);
-            
-            // Add particle effect around subtitle
-            createParticleEffectAroundSubtitle();
-        }
-
-        // Create particle effect around subtitle
-        function createParticleEffectAroundSubtitle() {
-            const subtitleElement = document.getElementById('subtitle');
-            const rect = subtitleElement.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
-            
-            // Create particles around subtitle
-            for (let i = 0; i < 20; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.width = '2px';
-                particle.style.height = '2px';
-                particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                particle.style.borderRadius = '50%';
-                particle.style.boxShadow = `0 0 8px ${colors[Math.floor(Math.random() * colors.length)]}`;
-                
-                // Position around subtitle
-                const angle = (i / 20) * Math.PI * 2;
-                const distance = 50 + Math.random() * 30;
-                const x = centerX + Math.cos(angle) * distance;
-                const y = centerY + Math.sin(angle) * distance;
-                
-                particle.style.left = `${x}px`;
-                particle.style.top = `${y}px`;
-                
-                document.body.appendChild(particle);
-                
-                // Animate particle
-                setTimeout(() => {
-                    particle.style.transition = 'all 1s ease-out';
-                    particle.style.opacity = '0';
-                    particle.style.transform = `translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px) scale(0)`;
-                    
-                    setTimeout(() => {
-                        if (particle.parentNode) {
-                            particle.parentNode.removeChild(particle);
-                        }
-                    }, 1000);
-                }, i * 100);
-            }
         }
     </script>
 </body>
