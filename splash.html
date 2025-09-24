@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Layouris — Where Layouts Come Alive.</title>
+  <title>Layouris — Onde os Layouts Ganham Vida.</title>
 
   <!-- GSAP -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -19,12 +19,6 @@
 
   <!-- Anime.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
-
-  <!-- Lottie -->
-  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-
-  <!-- Barba.js (para transições) -->
-  <script src="https://unpkg.com/barba.js@1.0.0-beta.11/dist/barba.min.js"></script>
 
   <!-- Styles -->
   <style>
@@ -98,17 +92,16 @@
       position: relative;
     }
 
-    .loader-container {
-      width: 100px;
-      height: 100px;
+    .loader {
+      width: 60px;
+      height: 60px;
       margin: 2rem auto;
+      border: 4px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: var(--white);
+      animation: spin 1s ease-in-out infinite;
       opacity: 0;
       position: relative;
-    }
-
-    .lottie-loader {
-      width: 100%;
-      height: 100%;
     }
 
     /* Fluid Background Shapes */
@@ -156,6 +149,10 @@
       0% { transform: translate(0px, 0px) rotate(0deg); }
       50% { transform: translate(10px, -10px) rotate(180deg); }
       100% { transform: translate(0px, 0px) rotate(360deg); }
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
 
     /* Glassmorphism */
@@ -207,17 +204,8 @@
   <div class="container glass">
     <div class="logo">Ly</div>
     <div class="title">Layouris</div>
-    <div class="slogan">Where Layouts Come Alive.</div>
-    <div class="loader-container">
-      <lottie-player
-        src="https://assets1.lottiefiles.com/packages/lf20_4bqjxk7r.json"
-        background="transparent"
-        speed="1"
-        class="lottie-loader"
-        loop
-        autoplay
-      ></lottie-player>
-    </div>
+    <div class="slogan">Onde os Layouts Ganham Vida.</div>
+    <div class="loader"></div>
   </div>
 
   <!-- Scripts -->
@@ -311,7 +299,7 @@
       });
 
       // Animação do loader
-      gsap.from(".loader-container", {
+      gsap.from(".loader", {
         scale: 0,
         opacity: 0,
         duration: 1,
@@ -321,7 +309,7 @@
 
       // Digitação do slogan (Typed.js)
       new Typed('.slogan', {
-        strings: ["Where Layouts Come Alive."],
+        strings: ["Onde os Layouts Ganham Vida."],
         typeSpeed: 50,
         backSpeed: 30,
         loop: false,
