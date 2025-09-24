@@ -56,6 +56,13 @@
       filter: drop-shadow(0 0 10px rgba(255,255,255,0.5));
       position: relative;
       animation: popIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      cursor: pointer;
+      transition: transform 0.3s ease, filter 0.3s ease;
+    }
+
+    .logo:hover {
+      transform: scale(1.05) rotate(2deg);
+      filter: drop-shadow(0 0 20px rgba(255,255,255,0.8));
     }
 
     .title {
@@ -76,18 +83,6 @@
       animation: slideUp 1s ease-out 0.8s forwards;
       font-style: italic;
       font-weight: 300;
-    }
-
-    .loader {
-      width: 60px;
-      height: 60px;
-      margin: 2rem auto;
-      border: 4px solid rgba(255,255,255,0.3);
-      border-radius: 50%;
-      border-top-color: var(--white);
-      animation: spin 1s ease-in-out infinite;
-      opacity: 0;
-      animation: fadeIn 0.5s ease-out 1.5s forwards;
     }
 
     /* Fluid Background Shapes */
@@ -125,6 +120,16 @@
       animation: float 10s ease-in-out infinite;
     }
 
+    /* Particles Canvas */
+    #particles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
     /* Animations */
     @keyframes fadeIn {
       from { opacity: 0; }
@@ -140,10 +145,6 @@
     @keyframes slideUp {
       from { transform: translateY(20px); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
     }
 
     @keyframes float {
@@ -189,6 +190,9 @@
   </style>
 </head>
 <body>
+  <!-- Particles Canvas -->
+  <canvas id="particles"></canvas>
+
   <!-- Fluid Background Shapes -->
   <div class="shape shape-1"></div>
   <div class="shape shape-2"></div>
@@ -199,12 +203,57 @@
     <div class="logo">Ly</div>
     <div class="title">Layouris</div>
     <div class="slogan">Onde os Layouts Ganham Vida.</div>
-    <div class="loader"></div>
   </div>
 
   <!-- Scripts -->
   <script>
-    // Som ambiente
+    // Particles System (JavaScript Puro)
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+
+    let particles = [];
+    const particleCount = 100;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    function createParticles() {
+      for (let i = 0; i < particleCount; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          radius: Math.random() * 2 + 1,
+          dx: (Math.random() - 0.5) * 0.5,
+          dy: (Math.random() - 0.5) * 0.5,
+          color: `rgba(255, 255, 255, ${Math.random() * 0.5 + 0.1})`
+        });
+      }
+    }
+
+    function drawParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      particles.forEach(particle => {
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+        ctx.fillStyle = particle.color;
+        ctx.fill();
+
+        // Move particle
+        particle.x += particle.dx;
+        particle.y += particle.dy;
+
+        // Bounce off edges
+        if (particle.x < 0 || particle.x > canvas.width) particle.dx *= -1;
+        if (particle.y < 0 || particle.y > canvas.height) particle.dy *= -1;
+      });
+
+      requestAnimationFrame(drawParticles);
+    }
+
+    // Som ambiente suave
     function playAmbientSound() {
       const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       const oscillator = audioCtx.createOscillator();
@@ -212,7 +261,7 @@
 
       oscillator.type = 'sine';
       oscillator.frequency.setValueAtTime(120, audioCtx.currentTime);
-      gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+      gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
 
       oscillator.connect(gainNode);
       gainNode.connect(audioCtx.destination);
@@ -227,19 +276,23 @@
       const oscillator = audioCtx.createOscillator();
       const gainNode = audioCtx.createGain();
 
-      oscillator.type = 'sawtooth';
-      oscillator.frequency.setValueAtTime(440, audioCtx.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1);
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
 
       oscillator.connect(gainNode);
       gainNode.connect(audioCtx.destination);
 
       oscillator.start();
-      oscillator.stop(audioCtx.currentTime + 1);
+      oscillator.stop(audioCtx.currentTime + 0.5);
     }
 
     // Executa sons ao carregar
     document.addEventListener('DOMContentLoaded', () => {
+      resizeCanvas();
+      createParticles();
+      drawParticles();
+
       playAmbientSound();
       setTimeout(playLogoSound, 1000);
 
@@ -251,6 +304,9 @@
         }, 500);
       }, 5000);
     });
+
+    // Redimensiona canvas ao redimensionar janela
+    window.addEventListener('resize', resizeCanvas);
   </script>
 </body>
 </html>
