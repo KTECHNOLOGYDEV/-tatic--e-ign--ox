@@ -4,23 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Layouris — Onde os Layouts Ganham Vida.</title>
-
-  <!-- GSAP -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-
-  <!-- Three.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/three.min.js"></script>
-
-  <!-- tsparticles -->
-  <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/dist/tsparticles.min.js"></script>
-
-  <!-- Typed.js -->
-  <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
-
-  <!-- Anime.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
-
-  <!-- Styles -->
   <style>
     :root {
       --primary-purple: #6e44ff;
@@ -72,6 +55,7 @@
       opacity: 0;
       filter: drop-shadow(0 0 10px rgba(255,255,255,0.5));
       position: relative;
+      animation: popIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     }
 
     .title {
@@ -79,17 +63,19 @@
       font-weight: 700;
       margin-top: 0.5rem;
       opacity: 0;
+      transform: translateY(20px);
+      animation: slideUp 1s ease-out 0.5s forwards;
       letter-spacing: 1px;
-      position: relative;
     }
 
     .slogan {
       font-size: 1.3rem;
       margin-top: 0.5rem;
       opacity: 0;
+      transform: translateY(20px);
+      animation: slideUp 1s ease-out 0.8s forwards;
       font-style: italic;
       font-weight: 300;
-      position: relative;
     }
 
     .loader {
@@ -101,7 +87,7 @@
       border-top-color: var(--white);
       animation: spin 1s ease-in-out infinite;
       opacity: 0;
-      position: relative;
+      animation: fadeIn 0.5s ease-out 1.5s forwards;
     }
 
     /* Fluid Background Shapes */
@@ -145,14 +131,25 @@
       to { opacity: 1; }
     }
 
-    @keyframes float {
-      0% { transform: translate(0px, 0px) rotate(0deg); }
-      50% { transform: translate(10px, -10px) rotate(180deg); }
-      100% { transform: translate(0px, 0px) rotate(360deg); }
+    @keyframes popIn {
+      0% { transform: scale(0.8); opacity: 0; }
+      70% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
     }
 
     @keyframes spin {
       to { transform: rotate(360deg); }
+    }
+
+    @keyframes float {
+      0% { transform: translate(0px, 0px) rotate(0deg); }
+      50% { transform: translate(10px, -10px) rotate(180deg); }
+      100% { transform: translate(0px, 0px) rotate(360deg); }
     }
 
     /* Glassmorphism */
@@ -192,9 +189,6 @@
   </style>
 </head>
 <body>
-  <!-- tsParticles Canvas -->
-  <div id="tsparticles"></div>
-
   <!-- Fluid Background Shapes -->
   <div class="shape shape-1"></div>
   <div class="shape shape-2"></div>
@@ -210,28 +204,6 @@
 
   <!-- Scripts -->
   <script>
-    // Inicializa tsParticles
-    tsParticles.load("tsparticles", {
-      particles: {
-        number: { value: 80, density: { enable: true, area: 800 } },
-        color: { value: "#ffffff" },
-        shape: { type: "circle" },
-        opacity: { value: 0.5, random: true },
-        size: { value: 3, random: true },
-        move: {
-          enable: true,
-          speed: 1,
-          direction: "none",
-          random: true,
-          straight: false,
-          out_mode: "out",
-          bounce: false,
-        },
-      },
-      interactivity: { events: { onhover: { enable: true, mode: "repulse" }, onclick: { enable: true, mode: "push" } } },
-      retina_detect: true,
-    });
-
     // Som ambiente
     function playAmbientSound() {
       const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -266,64 +238,18 @@
       oscillator.stop(audioCtx.currentTime + 1);
     }
 
-    // Animações com GSAP
+    // Executa sons ao carregar
     document.addEventListener('DOMContentLoaded', () => {
       playAmbientSound();
       setTimeout(playLogoSound, 1000);
 
-      // Animação do logo
-      gsap.from(".logo", {
-        scale: 0.8,
-        opacity: 0,
-        duration: 1,
-        ease: "back.out(1.7)",
-        delay: 0.5
-      });
-
-      // Animação do título
-      gsap.from(".title", {
-        y: 50,
-        opacity: 0,
-        duration: 1,
-        ease: "power2.out",
-        delay: 1
-      });
-
-      // Animação do slogan
-      gsap.from(".slogan", {
-        y: 50,
-        opacity: 0,
-        duration: 1,
-        ease: "power2.out",
-        delay: 1.5
-      });
-
-      // Animação do loader
-      gsap.from(".loader", {
-        scale: 0,
-        opacity: 0,
-        duration: 1,
-        ease: "back.out(1.7)",
-        delay: 2
-      });
-
-      // Digitação do slogan (Typed.js)
-      new Typed('.slogan', {
-        strings: ["Onde os Layouts Ganham Vida."],
-        typeSpeed: 50,
-        backSpeed: 30,
-        loop: false,
-        showCursor: false,
-        onComplete: () => {
-          // Redireciona após 3 segundos
-          setTimeout(() => {
-            document.body.style.opacity = 0;
-            setTimeout(() => {
-              window.location.href = 'app.html';
-            }, 500);
-          }, 3000);
-        }
-      });
+      // Redireciona após 5 segundos
+      setTimeout(() => {
+        document.body.style.opacity = 0;
+        setTimeout(() => {
+          window.location.href = 'app.html';
+        }, 500);
+      }, 5000);
     });
   </script>
 </body>
