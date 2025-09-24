@@ -1,308 +1,407 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Layouris — Onde os Layouts Ganham Vida.</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Layouris</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  <!-- GSAP -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+        body {
+            background: linear-gradient(135deg, #1a0a2e 0%, #2d0b4a 50%, #1a0a2e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            position: relative;
+        }
 
-  <!-- Styles -->
-  <style>
-    :root {
-      --primary-purple: #6e44ff;
-      --primary-blue: #009fff;
-      --primary-pink: #ff61f6;
-      --white: #ffffff;
-      --shadow: rgba(0, 0, 0, 0.3);
-      --glow: rgba(255, 255, 255, 0.2);
-      --glass-bg: rgba(255, 255, 255, 0.1);
-      --glass-border: rgba(255, 255, 255, 0.2);
-    }
+        .splash-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 10;
+        }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      overflow-x: hidden;
-    }
+        /* Animated background gradient */
+        .background-gradient {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #6b48ff 100%);
+            z-index: -1;
+            opacity: 0.8;
+        }
 
-    body {
-      background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue), var(--primary-pink));
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      height: 100vh;
-      overflow: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-      color: var(--white);
-      backdrop-filter: blur(10px);
-      transition: all 1s ease-out;
-    }
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+        }
 
-    .container {
-      text-align: center;
-      z-index: 10;
-      animation: fadeIn 1.5s ease-out;
-      padding: 2rem;
-      max-width: 90%;
-    }
+        /* Tagline styling */
+        .tagline {
+            font-size: 1.8rem;
+            color: white;
+            margin-top: 2rem;
+            font-weight: 300;
+            line-height: 1.4;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            text-shadow: 
+                0 0 10px rgba(255, 255, 255, 0.7),
+                0 0 20px rgba(255, 255, 255, 0.5),
+                0 0 30px rgba(255, 255, 255, 0.3);
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s ease-out;
+        }
 
-    .logo {
-      font-size: 8rem;
-      font-weight: 800;
-      letter-spacing: -0.05em;
-      color: var(--white);
-      text-shadow: 8px 8px 16px var(--shadow), 0 0 20px var(--glow);
-      transform: scale(0.8) rotate(-10deg) translateZ(0);
-      opacity: 0;
-      filter: drop-shadow(0 0 10px rgba(255,255,255,0.5));
-      position: relative;
-      cursor: pointer;
-      transition: transform 0.3s ease, filter 0.3s ease;
-    }
+        .tagline.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
 
-    .logo:hover {
-      transform: scale(1.05) rotate(2deg) translateZ(10px);
-      filter: drop-shadow(0 0 20px rgba(255,255,255,0.8));
-    }
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .tagline {
+                font-size: 1.4rem;
+                margin-top: 1rem;
+                padding: 0 20px;
+            }
+        }
 
-    .slogan {
-      font-size: 1.8rem;
-      font-style: italic;
-      font-weight: 300;
-      margin-top: 2rem;
-      opacity: 0;
-      transform: translateX(-100%);
-      position: relative;
-      z-index: 10;
-      text-shadow: 0 2px 10px rgba(0,0,0,0.3);
-      letter-spacing: 1px;
-    }
-
-    /* Fluid Background Shapes */
-    .shape {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(60px);
-      z-index: -1;
-    }
-
-    .shape-1 {
-      width: 400px;
-      height: 400px;
-      background: var(--primary-purple);
-      top: -100px;
-      right: -100px;
-      animation: float 6s ease-in-out infinite;
-    }
-
-    .shape-2 {
-      width: 300px;
-      height: 300px;
-      background: var(--primary-blue);
-      bottom: -50px;
-      left: -50px;
-      animation: float 8s ease-in-out infinite reverse;
-    }
-
-    .shape-3 {
-      width: 500px;
-      height: 500px;
-      background: var(--primary-pink);
-      bottom: -150px;
-      right: -100px;
-      animation: float 10s ease-in-out infinite;
-    }
-
-    /* Particles Canvas */
-    #particles {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-    }
-
-    /* Animations */
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    @keyframes float {
-      0% { transform: translate(0px, 0px) rotate(0deg); }
-      50% { transform: translate(10px, -10px) rotate(180deg); }
-      100% { transform: translate(0px, 0px) rotate(360deg); }
-    }
-
-    /* Glassmorphism */
-    .glass {
-      background: var(--glass-bg);
-      backdrop-filter: blur(10px);
-      border: 1px solid var(--glass-border);
-      border-radius: 20px;
-      padding: 2rem;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      .logo {
-        font-size: 6rem;
-      }
-      .slogan {
-        font-size: 1.4rem;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .logo {
-        font-size: 4rem;
-      }
-      .slogan {
-        font-size: 1.1rem;
-      }
-    }
-  </style>
+        @media (max-width: 480px) {
+            .tagline {
+                font-size: 1.1rem;
+                margin-top: 0.5rem;
+                padding: 0 15px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <!-- Particles Canvas -->
-  <canvas id="particles"></canvas>
+    <div class="splash-container">
+        <!-- Background gradient -->
+        <div class="background-gradient"></div>
+        
+        <!-- Canvas for particle animation -->
+        <canvas id="particleCanvas"></canvas>
+        
+        <!-- Tagline -->
+        <div class="tagline" id="tagline">Onde Os Layouts Criam Vidas.</div>
+    </div>
 
-  <!-- Fluid Background Shapes -->
-  <div class="shape shape-1"></div>
-  <div class="shape shape-2"></div>
-  <div class="shape shape-3"></div>
+    <script>
+        // Enhanced Particle System with better letter formation
+        class ParticleSystem {
+            constructor(canvas, text = 'Ly') {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.text = text;
+                this.particles = [];
+                this.targetPoints = [];
+                this.animationComplete = false;
+                this.setupCanvas();
+                this.createTargetPoints();
+                this.createParticles();
+            }
 
-  <!-- Main Content -->
-  <div class="container glass">
-    <div class="logo">Ly</div>
-    <div class="slogan">Onde os Layouts Ganham Vida.</div>
-  </div>
+            setupCanvas() {
+                this.resize();
+                window.addEventListener('resize', () => this.resize());
+            }
 
-  <!-- Scripts -->
-  <script>
-    // Particles System (JavaScript Puro)
-    const canvas = document.getElementById('particles');
-    const ctx = canvas.getContext('2d');
+            resize() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            }
 
-    let particles = [];
-    const particleCount = 80;
+            createTargetPoints() {
+                // Create offscreen canvas with better text rendering
+                const offscreenCanvas = document.createElement('canvas');
+                const offscreenCtx = offscreenCanvas.getContext('2d');
+                
+                // Calculate optimal font size
+                const fontSize = Math.min(window.innerWidth * 0.25, window.innerHeight * 0.35);
+                offscreenCtx.font = `900 ${fontSize}px Arial, sans-serif`;
+                offscreenCtx.textAlign = 'center';
+                offscreenCtx.textBaseline = 'middle';
+                
+                const textMetrics = offscreenCtx.measureText(this.text);
+                const textWidth = textMetrics.width;
+                const textHeight = fontSize;
+                
+                // Add generous padding
+                const padding = 50;
+                offscreenCanvas.width = textWidth + padding * 2;
+                offscreenCanvas.height = textHeight + padding * 2;
+                
+                // Clear and set up offscreen context
+                offscreenCtx.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
+                offscreenCtx.fillStyle = 'black';
+                offscreenCtx.fillRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
+                
+                // Draw white text for better contrast
+                offscreenCtx.fillStyle = 'white';
+                offscreenCtx.font = `900 ${fontSize}px Arial, sans-serif`;
+                offscreenCtx.textAlign = 'center';
+                offscreenCtx.textBaseline = 'middle';
+                offscreenCtx.fillText(this.text, offscreenCanvas.width / 2, offscreenCanvas.height / 2);
+                
+                // Get image data
+                const imageData = offscreenCtx.getImageData(0, 0, offscreenCanvas.width, offscreenCanvas.height);
+                const data = imageData.data;
+                
+                // Find non-transparent pixels with better sampling
+                const points = [];
+                const step = 2; // Sample every 2nd pixel for better detail
+                
+                for (let y = 0; y < offscreenCanvas.height; y += step) {
+                    for (let x = 0; x < offscreenCanvas.width; x += step) {
+                        const index = (y * offscreenCanvas.width + x) * 4;
+                        if (data[index] > 128) { // Red channel > 128 (white text)
+                            points.push({
+                                x: x - offscreenCanvas.width / 2,
+                                y: y - offscreenCanvas.height / 2
+                            });
+                        }
+                    }
+                }
+                
+                // Center the points on screen
+                const centerX = this.canvas.width / 2;
+                const centerY = this.canvas.height / 2 - 30; // Slightly above center
+                
+                // Ensure we have enough points by duplicating if necessary
+                let finalPoints = [];
+                const targetCount = Math.min(1200, Math.max(800, points.length));
+                
+                if (points.length === 0) {
+                    // Fallback: create basic L and Y shapes
+                    finalPoints = this.createFallbackPoints(centerX, centerY, fontSize);
+                } else {
+                    // Distribute points evenly
+                    for (let i = 0; i < targetCount; i++) {
+                        const pointIndex = Math.floor((i / targetCount) * points.length);
+                        finalPoints.push({
+                            x: centerX + points[pointIndex].x,
+                            y: centerY + points[pointIndex].y
+                        });
+                    }
+                }
+                
+                this.targetPoints = finalPoints;
+            }
 
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
+            createFallbackPoints(centerX, centerY, fontSize) {
+                const points = [];
+                const spacing = 3;
+                const halfSize = fontSize / 2;
+                
+                // Create "L" shape
+                // Vertical line of L
+                for (let y = -halfSize; y <= halfSize; y += spacing) {
+                    points.push({ x: centerX - fontSize/3, y: centerY + y });
+                }
+                // Horizontal line of L
+                for (let x = -fontSize/3; x <= fontSize/6; x += spacing) {
+                    points.push({ x: centerX + x, y: centerY + halfSize });
+                }
+                
+                // Create "Y" shape
+                const yStart = -halfSize;
+                const yEnd = 0;
+                const yMid = centerY;
+                
+                // Left arm of Y
+                for (let t = 0; t <= 1; t += 0.02) {
+                    const x = centerX + fontSize/2 - t * fontSize/2;
+                    const y = centerY + yStart + t * (yEnd - yStart);
+                    points.push({ x: x, y: y });
+                }
+                
+                // Right arm of Y
+                for (let t = 0; t <= 1; t += 0.02) {
+                    const x = centerX - fontSize/2 + t * fontSize/2;
+                    const y = centerY + yStart + t * (yEnd - yStart);
+                    points.push({ x: x, y: y });
+                }
+                
+                // Stem of Y
+                for (let y = 0; y <= halfSize; y += spacing) {
+                    points.push({ x: centerX, y: centerY + y });
+                }
+                
+                return points;
+            }
 
-    function createParticles() {
-      for (let i = 0; i < particleCount; i++) {
-        particles.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          radius: Math.random() * 2 + 1,
-          dx: (Math.random() - 0.5) * 0.3,
-          dy: (Math.random() - 0.5) * 0.3,
-          color: `rgba(255, 255, 255, ${Math.random() * 0.4 + 0.1})`
-        });
-      }
-    }
+            createParticles() {
+                const particleCount = this.targetPoints.length;
+                
+                for (let i = 0; i < particleCount; i++) {
+                    // Start particles from random positions around the screen edges
+                    let startX, startY;
+                    const edge = Math.floor(Math.random() * 4);
+                    
+                    switch(edge) {
+                        case 0: // Top
+                            startX = Math.random() * this.canvas.width;
+                            startY = -50;
+                            break;
+                        case 1: // Right
+                            startX = this.canvas.width + 50;
+                            startY = Math.random() * this.canvas.height;
+                            break;
+                        case 2: // Bottom
+                            startX = Math.random() * this.canvas.width;
+                            startY = this.canvas.height + 50;
+                            break;
+                        case 3: // Left
+                            startX = -50;
+                            startY = Math.random() * this.canvas.height;
+                            break;
+                    }
+                    
+                    const target = this.targetPoints[i];
+                    
+                    // Random color from brand palette with smooth transitions
+                    const colorIndex = Math.floor(i / (particleCount / 3)) % 3;
+                    const colors = [
+                        { r: 255, g: 0, b: 255 }, // Magenta
+                        { r: 0, g: 255, b: 255 }, // Cyan
+                        { r: 147, g: 51, b: 234 }  // Purple
+                    ];
+                    const color = colors[colorIndex];
+                    
+                    this.particles.push({
+                        x: startX,
+                        y: startY,
+                        targetX: target.x,
+                        targetY: target.y,
+                        vx: 0,
+                        vy: 0,
+                        color: color,
+                        size: Math.random() * 1.5 + 0.5,
+                        ease: Math.random() * 0.08 + 0.04,
+                        delay: Math.random() * 1000 // Staggered start
+                    });
+                }
+            }
 
-    function drawParticles() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+            update(currentTime) {
+                let settledCount = 0;
+                const totalParticles = this.particles.length;
+                
+                this.particles.forEach((particle, index) => {
+                    // Check if particle should start moving (staggered)
+                    if (currentTime < particle.delay) {
+                        return;
+                    }
+                    
+                    // Calculate distance to target
+                    const dx = particle.targetX - particle.x;
+                    const dy = particle.targetY - particle.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    // If not close enough to target, move towards it
+                    if (distance > 2) {
+                        // Smooth easing with better physics
+                        particle.vx += dx * particle.ease * 0.8;
+                        particle.vy += dy * particle.ease * 0.8;
+                        
+                        // Add some natural friction
+                        particle.vx *= 0.85;
+                        particle.vy *= 0.85;
+                        
+                        particle.x += particle.vx;
+                        particle.y += particle.vy;
+                    } else {
+                        // Snap to target when close enough
+                        particle.x = particle.targetX;
+                        particle.y = particle.targetY;
+                        particle.vx = 0;
+                        particle.vy = 0;
+                        settledCount++;
+                    }
+                });
+                
+                this.animationComplete = (settledCount / totalParticles) > 0.95;
+            }
 
-      particles.forEach(particle => {
-        ctx.beginPath();
-        ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
-        ctx.fillStyle = particle.color;
-        ctx.fill();
+            render() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                this.particles.forEach(particle => {
+                    this.ctx.save();
+                    this.ctx.globalCompositeOperation = 'lighter';
+                    
+                    // Enhanced glow effect
+                    this.ctx.shadowColor = `rgb(${particle.color.r}, ${particle.color.g}, ${particle.color.b})`;
+                    this.ctx.shadowBlur = 15;
+                    
+                    // Draw particle core
+                    this.ctx.fillStyle = `rgb(${particle.color.r}, ${particle.color.g}, ${particle.color.b})`;
+                    this.ctx.beginPath();
+                    this.ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+                    this.ctx.fill();
+                    
+                    this.ctx.restore();
+                });
+            }
 
-        particle.x += particle.dx;
-        particle.y += particle.dy;
-
-        if (particle.x < 0 || particle.x > canvas.width) particle.dx *= -1;
-        if (particle.y < 0 || particle.y > canvas.height) particle.dy *= -1;
-      });
-
-      requestAnimationFrame(drawParticles);
-    }
-
-    // Som ambiente suave
-    function playAmbientSound() {
-      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const oscillator = audioCtx.createOscillator();
-      const gainNode = audioCtx.createGain();
-
-      oscillator.type = 'sine';
-      oscillator.frequency.setValueAtTime(120, audioCtx.currentTime);
-      gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
-
-      oscillator.connect(gainNode);
-      gainNode.connect(audioCtx.destination);
-
-      oscillator.start();
-      setTimeout(() => oscillator.stop(), 5000);
-    }
-
-    // Som de entrada do logo
-    function playLogoSound() {
-      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const oscillator = audioCtx.createOscillator();
-      const gainNode = audioCtx.createGain();
-
-      oscillator.type = 'sine';
-      oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
-
-      oscillator.connect(gainNode);
-      gainNode.connect(audioCtx.destination);
-
-      oscillator.start();
-      oscillator.stop(audioCtx.currentTime + 0.5);
-    }
-
-    // Animações com GSAP
-    document.addEventListener('DOMContentLoaded', () => {
-      resizeCanvas();
-      createParticles();
-      drawParticles();
-
-      playAmbientSound();
-      setTimeout(playLogoSound, 1000);
-
-      // Animação do logo com GSAP
-      gsap.from(".logo", {
-        scale: 0.8,
-        rotation: -10,
-        opacity: 0,
-        duration: 1.5,
-        ease: "back.out(1.7)",
-        delay: 0.5,
-        onComplete: () => {
-          // Animação do slogan
-          gsap.to(".slogan", {
-            opacity: 1,
-            x: 0,
-            duration: 1,
-            ease: "power2.out",
-            delay: 0.5
-          });
+            animate(startTime) {
+                const currentTime = Date.now() - startTime;
+                this.update(currentTime);
+                this.render();
+                
+                if (!this.animationComplete) {
+                    requestAnimationFrame(() => this.animate(startTime));
+                }
+            }
         }
-      });
 
-      // Redireciona após 5 segundos
-      setTimeout(() => {
-        document.body.style.opacity = 0;
-        setTimeout(() => {
-          window.location.href = 'app.html';
-        }, 500);
-      }, 5500);
-    });
-
-    window.addEventListener('resize', resizeCanvas);
-  </script>
+        // Initialize the splash screen
+        window.addEventListener('load', () => {
+            const canvas = document.getElementById('particleCanvas');
+            const tagline = document.getElementById('tagline');
+            
+            // Create particle system
+            const particleSystem = new ParticleSystem(canvas, 'Ly');
+            
+            // Start animation with staggered timing
+            const startTime = Date.now();
+            particleSystem.animate(startTime);
+            
+            // Show tagline after particle animation completes
+            const checkAnimationComplete = setInterval(() => {
+                if (particleSystem.animationComplete) {
+                    clearInterval(checkAnimationComplete);
+                    setTimeout(() => {
+                        tagline.classList.add('visible');
+                        setTimeout(() => {
+                            window.location.href = 'login.html';
+                        }, 2500);
+                    }, 300);
+                }
+            }, 100);
+        });
+    </script>
 </body>
 </html>
