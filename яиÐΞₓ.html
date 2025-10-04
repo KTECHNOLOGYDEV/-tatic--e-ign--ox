@@ -1,1 +1,1902 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>K - DevTools | Ferramentas para Devs</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg-light: #f9fafb;
+      --text-light: #111827;
+      --bg-dark: #030712;
+      --text-dark: #f3f4f6;
+      --border-light: #e5e7eb;
+      --border-dark: #1f2937;
+      --sidebar-bg-light: rgba(255, 255, 255, 0.95);
+      --sidebar-bg-dark: rgba(31, 41, 55, 0.95);
+      --card-bg-light: rgba(255, 255, 255, 0.9);
+      --card-bg-dark: rgba(17, 24, 39, 0.9);
+      --primary: #3b82f6;
+      --secondary: #8b5cf6;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+    }
 
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      transition: background-color 0.3s, color 0.3s;
+      background-color: var(--bg-light);
+      color: var(--text-light);
+    }
+
+    body.dark {
+      background-color: var(--bg-dark);
+      color: var(--text-dark);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background-color: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border-light);
+      padding: 1rem 0;
+    }
+
+    body.dark header {
+      background-color: rgba(17, 24, 39, 0.8);
+      border-bottom-color: var(--border-dark);
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      font-weight: bold;
+      overflow: hidden;
+    }
+
+    .logo-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .logo-text h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .logo-text p {
+      font-size: 0.875rem;
+      opacity: 0.7;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .btn-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: 1px solid var(--border-light);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    body.dark .btn-icon {
+      border-color: var(--border-dark);
+    }
+
+    .btn-icon:hover {
+      background: rgba(59, 130, 246, 0.1);
+    }
+
+    body.dark .btn-icon:hover {
+      background: rgba(59, 130, 246, 0.2);
+    }
+
+    /* Mobile Menu Button */
+    .menu-btn {
+      display: none;
+      width: 40px;
+      height: 40px;
+      flex-direction: column;
+      justify-content: center;
+      gap: 4px;
+      background: white;
+      border-radius: 8px;
+      border: 1px solid var(--border-light);
+      cursor: pointer;
+    }
+
+    body.dark .menu-btn {
+      background: #1f2937;
+      border-color: var(--border-dark);
+    }
+
+    .menu-btn span {
+      display: block;
+      width: 100%;
+      height: 2px;
+      background: var(--text-light);
+    }
+
+    body.dark .menu-btn span {
+      background: var(--text-dark);
+    }
+
+    /* Layout */
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      padding: 2rem 0;
+    }
+
+    @media (min-width: 1024px) {
+      .layout {
+        grid-template-columns: 280px 1fr;
+      }
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: var(--sidebar-bg-light);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border-light);
+      border-radius: 16px;
+      padding: 1.5rem;
+      position: sticky;
+      top: 80px;
+      height: fit-content;
+    }
+
+    body.dark .sidebar {
+      background: var(--sidebar-bg-dark);
+      border-color: var(--border-dark);
+    }
+
+    .sidebar-section {
+      margin-bottom: 1.5rem;
+    }
+
+    .sidebar-section h3 {
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      opacity: 0.8;
+      text-transform: uppercase;
+    }
+
+    .tool-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin: 0.25rem 0;
+    }
+
+    .tool-item:hover {
+      background: rgba(59, 130, 246, 0.1);
+    }
+
+    body.dark .tool-item:hover {
+      background: rgba(59, 130, 246, 0.2);
+    }
+
+    .tool-item.active {
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid var(--primary);
+    }
+
+    body.dark .tool-item.active {
+      background: rgba(59, 130, 246, 0.25);
+    }
+
+    .tool-icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    .tool-info h4 {
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .tool-info p {
+      font-size: 0.75rem;
+      opacity: 0.7;
+      margin-top: 0.25rem;
+    }
+
+    /* Main Content */
+    .main-content {
+      background: var(--card-bg-light);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border-light);
+      border-radius: 16px;
+      padding: 1.5rem;
+    }
+
+    body.dark .main-content {
+      background: var(--card-bg-dark);
+      border-color: var(--border-dark);
+    }
+
+    .tool-container {
+      display: none;
+    }
+
+    .tool-container.active {
+      display: block;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      font-size: 0.875rem;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      background: transparent;
+      color: inherit;
+      font-family: inherit;
+    }
+
+    body.dark .form-control {
+      border-color: var(--border-dark);
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-secondary {
+      background: rgba(156, 163, 175, 0.2);
+      color: inherit;
+    }
+
+    body.dark .btn-secondary {
+      background: rgba(156, 163, 175, 0.3);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(156, 163, 175, 0.3);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .result-box {
+      background: rgba(243, 244, 246, 0.5);
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: monospace;
+      white-space: pre-wrap;
+      word-break: break-all;
+      min-height: 60px;
+    }
+
+    body.dark .result-box {
+      background: rgba(31, 41, 55, 0.5);
+      border-color: var(--border-dark);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    @media (min-width: 768px) {
+      .grid-2 {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    /* Creator Section */
+    .creator {
+      background: linear-gradient(135deg, #f3f4f6, #dbeafe);
+      border-radius: 16px;
+      padding: 2rem;
+      margin: 3rem 0;
+      text-align: center;
+    }
+
+    body.dark .creator {
+      background: linear-gradient(135deg, #111827, #1e293b);
+    }
+
+    .creator-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      margin: 0 auto 1.5rem;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 3rem;
+      font-weight: bold;
+      border: 4px solid white;
+      overflow: hidden;
+    }
+
+    .creator-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    body.dark .creator-avatar {
+      border-color: #1f2937;
+    }
+
+    .creator h2 {
+      font-size: 1.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .creator-info {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin: 1rem 0;
+      flex-wrap: wrap;
+    }
+
+    .creator-info div {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      opacity: 0.8;
+    }
+
+    .donate-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-top: 1.5rem;
+    }
+
+    .donate-btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 12px;
+      color: white;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      transition: all 0.3s;
+    }
+
+    .paypal-btn {
+      background: linear-gradient(135deg, #00457c, #0070ba);
+    }
+
+    .instagram-btn {
+      background: linear-gradient(135deg, #833ab4, #fd1d1d);
+    }
+
+    .donate-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 2rem 0;
+      margin-top: 2rem;
+      border-top: 1px solid var(--border-light);
+    }
+
+    body.dark footer {
+      border-top-color: var(--border-dark);
+    }
+
+    footer p {
+      opacity: 0.7;
+      font-size: 0.875rem;
+    }
+
+    /* Mobile Sidebar */
+    @media (max-width: 1023px) {
+      .menu-btn {
+        display: flex;
+      }
+      
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 280px;
+        height: 100vh;
+        z-index: 100;
+        transition: left 0.3s ease;
+        padding-top: 70px;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+      }
+      
+      .sidebar.open {
+        left: 0;
+      }
+      
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 99;
+      }
+      
+      .sidebar-overlay.active {
+        display: block;
+      }
+    }
+
+    /* Scrollbar personalizada */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(59, 130, 246, 0.3);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(59, 130, 246, 0.5);
+    }
+
+    body.dark ::-webkit-scrollbar-thumb {
+      background: rgba(59, 130, 246, 0.4);
+    }
+
+    body.dark ::-webkit-scrollbar-thumb:hover {
+      background: rgba(59, 130, 246, 0.6);
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <div class="logo-icon">
+            <img src="https://res.cloudinary.com/degs0c0bo/image/upload/c_crop,w_600,h_600/v1759588166/Gemini_Generated_Image_91q21k91q21k91q2_t7dmhe.png" alt="K">
+          </div>
+          <div class="logo-text">
+            <h1>K - DevTools</h1>
+            <p>Ferramentas 100% offline para devs</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button id="theme-toggle" class="btn-icon">
+            <i class="fas fa-moon"></i>
+          </button>
+          <button id="menu-btn" class="menu-btn">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sidebar Overlay -->
+  <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+  <div class="container">
+    <div class="layout">
+      <!-- Sidebar -->
+      <aside id="sidebar" class="sidebar">
+        <div class="sidebar-section">
+          <h3>Geradores & Conversores</h3>
+          <div class="tool-item active" data-tool="uuid">
+            <div class="tool-icon">🆔</div>
+            <div class="tool-info">
+              <h4>UUID Generator</h4>
+              <p>Gere UUIDs únicos v4</p>
+            </div>
+          </div>
+          <div class="tool-item" data-tool="base64">
+            <div class="tool-icon">🔠</div>
+            <div class="tool-info">
+              <h4>Base64 Encode/Decode</h4>
+              <p>Codifique e decodifique em Base64</p>
+            </div>
+          </div>
+          <div class="tool-item" data-tool="hash">
+            <div class="tool-icon">🔐</div>
+            <div class="tool-info">
+              <h4>Hash Generator</h4>
+              <p>Gere hashes SHA-256, SHA-1</p>
+            </div>
+          </div>
+          <div class="tool-item" data-tool="jwt">
+            <div class="tool-icon">🔒</div>
+            <div class="tool-info">
+              <h4>JWT Decoder</h4>
+              <p>Decodifique tokens JWT</p>
+            </div>
+          </div>
+          <div class="tool-item" data-tool="lorem">
+            <div class="tool-icon">📝</div>
+            <div class="tool-info">
+              <h4>Lorem Ipsum</h4>
+              <p>Gere texto placeholder</p>
+            </div>
+          </div>
+          <div class="tool-item" data-tool="slug">
+            <div class="tool-icon">🔗</div>
+            <div class="tool-info">
+              <h4>Slug Generator</h4>
+              <p>Converta texto para slug URL</p>
+            </div>
+          </div>
+          <div class="tool-item" data-tool="timestamp">
+            <div class="tool-icon">⏱️</div>
+            <div class="tool-info">
+              <h4>Timestamp Converter</h4>
+              <p>Converta timestamps para data</p>
+            </div>
+          </div>
+          <div class="tool-item" data-tool="case">
+            <div class="tool-icon">🔤</div>
+            <div class="tool-info">
+              <h4>Case Converter</h4>
+              <p>Converta entre formatos de texto</p>
+            </div>
+          </div>
+          <div class="tool-item" data-tool="color">
+            <div class="tool-icon">🎨</div>
+            <div class="tool-info">
+              <h4>Color Converter</h4>
+              <p>Converta entre HEX, RGB, HSL</p>
+            </div>
+          </div>
+          <div class="tool-item" data-tool="password">
+            <div class="tool-icon">🔒</div>
+            <div class="tool-info">
+              <h4>Password Generator</h4>
+              <p>Gere senhas seguras</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <h3>Playgrounds de Código</h3>
+          <div class="tool-item" data-tool="editor">
+            <div class="tool-icon">💻</div>
+            <div class="tool-info">
+              <h4>Live Editor</h4>
+              <p>Editor HTML/CSS/JS em tempo real</p>
+            </div>
+          </div>
+          <div class="tool-item" data-tool="regex">
+            <div class="tool-icon">🔍</div>
+            <div class="tool-info">
+              <h4>Regex Tester</h4>
+              <p>Teste expressões regulares</p>
+            </div>
+          </div>
+          <div class="tool-item" data-tool="markdown">
+            <div class="tool-icon">📝</div>
+            <div class="tool-info">
+              <h4>Markdown Editor</h4>
+              <p>Escreva e visualize Markdown</p>
+            </div>
+          </div>
+          <div class="tool-item" data-tool="json">
+            <div class="tool-icon">{} </div>
+            <div class="tool-info">
+              <h4>JSON Formatter</h4>
+              <p>Formate e valide JSON</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <h3>Utilitários</h3>
+          <div class="tool-item" data-tool="cpf">
+            <div class="tool-icon">🇧🇷</div>
+            <div class="tool-info">
+              <h4>CPF/CNPJ Validator</h4>
+              <p>Valide documentos brasileiros</p>
+            </div>
+          </div>
+          <div class="tool-item" data-tool="fake">
+            <div class="tool-icon">🎭</div>
+            <div class="tool-info">
+              <h4>Fake Data Generator</h4>
+              <p>Gere dados fictícios</p>
+            </div>
+          </div>
+          <div class="tool-item" data-tool="units">
+            <div class="tool-icon">📏</div>
+            <div class="tool-info">
+              <h4>Unit Converter</h4>
+              <p>Converta unidades de medida</p>
+            </div>
+          </div>
+          <div class="tool-item" data-tool="bytes">
+            <div class="tool-icon">💾</div>
+            <div class="tool-info">
+              <h4>Bytes Converter</h4>
+              <p>Converta tamanhos de arquivo</p>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- UUID Tool -->
+        <div id="tool-uuid" class="tool-container active">
+          <div class="form-group">
+            <label>UUID Gerado</label>
+            <div class="result-box" id="uuid-result"></div>
+          </div>
+          <div class="btn-group">
+            <button id="btn-generate-uuid" class="btn btn-primary">
+              <i class="fas fa-sync"></i> Gerar e Copiar
+            </button>
+            <button id="btn-new-uuid" class="btn btn-secondary">
+              <i class="fas fa-plus"></i> Gerar Novo
+            </button>
+          </div>
+        </div>
+
+        <!-- Base64 Tool -->
+        <div id="tool-base64" class="tool-container">
+          <div class="form-group">
+            <label>Texto de Entrada</label>
+            <textarea id="base64-input" class="form-control" rows="4" placeholder="Digite o texto para converter..."></textarea>
+          </div>
+          <div class="btn-group">
+            <button id="btn-toggle-base64" class="btn btn-primary">Codificar para Base64</button>
+            <button id="btn-copy-base64" class="btn btn-secondary">Copiar Resultado</button>
+          </div>
+          <div class="form-group">
+            <label>Resultado</label>
+            <div class="result-box" id="base64-result">Resultado aparecerá aqui...</div>
+          </div>
+        </div>
+
+        <!-- Hash Tool -->
+        <div id="tool-hash" class="tool-container">
+          <div class="form-group">
+            <label>Texto para Gerar Hash</label>
+            <input type="text" id="hash-input" class="form-control" placeholder="Digite o texto...">
+          </div>
+          <div class="form-group">
+            <label>Algoritmo de Hash</label>
+            <select id="hash-algorithm" class="form-control">
+              <option value="SHA-256">SHA-256 (recomendado)</option>
+              <option value="SHA-1">SHA-1</option>
+            </select>
+          </div>
+          <div class="btn-group">
+            <button id="btn-copy-hash" class="btn btn-primary">Copiar Hash</button>
+          </div>
+          <div class="form-group">
+            <label>Hash Gerado</label>
+            <div class="result-box" id="hash-result">Hash aparecerá aqui...</div>
+          </div>
+        </div>
+
+        <!-- JWT Tool -->
+        <div id="tool-jwt" class="tool-container">
+          <div class="form-group">
+            <label>Token JWT</label>
+            <textarea id="jwt-input" class="form-control" rows="3" placeholder="Cole seu token JWT aqui (ex: xxxxx.yyyyy.zzzzz)"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Payload Decodificado</label>
+            <div class="result-box" id="jwt-result">Payload aparecerá aqui...</div>
+          </div>
+        </div>
+
+        <!-- Lorem Tool -->
+        <div id="tool-lorem" class="tool-container">
+          <div class="form-group">
+            <label>Número de parágrafos</label>
+            <input type="range" id="lorem-count" class="form-control" min="1" max="5" value="2">
+            <div id="lorem-count-display" style="margin-top: 0.5rem; font-size: 0.875rem;">2 parágrafos</div>
+          </div>
+          <div class="form-group">
+            <label>Texto Gerado</label>
+            <div class="result-box" id="lorem-result">Lorem ipsum...</div>
+          </div>
+          <div class="btn-group">
+            <button id="btn-copy-lorem" class="btn btn-primary">Copiar Texto</button>
+          </div>
+        </div>
+
+        <!-- Slug Tool -->
+        <div id="tool-slug" class="tool-container">
+          <div class="form-group">
+            <label>Texto para Converter em Slug</label>
+            <input type="text" id="slug-input" class="form-control" placeholder="Ex: Meu Título de Blog Post">
+          </div>
+          <div class="form-group">
+            <label>Slug Gerado</label>
+            <div class="result-box" id="slug-result">slug-aparecera-aqui</div>
+          </div>
+          <div class="btn-group">
+            <button id="btn-copy-slug" class="btn btn-primary">Copiar Slug</button>
+          </div>
+        </div>
+
+        <!-- Timestamp Tool -->
+        <div id="tool-timestamp" class="tool-container">
+          <div class="form-group">
+            <label>Timestamp Unix (em segundos)</label>
+            <input type="number" id="timestamp-input" class="form-control" placeholder="Ex: 1703123456">
+          </div>
+          <div class="form-group">
+            <label>ISO 8601</label>
+            <div class="result-box" id="timestamp-iso">Data ISO aparecerá aqui...</div>
+          </div>
+          <div class="form-group">
+            <label>Data/Hora (BR)</label>
+            <div class="result-box" id="timestamp-br">Data BR aparecerá aqui...</div>
+          </div>
+        </div>
+
+        <!-- Case Converter Tool -->
+        <div id="tool-case" class="tool-container">
+          <div class="form-group">
+            <label>Texto para Converter</label>
+            <input type="text" id="case-input" class="form-control" placeholder="Ex: meu texto com espaços">
+          </div>
+          <div class="form-group">
+            <label>Tipo de Conversão</label>
+            <select id="case-type" class="form-control">
+              <option value="camel">camelCase</option>
+              <option value="snake">snake_case</option>
+              <option value="kebab">kebab-case</option>
+              <option value="pascal">PascalCase</option>
+              <option value="upper">UPPERCASE</option>
+              <option value="lower">lowercase</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Resultado</label>
+            <div class="result-box" id="case-result">resultado-aparecera-aqui</div>
+          </div>
+          <div class="btn-group">
+            <button id="btn-copy-case" class="btn btn-primary">Copiar Resultado</button>
+          </div>
+        </div>
+
+        <!-- Color Converter Tool -->
+        <div id="tool-color" class="tool-container">
+          <div class="form-group">
+            <label>Selecione uma Cor</label>
+            <div style="display: flex; gap: 0.75rem; align-items: center;">
+              <input type="color" id="color-input" class="form-control" value="#3b82f6" style="width: 40px; height: 40px; padding: 0;">
+              <input type="text" id="color-hex" class="form-control" value="#3b82f6" style="flex: 1;">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>RGB</label>
+            <div class="result-box" id="color-rgb">rgb(59, 130, 246)</div>
+          </div>
+          <div class="form-group">
+            <label>HEX</label>
+            <div class="result-box" id="color-hex-output">#3B82F6</div>
+          </div>
+          <div class="form-group">
+            <label>HSL</label>
+            <div class="result-box" id="color-hsl">hsl(217, 91%, 60%)</div>
+          </div>
+        </div>
+
+        <!-- Password Generator Tool -->
+        <div id="tool-password" class="tool-container">
+          <div class="form-group">
+            <label>Comprimento da senha</label>
+            <input type="range" id="password-length" class="form-control" min="4" max="50" value="12">
+            <div id="password-length-display" style="margin-top: 0.5rem; font-size: 0.875rem;">12 caracteres</div>
+          </div>
+          <div class="form-group">
+            <label>Incluir</label>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+              <label style="display: flex; align-items: center; gap: 0.5rem;">
+                <input type="checkbox" id="include-uppercase" checked> Letras maiúsculas
+              </label>
+              <label style="display: flex; align-items: center; gap: 0.5rem;">
+                <input type="checkbox" id="include-numbers" checked> Números
+              </label>
+              <label style="display: flex; align-items: center; gap: 0.5rem;">
+                <input type="checkbox" id="include-symbols" checked> Símbolos
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Senha Gerada</label>
+            <div class="result-box" id="password-result">senha-aparecera-aqui</div>
+          </div>
+          <div class="btn-group">
+            <button id="btn-generate-password" class="btn btn-primary">Gerar Nova</button>
+            <button id="btn-copy-password" class="btn btn-secondary">Copiar Senha</button>
+          </div>
+        </div>
+
+        <!-- Live Editor Tool -->
+        <div id="tool-editor" class="tool-container">
+          <div class="form-group">
+            <label>HTML</label>
+            <textarea id="html-code" class="form-control" rows="4" placeholder="<div>Hello World</div>"></textarea>
+          </div>
+          <div class="form-group">
+            <label>CSS</label>
+            <textarea id="css-code" class="form-control" rows="4" placeholder="body { color: red; }"></textarea>
+          </div>
+          <div class="form-group">
+            <label>JavaScript</label>
+            <textarea id="js-code" class="form-control" rows="4" placeholder="console.log('Hello');"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Preview</label>
+            <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; height: 200px; overflow: auto; padding: 1rem;">
+              <iframe id="preview-frame" style="width: 100%; height: 100%; border: none;"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- Regex Tester Tool -->
+        <div id="tool-regex" class="tool-container">
+          <div class="form-group">
+            <label>Expressão Regular</label>
+            <input type="text" id="regex-pattern" class="form-control" placeholder="/pattern/g">
+          </div>
+          <div class="form-group">
+            <label>Texto para Testar</label>
+            <textarea id="regex-text" class="form-control" rows="4" placeholder="Digite o texto para testar a regex..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>Flags</label>
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+              <label style="display: flex; align-items: center; gap: 0.5rem;">
+                <input type="checkbox" id="flag-g" checked> g
+              </label>
+              <label style="display: flex; align-items: center; gap: 0.5rem;">
+                <input type="checkbox" id="flag-i"> i
+              </label>
+              <label style="display: flex; align-items: center; gap: 0.5rem;">
+                <input type="checkbox" id="flag-m"> m
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Resultados</label>
+            <div class="result-box" id="regex-result">Nenhuma correspondência encontrada</div>
+          </div>
+        </div>
+
+        <!-- Markdown Editor Tool -->
+        <div id="tool-markdown" class="tool-container">
+          <div class="form-group">
+            <label>Markdown</label>
+            <textarea id="markdown-input" class="form-control" rows="6" placeholder="# Título\n\nTexto em **negrito** e *itálico*"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Preview HTML</label>
+            <div class="result-box" id="markdown-preview" style="height: 200px; overflow: auto;">Preview aparecerá aqui...</div>
+          </div>
+          <div class="btn-group">
+            <button id="btn-copy-markdown" class="btn btn-primary">Copiar Markdown</button>
+          </div>
+        </div>
+
+        <!-- JSON Formatter Tool -->
+        <div id="tool-json" class="tool-container">
+          <div class="form-group">
+            <label>JSON de Entrada</label>
+            <textarea id="json-input" class="form-control" rows="6" placeholder='{"nome": "exemplo", "valor": 123}'></textarea>
+          </div>
+          <div class="btn-group">
+            <button id="btn-copy-json" class="btn btn-primary">Copiar JSON</button>
+            <button id="btn-minify-json" class="btn btn-secondary">Minificar</button>
+          </div>
+          <div class="form-group">
+            <label>JSON Formatado</label>
+            <div class="result-box" id="json-result">JSON formatado aparecerá aqui...</div>
+          </div>
+        </div>
+
+        <!-- CPF Validator Tool -->
+        <div id="tool-cpf" class="tool-container">
+          <div class="form-group">
+            <label>CPF para Validar</label>
+            <input type="text" id="cpf-input" class="form-control" placeholder="000.000.000-00" maxlength="14">
+          </div>
+          <div id="cpf-result" class="form-group" style="display: none;">
+            <div class="result-box" style="text-align: center; padding: 1rem;">
+              <i id="cpf-icon" class="fas fa-check-circle" style="color: #10b981; font-size: 2rem; margin-bottom: 0.5rem;"></i>
+              <div id="cpf-message" style="font-weight: 500;">CPF VÁLIDO</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fake Data Generator Tool -->
+        <div id="tool-fake" class="tool-container">
+          <div class="form-group">
+            <label>Número de Registros</label>
+            <input type="range" id="fake-count" class="form-control" min="1" max="20" value="5">
+            <div id="fake-count-display" style="margin-top: 0.5rem; font-size: 0.875rem;">5 registros</div>
+          </div>
+          <div class="form-group">
+            <label>Dados Fictícios Gerados</label>
+            <div class="result-box" id="fake-result">Dados aparecerão aqui...</div>
+          </div>
+          <div class="btn-group">
+            <button id="btn-copy-fake" class="btn btn-primary">Copiar Dados</button>
+          </div>
+        </div>
+
+        <!-- Unit Converter Tool -->
+        <div id="tool-units" class="tool-container">
+          <div class="form-group">
+            <label>Valor</label>
+            <input type="number" id="unit-value" class="form-control" placeholder="0">
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label>De</label>
+              <select id="unit-from" class="form-control">
+                <option value="bytes">Bytes</option>
+                <option value="kb">KB</option>
+                <option value="mb">MB</option>
+                <option value="gb">GB</option>
+                <option value="tb">TB</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Para</label>
+              <select id="unit-to" class="form-control">
+                <option value="bytes">Bytes</option>
+                <option value="kb">KB</option>
+                <option value="mb">MB</option>
+                <option value="gb">GB</option>
+                <option value="tb">TB</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Resultado</label>
+            <div class="result-box" id="unit-result">Resultado aparecerá aqui...</div>
+          </div>
+        </div>
+
+        <!-- Bytes Converter Tool -->
+        <div id="tool-bytes" class="tool-container">
+          <div class="form-group">
+            <label>Tamanho em Bytes</label>
+            <input type="number" id="bytes-input" class="form-control" placeholder="0">
+          </div>
+          <div class="form-group">
+            <label>Conversão</label>
+            <div class="result-box" id="bytes-result">Conversão aparecerá aqui...</div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Creator Section -->
+  <div class="container">
+    <div class="creator">
+      <div class="creator-avatar">
+        <img src="https://placehold.co/120x120/3b82f6/ffffff?text=KB" alt="Kelvin Batista">
+      </div>
+      <h2>Kelvin Batista</h2>
+      <div class="creator-info">
+        <div><i class="fas fa-map-marker-alt"></i> Brasil</div>
+        <div><i class="fas fa-calendar"></i> 25 anos</div>
+        <div><i class="fas fa-envelope"></i> Dev Full-Stack</div>
+      </div>
+      <p>Sou um desenvolvedor apaixonado por tecnologia e empreendedorismo, dedicado a criar ferramentas que realmente ajudam a comunidade de devs.</p>
+      <p>Se você gostou do projeto e quer apoiar meu trabalho, sua doação fará toda a diferença!</p>
+      
+      <div class="donate-buttons">
+        <a href="https://www.paypal.com/donate/?business=batistaakelvin@gmail.com" target="_blank" class="donate-btn paypal-btn">
+          <i class="fab fa-paypal"></i> Doar via PayPal
+        </a>
+        <a href="https://www.instagram.com/kelvinbatista.dev" target="_blank" class="donate-btn instagram-btn">
+          <i class="fab fa-instagram"></i> Instagram
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>K - DevTools • 100% offline • Desenvolvido com ❤️ para a comunidade de desenvolvedores</p>
+      <p style="margin-top: 0.5rem; font-size: 0.75rem; opacity: 0.6;">Todas as ferramentas funcionam localmente no seu navegador, sem necessidade de internet</p>
+    </div>
+  </footer>
+
+  <script>
+    // Tema
+    const themeToggle = document.getElementById('theme-toggle');
+    const body = document.body;
+    
+    // Verifica preferência do sistema
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      body.classList.add('dark');
+      themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+    }
+    
+    themeToggle.addEventListener('click', () => {
+      body.classList.toggle('dark');
+      themeToggle.innerHTML = body.classList.contains('dark') ? 
+        '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+    });
+
+    // Menu mobile
+    const menuBtn = document.getElementById('menu-btn');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
+    
+    menuBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+      sidebarOverlay.classList.toggle('active');
+    });
+    
+    sidebarOverlay.addEventListener('click', () => {
+      sidebar.classList.remove('open');
+      sidebarOverlay.classList.remove('active');
+    });
+
+    // Navegação entre ferramentas
+    const toolItems = document.querySelectorAll('.tool-item');
+    const toolContainers = document.querySelectorAll('.tool-container');
+    
+    toolItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const toolId = item.getAttribute('data-tool');
+        
+        // Atualiza seleção
+        toolItems.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+        
+        // Mostra ferramenta correta
+        toolContainers.forEach(container => {
+          container.classList.remove('active');
+        });
+        document.getElementById(`tool-${toolId}`).classList.add('active');
+        
+        // Fecha menu mobile
+        sidebar.classList.remove('open');
+        sidebarOverlay.classList.remove('active');
+      });
+    });
+
+    // Funções utilitárias
+    function copyToClipboard(text) {
+      if (!text) return;
+      navigator.clipboard.writeText(text.trim());
+    }
+
+    // UUID Generator
+    function generateUUID() {
+      if (crypto && crypto.randomUUID) {
+        return crypto.randomUUID();
+      }
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    }
+
+    const uuidResult = document.getElementById('uuid-result');
+    const btnGenerateUUID = document.getElementById('btn-generate-uuid');
+    const btnNewUUID = document.getElementById('btn-new-uuid');
+    
+    let currentUUID = generateUUID();
+    uuidResult.textContent = currentUUID;
+    
+    btnGenerateUUID.addEventListener('click', () => {
+      currentUUID = generateUUID();
+      uuidResult.textContent = currentUUID;
+      copyToClipboard(currentUUID);
+    });
+    
+    btnNewUUID.addEventListener('click', () => {
+      currentUUID = generateUUID();
+      uuidResult.textContent = currentUUID;
+    });
+
+    // Base64
+    const base64Input = document.getElementById('base64-input');
+    const base64Result = document.getElementById('base64-result');
+    const btnToggleBase64 = document.getElementById('btn-toggle-base64');
+    const btnCopyBase64 = document.getElementById('btn-copy-base64');
+    
+    let isDecoding = false;
+    
+    base64Input.addEventListener('input', () => {
+      const value = base64Input.value;
+      if (!value) {
+        base64Result.textContent = 'Resultado aparecerá aqui...';
+        return;
+      }
+      
+      try {
+        const result = isDecoding ? 
+          decodeURIComponent(escape(atob(value))) : 
+          btoa(unescape(encodeURIComponent(value)));
+        base64Result.textContent = result;
+      } catch (e) {
+        base64Result.textContent = 'Erro na conversão';
+      }
+    });
+    
+    btnToggleBase64.addEventListener('click', () => {
+      isDecoding = !isDecoding;
+      btnToggleBase64.textContent = isDecoding ? 
+        'Decodificar Base64' : 'Codificar para Base64';
+      base64Input.dispatchEvent(new Event('input'));
+    });
+    
+    btnCopyBase64.addEventListener('click', () => {
+      copyToClipboard(base64Result.textContent);
+    });
+
+    // Hash Generator
+    const hashInput = document.getElementById('hash-input');
+    const hashResult = document.getElementById('hash-result');
+    const hashAlgorithm = document.getElementById('hash-algorithm');
+    const btnCopyHash = document.getElementById('btn-copy-hash');
+    
+    async function generateHash(text, algorithm = 'SHA-256') {
+      if (!text) return '';
+      try {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(text);
+        const hashBuffer = await crypto.subtle.digest(algorithm, data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      } catch (e) {
+        return 'Erro ao gerar hash';
+      }
+    }
+    
+    hashInput.addEventListener('input', async () => {
+      const value = hashInput.value;
+      if (!value) {
+        hashResult.textContent = 'Hash aparecerá aqui...';
+        return;
+      }
+      const algorithm = hashAlgorithm.value;
+      const hash = await generateHash(value, algorithm);
+      hashResult.textContent = hash;
+    });
+    
+    hashAlgorithm.addEventListener('change', async () => {
+      hashInput.dispatchEvent(new Event('input'));
+    });
+    
+    btnCopyHash.addEventListener('click', () => {
+      copyToClipboard(hashResult.textContent);
+    });
+
+    // JWT Decoder
+    const jwtInput = document.getElementById('jwt-input');
+    const jwtResult = document.getElementById('jwt-result');
+    
+    function decodeJWT(token) {
+      if (!token || token.split('.').length !== 3) {
+        return { error: 'Token JWT inválido' };
+      }
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+      } catch (e) {
+        return { error: 'Token JWT corrompido' };
+      }
+    }
+    
+    jwtInput.addEventListener('input', () => {
+      const value = jwtInput.value;
+      if (!value) {
+        jwtResult.textContent = 'Payload aparecerá aqui...';
+        return;
+      }
+      const decoded = decodeJWT(value);
+      jwtResult.textContent = JSON.stringify(decoded, null, 2);
+    });
+
+    // Lorem Ipsum
+    const loremCount = document.getElementById('lorem-count');
+    const loremCountDisplay = document.getElementById('lorem-count-display');
+    const loremResult = document.getElementById('lorem-result');
+    const btnCopyLorem = document.getElementById('btn-copy-lorem');
+    
+    const loremParagraphs = [
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+      "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+      "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium."
+    ];
+    
+    function generateLorem(count = 1) {
+      const selected = [];
+      const safeCount = Math.min(Math.max(count, 1), 10);
+      for (let i = 0; i < safeCount; i++) {
+        selected.push(loremParagraphs[i % loremParagraphs.length]);
+      }
+      return selected.join('\n\n');
+    }
+    
+    loremCount.addEventListener('input', () => {
+      const count = parseInt(loremCount.value);
+      loremCountDisplay.textContent = `${count} parágrafos`;
+      loremResult.textContent = generateLorem(count);
+    });
+    
+    btnCopyLorem.addEventListener('click', () => {
+      copyToClipboard(loremResult.textContent);
+    });
+
+    // Slug Generator
+    const slugInput = document.getElementById('slug-input');
+    const slugResult = document.getElementById('slug-result');
+    const btnCopySlug = document.getElementById('btn-copy-slug');
+    
+    function generateSlug(text) {
+      if (!text) return '';
+      return text.toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .trim();
+    }
+    
+    slugInput.addEventListener('input', () => {
+      const value = slugInput.value;
+      slugResult.textContent = generateSlug(value);
+    });
+    
+    btnCopySlug.addEventListener('click', () => {
+      copyToClipboard(slugResult.textContent);
+    });
+
+    // Timestamp Converter
+    const timestampInput = document.getElementById('timestamp-input');
+    const timestampIso = document.getElementById('timestamp-iso');
+    const timestampBr = document.getElementById('timestamp-br');
+    
+    function convertTimestamp(timestamp) {
+      if (!timestamp) return { iso: '', readable: '' };
+      const num = parseInt(timestamp);
+      if (isNaN(num) || num < 0 || num > 2147483647000) return { iso: '', readable: '' };
+      const date = new Date(num);
+      if (date.toString() === 'Invalid Date') return { iso: '', readable: '' };
+      return {
+        iso: date.toISOString(),
+        readable: date.toLocaleString('pt-BR', {
+          timeZone: 'America/Sao_Paulo',
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        })
+      };
+    }
+    
+    timestampInput.addEventListener('input', () => {
+      const value = timestampInput.value;
+      if (!value) {
+        timestampIso.textContent = 'Data ISO aparecerá aqui...';
+        timestampBr.textContent = 'Data BR aparecerá aqui...';
+        return;
+      }
+      const result = convertTimestamp(value);
+      timestampIso.textContent = result.iso;
+      timestampBr.textContent = result.readable;
+    });
+
+    // Case Converter
+    const caseInput = document.getElementById('case-input');
+    const caseType = document.getElementById('case-type');
+    const caseResult = document.getElementById('case-result');
+    const btnCopyCase = document.getElementById('btn-copy-case');
+    
+    function convertCase(text, type) {
+      if (!text) return '';
+      switch (type) {
+        case 'camel':
+          return text.replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => 
+            index === 0 ? word.toLowerCase() : word.toUpperCase()
+          ).replace(/\s+/g, '');
+        case 'snake':
+          return text.toLowerCase().replace(/\s+/g, '_');
+        case 'kebab':
+          return text.toLowerCase().replace(/\s+/g, '-');
+        case 'pascal':
+          return text.replace(/(?:^\w|[A-Z]|\b\w)/g, word => word.toUpperCase()).replace(/\s+/g, '');
+        case 'upper':
+          return text.toUpperCase();
+        case 'lower':
+          return text.toLowerCase();
+        default:
+          return text;
+      }
+    }
+    
+    caseInput.addEventListener('input', () => {
+      const value = caseInput.value;
+      const type = caseType.value;
+      caseResult.textContent = convertCase(value, type);
+    });
+    
+    caseType.addEventListener('change', () => {
+      caseInput.dispatchEvent(new Event('input'));
+    });
+    
+    btnCopyCase.addEventListener('click', () => {
+      copyToClipboard(caseResult.textContent);
+    });
+
+    // Color Converter
+    const colorInput = document.getElementById('color-input');
+    const colorHex = document.getElementById('color-hex');
+    const colorRgb = document.getElementById('color-rgb');
+    const colorHsl = document.getElementById('color-hsl');
+    const colorHexOutput = document.getElementById('color-hex-output');
+    
+    function hexToRgb(hex) {
+      if (!hex || typeof hex !== 'string') return null;
+      const cleanHex = hex.replace('#', '');
+      if (cleanHex.length !== 6) return null;
+      const result = /^([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(cleanHex);
+      return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+      } : null;
+    }
+    
+    function rgbToHsl(r, g, b) {
+      r /= 255;
+      g /= 255;
+      b /= 255;
+      const max = Math.max(r, g, b);
+      const min = Math.min(r, g, b);
+      let h, s, l = (max + min) / 2;
+      if (max === min) {
+        h = s = 0;
+      } else {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+          case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+          case g: h = (b - r) / d + 2; break;
+          case b: h = (r - g) / d + 4; break;
+        }
+        h /= 6;
+      }
+      return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)];
+    }
+    
+    function updateColor() {
+      const hex = colorInput.value;
+      colorHex.value = hex;
+      colorHexOutput.textContent = hex.toUpperCase();
+      
+      const rgb = hexToRgb(hex);
+      if (rgb) {
+        colorRgb.textContent = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+        const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+        colorHsl.textContent = `hsl(${hsl[0]}, ${hsl[1]}%, ${hsl[2]}%)`;
+      } else {
+        colorRgb.textContent = 'rgb(0, 0, 0)';
+        colorHsl.textContent = 'hsl(0, 0%, 0%)';
+      }
+    }
+    
+    colorInput.addEventListener('input', updateColor);
+    colorHex.addEventListener('input', () => {
+      colorInput.value = colorHex.value;
+      updateColor();
+    });
+    
+    colorHex.addEventListener('blur', () => {
+      if (!colorHex.value.startsWith('#')) {
+        colorHex.value = '#' + colorHex.value;
+        colorInput.value = colorHex.value;
+        updateColor();
+      }
+    });
+
+    // Password Generator
+    const passwordLength = document.getElementById('password-length');
+    const passwordLengthDisplay = document.getElementById('password-length-display');
+    const includeUppercase = document.getElementById('include-uppercase');
+    const includeNumbers = document.getElementById('include-numbers');
+    const includeSymbols = document.getElementById('include-symbols');
+    const passwordResult = document.getElementById('password-result');
+    const btnGeneratePassword = document.getElementById('btn-generate-password');
+    const btnCopyPassword = document.getElementById('btn-copy-password');
+    
+    function generatePassword(length = 12, options = {}) {
+      const { uppercase = true, numbers = true, symbols = true } = options;
+      let charset = 'abcdefghijklmnopqrstuvwxyz';
+      if (uppercase) charset += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      if (numbers) charset += '0123456789';
+      if (symbols) charset += '!@#$%^&*()_+-=[]{}|;:,.<>?';
+      
+      let password = '';
+      for (let i = 0; i < length; i++) {
+        password += charset.charAt(Math.floor(Math.random() * charset.length));
+      }
+      return password;
+    }
+    
+    function updatePassword() {
+      const length = parseInt(passwordLength.value);
+      passwordLengthDisplay.textContent = `${length} caracteres`;
+      const password = generatePassword(length, {
+        uppercase: includeUppercase.checked,
+        numbers: includeNumbers.checked,
+        symbols: includeSymbols.checked
+      });
+      passwordResult.textContent = password;
+    }
+    
+    passwordLength.addEventListener('input', updatePassword);
+    includeUppercase.addEventListener('change', updatePassword);
+    includeNumbers.addEventListener('change', updatePassword);
+    includeSymbols.addEventListener('change', updatePassword);
+    
+    btnGeneratePassword.addEventListener('click', updatePassword);
+    
+    btnCopyPassword.addEventListener('click', () => {
+      copyToClipboard(passwordResult.textContent);
+    });
+
+    // Live Editor
+    const htmlCode = document.getElementById('html-code');
+    const cssCode = document.getElementById('css-code');
+    const jsCode = document.getElementById('js-code');
+    const previewFrame = document.getElementById('preview-frame');
+    
+    function updatePreview() {
+      const html = htmlCode.value || '<h1>Hello World</h1>';
+      const css = cssCode.value || 'body { font-family: Arial, sans-serif; }';
+      const js = jsCode.value || 'console.log("Hello from JS!");';
+      
+      const content = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>${css}</style>
+        </head>
+        <body>
+          ${html}
+          <script>${js}<\/script>
+        </body>
+        </html>
+      `;
+      
+      const doc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+      doc.open();
+      doc.write(content);
+      doc.close();
+    }
+    
+    htmlCode.addEventListener('input', updatePreview);
+    cssCode.addEventListener('input', updatePreview);
+    jsCode.addEventListener('input', updatePreview);
+
+    // Regex Tester
+    const regexPattern = document.getElementById('regex-pattern');
+    const regexText = document.getElementById('regex-text');
+    const flagG = document.getElementById('flag-g');
+    const flagI = document.getElementById('flag-i');
+    const flagM = document.getElementById('flag-m');
+    const regexResult = document.getElementById('regex-result');
+    
+    function testRegex(pattern, text, flags = '') {
+      if (!pattern || !text) return [];
+      try {
+        const regex = new RegExp(pattern, flags);
+        const matches = [];
+        let match;
+        while ((match = regex.exec(text)) !== null) {
+          matches.push({
+            match: match[0],
+            index: match.index,
+            length: match[0].length
+          });
+          if (!regex.global) break;
+        }
+        return matches;
+      } catch (e) {
+        return [];
+      }
+    }
+    
+    function updateRegex() {
+      const pattern = regexPattern.value;
+      const text = regexText.value;
+      const flags = (flagG.checked ? 'g' : '') + (flagI.checked ? 'i' : '') + (flagM.checked ? 'm' : '');
+      
+      const matches = testRegex(pattern, text, flags);
+      
+      if (matches.length > 0) {
+        regexResult.innerHTML = matches.map((match, index) => 
+          `<div style="padding: 0.5rem; background: #dbeafe; margin: 0.25rem 0; border-radius: 4px; font-family: monospace;">
+            "${match.match}" na posição ${match.index}
+          </div>`
+        ).join('');
+      } else {
+        regexResult.innerHTML = '<div style="padding: 0.5rem; text-align: center;">Nenhuma correspondência encontrada</div>';
+      }
+    }
+    
+    regexPattern.addEventListener('input', updateRegex);
+    regexText.addEventListener('input', updateRegex);
+    flagG.addEventListener('change', updateRegex);
+    flagI.addEventListener('change', updateRegex);
+    flagM.addEventListener('change', updateRegex);
+
+    // Markdown Editor
+    const markdownInput = document.getElementById('markdown-input');
+    const markdownPreview = document.getElementById('markdown-preview');
+    
+    function markdownToHtml(markdown) {
+      if (!markdown) return '';
+      return markdown
+        .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+        .replace(/^## (.*$)/gm, '<h2>$1</h2>')
+        .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/^- (.*$)/gm, '<li>$1</li>')
+        .replace(/<\/li>\s*<li>/g, '</li><li>')
+        .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+        .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>')
+        .replace(/\n/g, '<br>');
+    }
+    
+    markdownInput.addEventListener('input', () => {
+      const value = markdownInput.value;
+      markdownPreview.innerHTML = markdownToHtml(value);
+    });
+
+    // JSON Formatter
+    const jsonInput = document.getElementById('json-input');
+    const jsonResult = document.getElementById('json-result');
+    const btnCopyJSON = document.getElementById('btn-copy-json');
+    const btnMinifyJSON = document.getElementById('btn-minify-json');
+    
+    jsonInput.addEventListener('input', () => {
+      const value = jsonInput.value.trim();
+      if (!value) {
+        jsonResult.textContent = 'JSON formatado aparecerá aqui...';
+        return;
+      }
+      try {
+        const parsed = JSON.parse(value);
+        jsonResult.textContent = JSON.stringify(parsed, null, 2);
+      } catch (e) {
+        jsonResult.textContent = `Erro: ${e.message}`;
+      }
+    });
+    
+    btnCopyJSON.addEventListener('click', () => {
+      copyToClipboard(jsonResult.textContent);
+    });
+    
+    btnMinifyJSON.addEventListener('click', () => {
+      try {
+        const minified = JSON.stringify(JSON.parse(jsonInput.value));
+        copyToClipboard(minified);
+      } catch (e) {
+        // Já tratado no input
+      }
+    });
+
+    // CPF Validator
+    const cpfInput = document.getElementById('cpf-input');
+    const cpfResult = document.getElementById('cpf-result');
+    const cpfIcon = document.getElementById('cpf-icon');
+    const cpfMessage = document.getElementById('cpf-message');
+    
+    function formatCPF(value) {
+      const digits = value.replace(/\D/g, '');
+      if (digits.length <= 3) return digits;
+      if (digits.length <= 6) return `${digits.slice(0, 3)}.${digits.slice(3)}`;
+      if (digits.length <= 9) return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`;
+      return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9, 11)}`;
+    }
+    
+    function validateCPF(cpf) {
+      const cleanCPF = cpf.replace(/[^\d]/g, '');
+      if (cleanCPF.length !== 11) return false;
+      if (/^(\d)\1+$/.test(cleanCPF)) return false;
+      
+      let sum = 0;
+      for (let i = 0; i < 9; i++) {
+        sum += parseInt(cleanCPF.charAt(i)) * (10 - i);
+      }
+      let digit = 11 - (sum % 11);
+      if (digit > 9) digit = 0;
+      if (digit !== parseInt(cleanCPF.charAt(9))) return false;
+      
+      sum = 0;
+      for (let i = 0; i < 10; i++) {
+        sum += parseInt(cleanCPF.charAt(i)) * (11 - i);
+      }
+      digit = 11 - (sum % 11);
+      if (digit > 9) digit = 0;
+      return digit === parseInt(cleanCPF.charAt(10));
+    }
+    
+    cpfInput.addEventListener('input', () => {
+      const value = cpfInput.value;
+      const cleanValue = value.replace(/[^\d]/g, '');
+      
+      if (cleanValue.length <= 11) {
+        cpfInput.value = formatCPF(value);
+      } else {
+        cpfInput.value = formatCPF(value.substring(0, 14));
+      }
+      
+      if (cleanValue.length === 11) {
+        const isValid = validateCPF(cpfInput.value);
+        cpfResult.style.display = 'block';
+        if (isValid) {
+          cpfIcon.className = 'fas fa-check-circle';
+          cpfIcon.style.color = '#10b981';
+          cpfMessage.textContent = 'CPF VÁLIDO';
+          cpfMessage.style.color = '#10b981';
+        } else {
+          cpfIcon.className = 'fas fa-times-circle';
+          cpfIcon.style.color = '#ef4444';
+          cpfMessage.textContent = 'CPF INVÁLIDO';
+          cpfMessage.style.color = '#ef4444';
+        }
+      } else {
+        cpfResult.style.display = 'none';
+      }
+    });
+
+    // Fake Data Generator
+    const fakeCount = document.getElementById('fake-count');
+    const fakeCountDisplay = document.getElementById('fake-count-display');
+    const fakeResult = document.getElementById('fake-result');
+    const btnCopyFake = document.getElementById('btn-copy-fake');
+    
+    const brazilianNames = ['João', 'Maria', 'José', 'Ana', 'Carlos', 'Paula', 'Pedro', 'Luciana', 'Rafael', 'Fernanda'];
+    
+    function generateCPF() {
+      let n = '';
+      for (let i = 0; i < 9; i++) {
+        n += Math.floor(Math.random() * 10);
+      }
+      let d1 = 0;
+      for (let i = 0; i < 9; i++) {
+        d1 += parseInt(n.charAt(i)) * (10 - i);
+      }
+      d1 = 11 - (d1 % 11);
+      if (d1 > 9) d1 = 0;
+      n += d1;
+      let d2 = 0;
+      for (let i = 0; i < 10; i++) {
+        d2 += parseInt(n.charAt(i)) * (11 - i);
+      }
+      d2 = 11 - (d2 % 11);
+      if (d2 > 9) d2 = 0;
+      n += d2;
+      return formatCPF(n);
+    }
+    
+    function generateFakeData(count) {
+      const data = [];
+      for (let i = 0; i < count; i++) {
+        const name = brazilianNames[Math.floor(Math.random() * brazilianNames.length)];
+        const cpf = generateCPF();
+        data.push({ name, cpf });
+      }
+      return JSON.stringify(data, null, 2);
+    }
+    
+    fakeCount.addEventListener('input', () => {
+      const count = parseInt(fakeCount.value);
+      fakeCountDisplay.textContent = `${count} registros`;
+      fakeResult.textContent = generateFakeData(count);
+    });
+    
+    btnCopyFake.addEventListener('click', () => {
+      copyToClipboard(fakeResult.textContent);
+    });
+
+    // Unit Converter
+    const unitValue = document.getElementById('unit-value');
+    const unitFrom = document.getElementById('unit-from');
+    const unitTo = document.getElementById('unit-to');
+    const unitResult = document.getElementById('unit-result');
+    
+    function convertUnits(value, from, to) {
+      const units = {
+        bytes: 1,
+        kb: 1024,
+        mb: 1024 * 1024,
+        gb: 1024 * 1024 * 1024,
+        tb: 1024 * 1024 * 1024 * 1024
+      };
+      
+      if (from === to) return value.toString();
+      
+      const bytes = value * units[from];
+      const result = bytes / units[to];
+      return result.toFixed(2);
+    }
+    
+    unitValue.addEventListener('input', () => {
+      const value = parseFloat(unitValue.value);
+      if (isNaN(value)) {
+        unitResult.textContent = 'Resultado aparecerá aqui...';
+        return;
+      }
+      const from = unitFrom.value;
+      const to = unitTo.value;
+      const result = convertUnits(value, from, to);
+      unitResult.textContent = `${result} ${to}`;
+    });
+    
+    unitFrom.addEventListener('change', () => {
+      unitValue.dispatchEvent(new Event('input'));
+    });
+    
+    unitTo.addEventListener('change', () => {
+      unitValue.dispatchEvent(new Event('input'));
+    });
+
+    // Bytes Converter
+    const bytesInput = document.getElementById('bytes-input');
+    const bytesResult = document.getElementById('bytes-result');
+    
+    function convertBytes(bytes) {
+      const units = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+      let size = bytes;
+      let unitIndex = 0;
+      
+      while (size >= 1024 && unitIndex < units.length - 1) {
+        size /= 1024;
+        unitIndex++;
+      }
+      
+      return `${size.toFixed(2)} ${units[unitIndex]}`;
+    }
+    
+    bytesInput.addEventListener('input', () => {
+      const value = parseFloat(bytesInput.value);
+      if (isNaN(value)) {
+        bytesResult.textContent = 'Conversão aparecerá aqui...';
+        return;
+      }
+      const result = convertBytes(value);
+      bytesResult.textContent = result;
+    });
+  </script>
+</body>
+</html>
