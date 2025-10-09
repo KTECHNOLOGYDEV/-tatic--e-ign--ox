@@ -254,11 +254,11 @@
       el.resultado.classList.add('hidden');
 
       try {
-        // ⚠️ Endpoint ofuscado
+        // ✅ Chama o backend ofuscado
         const res = await fetch('/api/plαc\u200Bα?placa=' + placa);
         const data = await res.json();
 
-        if (!res.ok) throw new Error(data.error || 'Placa não encontrada');
+        if (!res.ok) throw new Error(data.error || 'Erro desconhecido');
 
         el.valor.textContent = data.valor || 'R$ —';
         el.desc.textContent = `${data.marca || '—'} ${data.modelo || '—'} - ${data.ano_modelo || '—'} (${data.combustivel || '—'})`;
@@ -266,7 +266,7 @@
         el.resultado.classList.remove('hidden');
 
       } catch (err) {
-        mostrarErro(`⚠️ ${err.message || 'Erro ao consultar placa'}`);
+        mostrarErro(`⚠️ ${err.message}`);
       } finally {
         toggleLoading(false);
       }
