@@ -133,7 +133,8 @@
       <div class="text-center">
         <p class="text-vs-orange font-bold text-lg" id="valorFipe">R$ --</p>
         <p class="text-vs-silver text-sm mt-1" id="descricaoFipe">—</p>
-        <p class="text-xs text-gray-500 mt-2">Dados oficiais FIPE • Atualizados mensalmente</p>
+        <p class="text-xs text-gray-500 mt-2" id="infoPlaca"></p> <!-- Novo elemento para município/UF -->
+        <p class="text-xs text-gray-500 mt-1">Dados oficiais FIPE • Atualizados mensalmente</p>
       </div>
     </div>
 
@@ -165,6 +166,7 @@
       resultado: document.getElementById('resultado'),
       valor: document.getElementById('valorFipe'),
       desc: document.getElementById('descricaoFipe'),
+      infoPlaca: document.getElementById('infoPlaca'), // Novo elemento
       erro: document.getElementById('erro'),
       loading: document.getElementById('loading')
     };
@@ -217,11 +219,10 @@
             if (!res.ok) {
                  const errorData = await res.json().catch(() => ({}));
                  let errorMsg = '⚠️ ';
-
-                 if(res.status === 404) {
-                     errorMsg += 'Placa não encontrada nas bases oficiais da FIPE.';
-                     // Sugestão amigável
-                     errorMsg += ' Verifique se a placa está correta e registrada.';
+                 if (res.status === 404) {
+                     errorMsg += 'Placa não encontrada nas bases oficiais.';
+                 } else if (res.status === 429) {
+                     errorMsg += 'Limite de requisições atingido. Aguarde 60 segundos.';
                  } else if (res.status >= 500) {
                       errorMsg += 'Serviço temporariamente indisponível. Tente novamente mais tarde.';
                  } else {
@@ -234,7 +235,9 @@
 
             // Exibe os dados
             el.valor.textContent = dados.valor || 'R$ —';
-            el.desc.textContent = `${dados.marca || '—'} ${dados.modelo || '—'} - ${dados.ano_modelo || '—'} (${dados.combustivel || '—'})`;
+            el.desc.textContent = `${dados.marca || '—'} ${dados.modelo || '—'} - ${dados.ano_modelo || dados.ano || '—'} (${dados.combustivel || '—'})`;
+            // Exibe município e UF
+            el.infoPlaca.textContent = `${dados.municipio || '—'} / ${dados.uf || '—'}`;
             el.resultado.classList.remove('hidden');
 
         } catch (err) {
