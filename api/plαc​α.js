@@ -22,11 +22,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    // 1. Consulta a placa no site que retorna dados FIPE (via proxy público)
-    // Usando: https://placafipe.com/placa/{placa}
-    // Ele retorna JSON com dados FIPE
-    // Mas isso não funciona no frontend (CORS), então usamos no backend
-
+    // Faz a requisição para placafipe.com
     const url = `https://placafipe.com/placa/${clean}`;
     const response = await fetch(url, {
       headers: {
