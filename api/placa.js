@@ -22,83 +22,36 @@ export default async function handler(req, res) {
   }
 
   try {
-    const url = `https://placafipe.com/placa/${clean}`;
-    const response = await fetch(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36'
-      }
-    });
+    // ✅ CONSULTA DIRETA POR PLACA VIA BRASILAPI
+    const url = `https://brasilapi.com.br/api/fipe/v1/${clean}`;
+    const response = await fetch(url);
 
     if (!response.ok) {
-      return res.status(500).json({ error: 'Serviço indisponível' });
+      if (response.status === 404) {
+        return res.status(404).json({ error: 'Placa não encontrada' });
+      }
+      return res.status(500).json({ error: 'Serviço temporariamente indisponível' });
     }
 
-    const html = await response.text();
+    const data = await response.json();
 
-    // === EXTRAÇÃO DOS DADOS COM REGEX ===
-    const dados = {};
-
-    // Valor FIPE
-    const valorMatch = html.match(/<td>R\$\s*([\d\.,]+)<\/td>/);
-    dados.valor = valorMatch ? `R$ ${valorMatch[1].trim()}` : 'R$ —';
-
-    // Marca
-    const marcaMatch = html.match(/<td>\s*Marca:\s*<\/td>\s*<td>([^<]+)<\/td>/i);
-    dados.marca = marcaMatch ? marcaMatch[1].trim() : '—';
-
-    // Modelo
-    const modeloMatch = html.match(/<td>\s*Modelo:\s*<\/td>\s*<td>([^<]+)<\/td>/i);
-    dados.modelo = modeloMatch ? modeloMatch[1].trim() : '—';
-
-    // Ano
-    const anoMatch = html.match(/<td>\s*Ano:\s*<\/td>\s*<td>([^<]+)<\/td>/i);
-    dados.ano = anoMatch ? anoMatch[1].trim() : '—';
-
-    // Combustível
-    const combMatch = html.match(/<td>\s*Combustível:\s*<\/td>\s*<td>([^<]+)<\/td>/i);
-    dados.combustivel = combMatch ? combMatch[1].trim() : '—';
-
-    // Cor
-    const corMatch = html.match(/<td>\s*Cor:\s*<\/td>\s*<td>([^<]+)<\/td>/i);
-    dados.cor = corMatch ? corMatch[1].trim() : '—';
-
-    // Chassi
-    const chassiMatch = html.match(/<td>\s*Chassi:\s*<\/td>\s*<td>\s*\*+([^<\s]+)\s*<\/td>/i);
-    dados.chassi = chassiMatch ? `...${chassiMatch[1].slice(-6)}` : '—';
-
-    // Código FIPE
-    const codFipeMatch = html.match(/Código FIPE\s*<\/td>\s*<td>([^<]+)<\/td>/i);
-    dados.codigo_fipe = codFipeMatch ? codFipeMatch[1].trim() : '—';
-
-    // UF
-    const ufMatch = html.match(/<td>\s*UF:\s*<\/td>\s*<td>([^<]+)<\/td>/i);
-    dados.uf = ufMatch ? ufMatch[1].trim() : '—';
-
-    // Município
-    const munMatch = html.match(/<td>\s*Município:\s*<\/td>\s*<td>([^<]+)<\/td>/i);
-    dados.municipio = munMatch ? munMatch[1].trim() : '—';
-
-    // Validação mínima
-    if (!dados.valor || dados.valor === 'R$ —') {
-      return res.status(404).json({ error: 'Placa não encontrada ou sem dados' });
+    if (!data || !data.valor) {
+      return res.status(404).json({ error: 'Dados da placa incompletos' });
     }
 
     res.status(200).json({
       placa: clean,
-      marca: dados.marca,
-      modelo: dados.modelo,
-      ano: dados.ano,
-      combustivel: dados.combustivel,
-      cor: dados.cor,
-      chassi: dados.chassi,
-      valor: dados.valor,
-      codigo_fipe: dados.codigo_fipe,
-      uf: dados.uf,
-      municipio: dados.municipio
+      marca: data.marca || '—',
+      modelo: data.modelo || '—',
+      ano_modelo: data.ano_modelo || '—',
+      combustivel: data.combustivel || '—',
+      valor: data.valor || 'R$ —',
+      codigo_fipe: data.fipe_codigo || '—',
+      referencia: data.referencia || '—'
     });
 
   } catch (err) {
-    console.error('[SCRAPING ERROR]', err);
+    console.error('[BRASILAPI ERROR]', err);
     res.status(500).json({ error: 'Erro interno ao consultar placa' });
   }
 }
