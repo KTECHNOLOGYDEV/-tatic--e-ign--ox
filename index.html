@@ -6,6 +6,7 @@
   <title>EmpreendaCheck - Consulta de CNPJ</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/heroicons@1.0.1/dist/outline.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     body {
@@ -17,9 +18,33 @@
     .section-divider {
       @apply border-t border-gray-200 my-6;
     }
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 50;
+      color: white;
+      font-size: 1.2rem;
+    }
+    .loading-overlay.hidden {
+      display: none;
+    }
   </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
+  <!-- Overlay de Loading -->
+  <div id="loadingOverlay" class="loading-overlay hidden">
+    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white mb-4"></div>
+    <p>Consultando dados...</p>
+  </div>
+
   <header class="br-flag-gradient text-white shadow-lg">
     <div class="container mx-auto px-4 py-6 flex flex-col items-center">
       <h1 class="text-3xl md:text-4xl font-bold">EmpreendaCheck</h1>
@@ -52,6 +77,13 @@
       </div>
 
       <div id="result" class="mt-6 hidden">
+        <!-- Botão para exportar PDF -->
+        <div class="mb-6 text-right">
+          <button id="exportPdfBtn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold transition">
+            Exportar PDF
+          </button>
+        </div>
+
         <!-- Dados Principais -->
         <div>
           <h2 class="text-xl font-bold mb-4">Dados da Empresa</h2>
@@ -139,12 +171,47 @@
   </footer>
 
   <script>
+    // Validação de CNPJ
+    function validarCNPJ(cnpj) {
+      cnpj = cnpj.replace(/[^\d]/g, '');
+      if (cnpj.length !== 14 || /^(\d)\1+$/.test(cnpj)) return false;
+
+      let tamanho = cnpj.length - 2;
+      let numeros = cnpj.substring(0, tamanho);
+      let digitos = cnpj.substring(tamanho);
+      let soma = 0;
+      let pos = tamanho - 7;
+
+      for (let i = tamanho; i >= 1; i--) {
+        soma += numeros.charAt(tamanho - i) * pos--;
+        if (pos < 2) pos = 9;
+      }
+
+      let resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
+      if (resultado !== parseInt(digitos.charAt(0))) return false;
+
+      tamanho = tamanho + 1;
+      numeros = cnpj.substring(0, tamanho);
+      soma = 0;
+      pos = tamanho - 7;
+
+      for (let i = tamanho; i >= 1; i--) {
+        soma += numeros.charAt(tamanho - i) * pos--;
+        if (pos < 2) pos = 9;
+      }
+
+      resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
+      return resultado === parseInt(digitos.charAt(1));
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
       const input = document.getElementById("cnpjInput");
       const searchBtn = document.getElementById("searchBtn");
       const resultDiv = document.getElementById("result");
       const errorDiv = document.getElementById("error");
       const loading = document.getElementById("loading");
+      const loadingOverlay = document.getElementById("loadingOverlay");
+      const exportBtn = document.getElementById("exportPdfBtn");
 
       input.addEventListener("input", (e) => {
         let v = e.target.value.replace(/\D/g, "");
@@ -158,13 +225,13 @@
 
       const fetchCNPJ = async (cnpj) => {
         cnpj = cnpj.replace(/[^\d]/g, "");
-        if (cnpj.length !== 14) {
-          showError("CNPJ inválido. Digite 14 números.");
+        if (!validarCNPJ(cnpj)) {
+          showError("CNPJ inválido. Verifique os dígitos.");
           return;
         }
 
         try {
-          loading.classList.remove("hidden");
+          loadingOverlay.classList.remove("hidden"); // Mostra overlay
           errorDiv.classList.add("hidden");
           resultDiv.classList.add("hidden");
 
@@ -182,7 +249,7 @@
           console.error(err);
           showError("Erro ao buscar dados. Tente novamente.");
         } finally {
-          loading.classList.add("hidden");
+          loadingOverlay.classList.add("hidden"); // Esconde overlay
         }
       };
 
@@ -268,6 +335,23 @@
       const formatCNPJ = (cnpj) => {
         return cnpj.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5");
       };
+
+      // Exportar PDF
+      exportBtn.addEventListener("click", () => {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        const resultElement = document.getElementById("result");
+        doc.html(resultElement, {
+          callback: function (doc) {
+            doc.save(`dados_empresa_${document.getElementById("cnpj").textContent}.pdf`);
+          },
+          x: 10,
+          y: 10,
+          width: 180,
+          windowWidth: resultElement.scrollWidth,
+        });
+      });
 
       searchBtn.addEventListener("click", () => {
         fetchCNPJ(input.value);
