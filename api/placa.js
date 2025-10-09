@@ -13,6 +13,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Parâmetro "placa" é obrigatório' });
   }
 
+  // Limpa e valida a placa
   const clean = placa.replace(/[^A-Z0-9]/gi, '').toUpperCase();
   const antiga = /^[A-Z]{3}[0-9]{4}$/;
   const mercosul = /^[A-Z]{3}[0-9][A-Z][0-9]{2}$/;
@@ -21,62 +22,84 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Formato de placa inválido' });
   }
 
-  // === TENTA BRASILAPI PRIMEIRO ===
   try {
-    const brasilApiUrl = `https://brasilapi.com.br/api/fipe/v1/${clean}`;
-    const response = await fetch(brasilApiUrl);
+    // ✅ CONSULTA À NOVA API SINESP
+    const url = 'https://sinesp-v3.apibrasil.com.br/api';
+    const chave = 'https://sinesp.contrateumdev.com.br'; // Chave pública indicada
 
-    if (response.ok) {
-      const data = await response.json();
-      if (data && data.valor) {
-        return res.status(200).json({
-          placa: clean,
-          marca: data.marca || '—',
-          modelo: data.modelo || '—',
-          ano_modelo: data.ano_modelo || '—',
-          combustivel: data.combustivel || '—',
-          valor: data.valor || 'R$ —',
-          codigo_fipe: data.fipe_codigo || '—',
-          referencia: data.referencia || '—'
-        });
-      }
-    }
-  } catch (err) {
-    console.warn('[BRASILAPI FAILED]', err.message);
-  }
-
-  // === TENTA FIPE.ONLINE COMO FALLBACK ===
-  try {
-    // ⚠️ Substitua 'SEU_TOKEN_AQUI' pelo seu token real da fipe.online
-    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI4NjRmNTkwOC0xMDc1LTQ3ODItYjg5NC1iMjU0YmNlMGIzMWUiLCJlbWFpbCI6ImNvbWVyY2lhbGt0ZWNobm9sb2d5LmRldkBnbWFpbC5jb20iLCJpYXQiOjE3NTk5NzIxMDl9.97CV6a3tbOlCYRK03paR0ZKNneJjvZ6G-BJWXKZPCfE'; // <- COLOQUE SEU TOKEN AQUI
-    const fipeOnlineUrl = `https://fipe.online/api/fipe/vehicle?plate=${clean}`;
-
-    const response = await fetch(fipeOnlineUrl, {
+    const response = await fetch(url, {
+      method: 'POST',
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'User-Agent': 'ConsultorFipe-VSLocar/1.0'
-      }
+        'Content-Type': 'application/json',
+        'chave': chave
+      },
+      body: JSON.stringify({ placa: clean })
     });
 
-    if (response.ok) {
-      const data = await response.json();
-      if (data && data.price) {
-        return res.status(200).json({
-          placa: clean,
-          marca: data.brand || '—',
-          modelo: data.model || '—',
-          ano_modelo: data.modelYear || '—',
-          combustivel: data.fuel || '—',
-          valor: data.price || 'R$ —',
-          codigo_fipe: data.codeFipe || '—',
-          referencia: data.referenceMonth || '—'
-        });
+    if (!response.ok) {
+      // Tenta ler o corpo do erro para uma mensagem mais específica
+      let errorMessage = 'Serviço temporariamente indisponível';
+      try {
+        const errorText = await response.text();
+        console.error("Erro da API Sinesp:", response.status, errorText);
+        if (response.status === 429) {
+          errorMessage = 'Limite de requisições atingido. Aguarde 60 segundos.';
+        } else if (response.status === 400) {
+          errorMessage = 'Requisição inválida. Verifique a placa.';
+        }
+      } catch (e) {
+        // Ignora erro ao ler o corpo do erro
       }
+      return res.status(response.status).json({ error: errorMessage });
     }
-  } catch (err) {
-    console.warn('[FIPE.ONLINE FAILED]', err.message);
-  }
 
-  // === NENHUMA FUNCIONOU ===
-  return res.status(404).json({ error: 'Placa não encontrada nas bases oficiais' });
+    const data = await response.json();
+
+    // Verifica se a resposta indica erro
+    if (data.codigoRetorno !== "0") {
+        console.error("Erro lógico da API Sinesp:", data);
+        let userMessage = 'Placa não encontrada ou dados indisponíveis.';
+        // Mapeia códigos de erro comuns, se necessário
+        // Exemplo: if (data.codigoRetorno === "1") userMessage = "...";
+        return res.status(404).json({ error: userMessage });
+    }
+
+
+    // Extrai os dados FIPE com maior score (mais relevante)
+    let melhorFipe = null;
+    if (data.fipe && data.fipe.dados && Array.isArray(data.fipe.dados)) {
+        // Filtra dados com score > 0 e ordena por score decrescente
+        const dadosValidos = data.fipe.dados.filter(d => d.score > 0);
+        if (dadosValidos.length > 0) {
+            dadosValidos.sort((a, b) => b.score - a.score);
+            melhorFipe = dadosValidos[0]; // Pega o primeiro (maior score)
+        } else if (data.fipe.dados.length > 0) {
+            // Se não tiver score, pega o primeiro
+            melhorFipe = data.fipe.dados[0];
+        }
+    }
+
+    // Monta a resposta final
+    res.status(200).json({
+      placa: clean,
+      marca: data.marca || '—',
+      modelo: data.modelo || '—',
+      ano: data.ano || '—',
+      ano_modelo: data.anoModelo || '—',
+      cor: data.cor || '—',
+      chassi: data.chassi || '—',
+      municipio: data.municipio || '—',
+      uf: data.uf || '—',
+      situacao: data.situacao || '—',
+      valor: melhorFipe ? melhorFipe.texto_valor : 'R$ —',
+      codigo_fipe: melhorFipe ? melhorFipe.codigo_fipe : '—',
+      combustivel: melhorFipe ? melhorFipe.combustivel : '—',
+      referencia: melhorFipe ? melhorFipe.mes_referencia : '—'
+    });
+
+  } catch (err) {
+    console.error('[SINESP API ERROR]', err);
+    // Erro de rede ou JSON inválido
+    res.status(500).json({ error: 'Erro interno ao consultar placa. Tente novamente mais tarde.' });
+  }
 }
