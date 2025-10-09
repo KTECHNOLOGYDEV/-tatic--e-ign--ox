@@ -1,1 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EmpreendaCheck - Consulta de CNPJ</title>
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Ícones do Heroicons -->
+  <script src="https://cdn.jsdelivr.net/npm/heroicons@1.0.1/dist/outline.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .br-flag-gradient {
+      background: linear-gradient(135deg, #009C3B 0%, #FFDF00 100%);
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <!-- Header -->
+  <header class="br-flag-gradient text-white shadow-lg">
+    <div class="container mx-auto px-4 py-6 flex flex-col items-center">
+      <h1 class="text-3xl md:text-4xl font-bold">EmpreendaCheck</h1>
+      <p class="mt-2 text-center text-lg">Consulta de CNPJ em tempo real</p>
+    </div>
+  </header>
 
+  <!-- Main -->
+  <main class="container mx-auto px-4 py-8">
+    <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-6">
+      <div class="mb-6">
+        <label for="cnpjInput" class="block text-lg font-medium text-gray-700">Digite o CNPJ</label>
+        <div class="flex mt-2">
+          <input
+            type="text"
+            id="cnpjInput"
+            placeholder="00.000.000/0000-00"
+            class="w-full px-4 py-3 border border-gray-300 rounded-l-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          />
+          <button
+            id="searchBtn"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-6 rounded-r-lg font-semibold transition"
+          >
+            Buscar
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div id="loading" class="hidden flex justify-center py-6">
+        <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+
+      <!-- Resultado -->
+      <div id="result" class="mt-6 hidden">
+        <h2 class="text-xl font-bold mb-4">Dados da Empresa</h2>
+        <div class="space-y-3">
+          <p><span class="font-semibold">Nome:</span> <span id="nome"></span></p>
+          <p><span class="font-semibold">Nome Fantasia:</span> <span id="fantasia"></span></p>
+          <p><span class="font-semibold">CNPJ:</span> <span id="cnpj"></span></p>
+          <p><span class="font-semibold">UF:</span> <span id="uf"></span></p>
+          <p><span class="font-semibold">Município:</span> <span id="municipio"></span></p>
+          <p><span class="font-semibold">Logradouro:</span> <span id="logradouro"></span></p>
+          <p><span class="font-semibold">Número:</span> <span id="numero"></span></p>
+          <p><span class="font-semibold">CEP:</span> <span id="cep"></span></p>
+          <p><span class="font-semibold">Telefone:</span> <span id="telefone"></span></p>
+          <p><span class="font-semibold">Email:</span> <span id="email"></span></p>
+          <p><span class="font-semibold">Situação:</span> <span id="situacao"></span></p>
+        </div>
+      </div>
+
+      <!-- Erro -->
+      <div id="error" class="mt-6 hidden text-red-500 bg-red-50 p-4 rounded-lg">
+        <p id="errorMsg"></p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="py-6 text-center text-gray-600 bg-white mt-8 border-t">
+    <p>© EmpreendaCheck - Todos os direitos reservados</p>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const input = document.getElementById("cnpjInput");
+      const searchBtn = document.getElementById("searchBtn");
+      const resultDiv = document.getElementById("result");
+      const errorDiv = document.getElementById("error");
+      const loading = document.getElementById("loading");
+
+      // Máscara simples para CNPJ
+      input.addEventListener("input", (e) => {
+        let v = e.target.value.replace(/\D/g, "");
+        if (v.length > 14) v = v.substring(0, 14);
+        if (v.length > 12) v = v.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5");
+        else if (v.length > 8) v = v.replace(/(\d{2})(\d{3})(\d{3})(\d{4})/, "$1.$2.$3/$4");
+        else if (v.length > 5) v = v.replace(/(\d{2})(\d{3})(\d{3})/, "$1.$2.$3/");
+        else if (v.length > 2) v = v.replace(/(\d{2})(\d{3})/, "$1.$2.");
+        e.target.value = v;
+      });
+
+      // Função de busca
+      const fetchCNPJ = async (cnpj) => {
+        cnpj = cnpj.replace(/[^\d]/g, "");
+        if (cnpj.length !== 14) {
+          showError("CNPJ inválido. Digite 14 números.");
+          return;
+        }
+
+        try {
+          loading.classList.remove("hidden");
+          errorDiv.classList.add("hidden");
+          resultDiv.classList.add("hidden");
+
+          const response = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpj}`);
+          const data = await response.json();
+
+          if (data.erro) {
+            showError("CNPJ não encontrado.");
+            return;
+          }
+
+          fillResult(data);
+          resultDiv.classList.remove("hidden");
+        } catch (err) {
+          console.error(err);
+          showError("Erro ao buscar dados. Tente novamente.");
+        } finally {
+          loading.classList.add("hidden");
+        }
+      };
+
+      const showError = (msg) => {
+        document.getElementById("errorMsg").textContent = msg;
+        errorDiv.classList.remove("hidden");
+      };
+
+      const fillResult = (data) => {
+        document.getElementById("nome").textContent = data.nome || "Não informado";
+        document.getElementById("fantasia").textContent = data.fantasia || "Não informado";
+        document.getElementById("cnpj").textContent = formatCNPJ(data.cnpj) || "Não informado";
+        document.getElementById("uf").textContent = data.uf || "Não informado";
+        document.getElementById("municipio").textContent = data.municipio || "Não informado";
+        document.getElementById("logradouro").textContent = data.logradouro || "Não informado";
+        document.getElementById("numero").textContent = data.numero || "Não informado";
+        document.getElementById("cep").textContent = data.cep || "Não informado";
+        document.getElementById("telefone").textContent = data.telefone || "Não informado";
+        document.getElementById("email").textContent = data.email || "Não informado";
+        document.getElementById("situacao").textContent = data.situacao || "Não informado";
+      };
+
+      const formatCNPJ = (cnpj) => {
+        return cnpj.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5");
+      };
+
+      searchBtn.addEventListener("click", () => {
+        fetchCNPJ(input.value);
+      });
+
+      input.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") fetchCNPJ(input.value);
+      });
+    });
+  </script>
+</body>
+</html>
