@@ -19,6 +19,10 @@
           animation: {
             'fade-in': 'fadeIn 0.5s ease-out',
             'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+          },
+          keyframes: {
+            fadeIn: { '0%': { opacity: 0, transform: 'translateY(12px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } },
+            pulse: { '0%, 100%' : { opacity: 1 }, '50%' : { opacity: 0.7 } }
           }
         }
       }
@@ -74,13 +78,6 @@
     .pulse-btn {
       animation: pulse-slow 2s infinite;
     }
-    @media (max-width: 640px) {
-      body { background-attachment: scroll; }
-      .container { padding: 12px !important; }
-      .card { padding: 16px !important; }
-      .btn { padding: 0.6rem !important; font-size: 0.875rem !important; }
-      .modal-content { margin: 12% auto; padding: 1.25rem !important; }
-    }
   </style>
 </head>
 <body class="text-white min-h-screen flex flex-col items-center py-5">
@@ -97,7 +94,6 @@
       <p class="text-vs-silver text-xs mt-1">Valor de mercado para locação e venda</p>
     </div>
 
-    <!-- Campo de Placa -->
     <div class="card-step">
       <div class="flex items-center mb-2">
         <span class="step-number">1</span>
@@ -110,19 +106,17 @@
         placeholder="Ex: ABC1234 ou ABC1D23" 
         class="w-full p-2.5 bg-gray-800/70 border border-gray-700 rounded-lg focus:ring-2 focus:ring-vs-red focus:border-vs-red focus:outline-none text-white text-sm"
       />
-      <p class="text-xs text-gray-500 mt-1">Digite a placa sem espaços ou traços</p>
+      <p class="text-xs text-gray-500 mt-1">Placa sem espaços ou traços</p>
     </div>
 
-    <!-- Resultado -->
     <div id="resultado" class="hidden mt-5 p-4 bg-gradient-to-r from-red-900/40 to-black rounded-lg border border-vs-red/40">
       <div class="text-center">
         <p class="text-vs-orange font-bold text-lg" id="valorFipe">R$ --</p>
         <p class="text-vs-silver text-sm mt-1" id="descricaoFipe">—</p>
-        <p class="text-xs text-gray-400 mt-2">Dados oficiais FIPE • Atualizados mensalmente</p>
+        <p class="text-xs text-gray-500 mt-2">Dados oficiais FIPE • Atualizados mensalmente</p>
       </div>
     </div>
 
-    <!-- Botão Animado -->
     <div class="mt-5 text-center">
       <button id="btnConsultar" class="pulse-btn bg-vs-red hover:bg-red-700 text-white font-semibold py-3.5 px-6 rounded-full transition shadow-lg hover:shadow-xl flex items-center justify-center mx-auto gap-2">
         <i class="fas fa-search"></i>
@@ -130,7 +124,6 @@
       </button>
     </div>
 
-    <!-- Mensagens -->
     <div id="erro" class="hidden mt-4 text-red-400 text-center text-sm px-2 py-2 rounded bg-red-900/20"></div>
     <div id="loading" class="hidden mt-4 text-center">
       <div class="inline-block w-6 h-6 border-2 border-vs-red border-t-transparent rounded-full animate-spin"></div>
@@ -138,7 +131,6 @@
     </div>
   </div>
 
-  <!-- Crédito -->
   <div class="mt-6 text-center max-w-md px-2">
     <p class="text-gray-500 text-xs">
       Desenvolvido por <span class="text-vs-orange font-medium">Kelvin Batista</span>
@@ -156,16 +148,14 @@
       loading: document.getElementById('loading')
     };
 
-    // Formatação de placa em tempo real
     el.placa.addEventListener('input', (e) => {
       let v = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
       if (v.length > 7) v = v.slice(0, 7);
       e.target.value = v;
     });
 
-    // Consulta ao clicar no botão
     el.btn.addEventListener('click', async () => {
-      const placa = el.placa.value.trim();
+      const placa = el.placa.value.trim().replace(/[^A-Z0-9]/g, '').toUpperCase();
       if (!placa || placa.length !== 7) {
         mostrarErro('⚠️ Digite uma placa válida (7 caracteres)');
         return;
@@ -177,12 +167,12 @@
 
       try {
         const res = await fetch(`/api/placa?placa=${placa}`);
-        const dados = await res.json();
+        const data = await res.json();
 
-        if (!res.ok) throw new Error(dados.error || 'Erro desconhecido');
+        if (!res.ok) throw new Error(data.error || 'Erro desconhecido');
 
-        el.valor.textContent = dados.valor || 'R$ —';
-        el.desc.textContent = `${dados.marca || '—'} ${dados.modelo || '—'} - ${dados.ano || '—'} (${dados.combustivel || '—'})`;
+        el.valor.textContent = data.valor || 'R$ —';
+        el.desc.textContent = `${data.marca || '—'} ${data.modelo || '—'} - ${data.ano_modelo || '—'} (${data.combustivel || '—'})`;
         el.resultado.classList.remove('hidden');
 
       } catch (err) {
@@ -192,7 +182,6 @@
       }
     });
 
-    // Funções auxiliares
     function toggleLoading(show) {
       el.loading.classList.toggle('hidden', !show);
       el.btn.disabled = show;
