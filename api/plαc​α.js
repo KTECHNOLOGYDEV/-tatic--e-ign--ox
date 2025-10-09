@@ -23,21 +23,7 @@ export default async function handler(req, res) {
 
   try {
     // 1. Consulta a placa no site que retorna dados FIPE (via proxy público)
-    // Usando: http://api.fipeapi.com.br/v1/fipe/{fipe_code}?{token}
-    // Mas como não temos token, vamos usar um proxy que já tem acesso
-    // Exemplo: https://api-fipe-fi.vercel.app/api/price?code=001001-1
-    // Mas vamos usar um serviço que funcione sem token
-
-    // Vamos usar a API oficial via proxy: fipe.parallelum.com.br
-    // Primeiro, vamos obter o código FIPE via scraping de tabelafipebrasil.com (não mais confiável)
-    // Vamos mudar para uma API que aceite placa diretamente
-
-    // Alternativa: usar o endpoint de busca por código FIPE
-    // Exemplo: https://fipe.parallelum.com.br/api/v2/lookup/{fipe_code}
-    // Mas não temos o código FIPE, apenas a placa
-
-    // Nova estratégia:
-    // Vamos usar o site: https://placafipe.com/placa/{placa}
+    // Usando: https://placafipe.com/placa/{placa}
     // Ele retorna JSON com dados FIPE
     // Mas isso não funciona no frontend (CORS), então usamos no backend
 
