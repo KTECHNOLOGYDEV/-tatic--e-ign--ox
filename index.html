@@ -4,9 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>EmpreendaCheck - Consulta de CNPJ</title>
-  <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Ícones do Heroicons -->
   <script src="https://cdn.jsdelivr.net/npm/heroicons@1.0.1/dist/outline.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -19,7 +17,6 @@
   </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
-  <!-- Header -->
   <header class="br-flag-gradient text-white shadow-lg">
     <div class="container mx-auto px-4 py-6 flex flex-col items-center">
       <h1 class="text-3xl md:text-4xl font-bold">EmpreendaCheck</h1>
@@ -27,7 +24,6 @@
     </div>
   </header>
 
-  <!-- Main -->
   <main class="container mx-auto px-4 py-8">
     <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-6">
       <div class="mb-6">
@@ -48,16 +44,14 @@
         </div>
       </div>
 
-      <!-- Loading -->
       <div id="loading" class="hidden flex justify-center py-6">
         <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500"></div>
       </div>
 
-      <!-- Resultado -->
       <div id="result" class="mt-6 hidden">
         <h2 class="text-xl font-bold mb-4">Dados da Empresa</h2>
         <div class="space-y-3">
-          <p><span class="font-semibold">Nome:</span> <span id="nome"></span></p>
+          <p><span class="font-semibold">Razão Social:</span> <span id="nome"></span></p>
           <p><span class="font-semibold">Nome Fantasia:</span> <span id="fantasia"></span></p>
           <p><span class="font-semibold">CNPJ:</span> <span id="cnpj"></span></p>
           <p><span class="font-semibold">UF:</span> <span id="uf"></span></p>
@@ -67,18 +61,22 @@
           <p><span class="font-semibold">CEP:</span> <span id="cep"></span></p>
           <p><span class="font-semibold">Telefone:</span> <span id="telefone"></span></p>
           <p><span class="font-semibold">Email:</span> <span id="email"></span></p>
-          <p><span class="font-semibold">Situação:</span> <span id="situacao"></span></p>
+          <p><span class="font-semibold">Situação Cadastral:</span> <span id="situacao"></span></p>
+          <p><span class="font-semibold">Data de Início de Atividade:</span> <span id="data_inicio"></span></p>
+          <p><span class="font-semibold">Porte:</span> <span id="porte"></span></p>
+          <p><span class="font-semibold">Natureza Jurídica:</span> <span id="natureza_juridica"></span></p>
+          <p><span class="font-semibold">CNAE Fiscal:</span> <span id="cnae_fiscal"></span></p>
+          <p><span class="font-semibold">CNAE Fiscal Descrição:</span> <span id="cnae_fiscal_descricao"></span></p>
+          <p><span class="font-semibold">Sócios:</span> <span id="qsa"></span></p>
         </div>
       </div>
 
-      <!-- Erro -->
       <div id="error" class="mt-6 hidden text-red-500 bg-red-50 p-4 rounded-lg">
         <p id="errorMsg"></p>
       </div>
     </div>
   </main>
 
-  <!-- Footer -->
   <footer class="py-6 text-center text-gray-600 bg-white mt-8 border-t">
     <p>© EmpreendaCheck - Todos os direitos reservados</p>
   </footer>
@@ -91,7 +89,6 @@
       const errorDiv = document.getElementById("error");
       const loading = document.getElementById("loading");
 
-      // Máscara simples para CNPJ
       input.addEventListener("input", (e) => {
         let v = e.target.value.replace(/\D/g, "");
         if (v.length > 14) v = v.substring(0, 14);
@@ -102,7 +99,6 @@
         e.target.value = v;
       });
 
-      // Função de busca
       const fetchCNPJ = async (cnpj) => {
         cnpj = cnpj.replace(/[^\d]/g, "");
         if (cnpj.length !== 14) {
@@ -139,17 +135,30 @@
       };
 
       const fillResult = (data) => {
-        document.getElementById("nome").textContent = data.nome || "Não informado";
-        document.getElementById("fantasia").textContent = data.fantasia || "Não informado";
+        document.getElementById("nome").textContent = data.razao_social || "Não informado";
+        document.getElementById("fantasia").textContent = data.nome_fantasia || "Não informado";
         document.getElementById("cnpj").textContent = formatCNPJ(data.cnpj) || "Não informado";
         document.getElementById("uf").textContent = data.uf || "Não informado";
         document.getElementById("municipio").textContent = data.municipio || "Não informado";
-        document.getElementById("logradouro").textContent = data.logradouro || "Não informado";
+        document.getElementById("logradouro").textContent = `${data.descricao_tipo_de_logradouro} ${data.logradouro}` || "Não informado";
         document.getElementById("numero").textContent = data.numero || "Não informado";
         document.getElementById("cep").textContent = data.cep || "Não informado";
-        document.getElementById("telefone").textContent = data.telefone || "Não informado";
+        document.getElementById("telefone").textContent = data.ddd_telefone_1 ? `(${data.ddd_telefone_1}) ${data.telefone_1 || ''}` : "Não informado";
         document.getElementById("email").textContent = data.email || "Não informado";
-        document.getElementById("situacao").textContent = data.situacao || "Não informado";
+        document.getElementById("situacao").textContent = data.descricao_situacao_cadastral || "Não informado";
+        document.getElementById("data_inicio").textContent = data.data_inicio_atividade || "Não informado";
+        document.getElementById("porte").textContent = data.porte || "Não informado";
+        document.getElementById("natureza_juridica").textContent = data.natureza_juridica || "Não informado";
+        document.getElementById("cnae_fiscal").textContent = data.cnae_fiscal || "Não informado";
+        document.getElementById("cnae_fiscal_descricao").textContent = data.cnae_fiscal_descricao || "Não informado";
+
+        // Exibir sócios
+        if (data.qsa && data.qsa.length > 0) {
+          const socios = data.qsa.map(socio => socio.nome_socio).join(", ");
+          document.getElementById("qsa").textContent = socios;
+        } else {
+          document.getElementById("qsa").textContent = "Não informado";
+        }
       };
 
       const formatCNPJ = (cnpj) => {
