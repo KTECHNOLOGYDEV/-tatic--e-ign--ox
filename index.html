@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Consultor FIPE - VS LOCAR</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
@@ -18,11 +18,7 @@
           },
           animation: {
             'fade-in': 'fadeIn 0.5s ease-out',
-            'glow': 'glow 2s infinite alternate'
-          },
-          keyframes: {
-            fadeIn: { '0%': { opacity: 0, transform: 'translateY(12px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } },
-            glow: { '0%': { boxShadow: '0 0 5px #E60000' }, '100%': { boxShadow: '0 0 15px #E60000, 0 0 25px #FFA500' } }
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
           }
         }
       }
@@ -75,40 +71,16 @@
       font-weight: bold;
       margin-right: 10px;
     }
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.94);
-      backdrop-filter: blur(6px);
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
+    .pulse-btn {
+      animation: pulse-slow 2s infinite;
     }
-    .modal-content {
-      background: #0f172a;
-      border: 1px solid #E60000;
-      border-radius: 18px;
-      max-width: 600px;
-      width: 100%;
-      max-height: 85vh;
-      overflow-y: auto;
-      color: white;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+    @media (max-width: 640px) {
+      body { background-attachment: scroll; }
+      .container { padding: 12px !important; }
+      .card { padding: 16px !important; }
+      .btn { padding: 0.6rem !important; font-size: 0.875rem !important; }
+      .modal-content { margin: 12% auto; padding: 1.25rem !important; }
     }
-    .close {
-      color: #FFA500;
-      float: right;
-      font-size: 28px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .close:hover { color: #E60000; }
   </style>
 </head>
 <body class="text-white min-h-screen flex flex-col items-center py-5">
@@ -125,144 +97,92 @@
       <p class="text-vs-silver text-xs mt-1">Valor de mercado para locação e venda</p>
     </div>
 
+    <!-- Campo de Placa -->
     <div class="card-step">
       <div class="flex items-center mb-2">
         <span class="step-number">1</span>
         <label class="text-vs-silver text-sm font-medium">Consultar por Placa</label>
       </div>
-      <div class="relative">
-        <input 
-          type="text" 
-          id="placa" 
-          maxlength="7" 
-          placeholder="Ex: ABC1234 ou ABC1D23" 
-          class="w-full p-2.5 pr-24 bg-gray-800/70 rounded-lg text-white text-sm"
-        />
-        <button 
-          id="btnConsultarPlacaInline" 
-          class="absolute right-1 top-1/2 transform -translate-y-1/2 bg-vs-red hover:bg-red-700 text-white text-xs font-medium py-1.5 px-3 rounded-md transition"
-        >
-          Consultar
-        </button>
-      </div>
-      <p class="text-xs text-gray-500 mt-1">Placa sem espaços (antiga ou Mercosul)</p>
+      <input 
+        type="text" 
+        id="placa" 
+        maxlength="7" 
+        placeholder="Ex: ABC1234 ou ABC1D23" 
+        class="w-full p-2.5 bg-gray-800/70 border border-gray-700 rounded-lg focus:ring-2 focus:ring-vs-red focus:border-vs-red focus:outline-none text-white text-sm"
+      />
+      <p class="text-xs text-gray-500 mt-1">Digite a placa sem espaços ou traços</p>
     </div>
 
-    <div id="resultado" class="hidden mt-5 p-4 bg-gradient-to-r from-red-900/20 to-black rounded-xl border border-vs-red/30 animate-fade-in">
+    <!-- Resultado -->
+    <div id="resultado" class="hidden mt-5 p-4 bg-gradient-to-r from-red-900/40 to-black rounded-lg border border-vs-red/40">
       <div class="text-center">
         <p class="text-vs-orange font-bold text-lg" id="valorFipe">R$ --</p>
         <p class="text-vs-silver text-sm mt-1" id="descricaoFipe">—</p>
-        <p class="text-xs text-gray-500 mt-2" id="infoPlaca"></p>
-        <p class="text-xs text-gray-500 mt-1">Dados oficiais FIPE • Atualizado mensalmente</p>
+        <p class="text-xs text-gray-400 mt-2">Dados oficiais FIPE • Atualizados mensalmente</p>
       </div>
     </div>
 
-    <div id="erro" class="hidden mt-3 text-red-400 text-center text-sm px-2 py-2 rounded-lg bg-red-900/10 animate-fade-in"></div>
+    <!-- Botão Animado -->
+    <div class="mt-5 text-center">
+      <button id="btnConsultar" class="pulse-btn bg-vs-red hover:bg-red-700 text-white font-semibold py-3.5 px-6 rounded-full transition shadow-lg hover:shadow-xl flex items-center justify-center mx-auto gap-2">
+        <i class="fas fa-search"></i>
+        <span>Consultar Valor FIPE</span>
+      </button>
+    </div>
+
+    <!-- Mensagens -->
+    <div id="erro" class="hidden mt-4 text-red-400 text-center text-sm px-2 py-2 rounded bg-red-900/20"></div>
     <div id="loading" class="hidden mt-4 text-center">
-      <div class="inline-block w-6 h-6 border-3 border-vs-red border-t-transparent rounded-full animate-spin"></div>
-      <p class="text-vs-silver mt-2 text-sm" id="loadingText">Carregando...</p>
+      <div class="inline-block w-6 h-6 border-2 border-vs-red border-t-transparent rounded-full animate-spin"></div>
+      <p class="text-vs-silver mt-2 text-sm">Consultando dados oficiais...</p>
     </div>
   </div>
 
-  <div class="mt-5 text-center max-w-md px-2">
+  <!-- Crédito -->
+  <div class="mt-6 text-center max-w-md px-2">
     <p class="text-gray-500 text-xs">
       Desenvolvido por <span class="text-vs-orange font-medium">Kelvin Batista</span>
     </p>
   </div>
 
-  <footer class="mt-5 text-gray-600 text-xs text-center px-2">
-    <button id="btnTermos" class="text-vs-orange hover:underline mr-2 transition">Termos de Uso</button> • 
-    <button id="btnPrivacidade" class="text-vs-orange hover:underline ml-2 transition">Política de Privacidade</button><br>
-    © 2025 VS LOCAR • Todos os direitos reservados
-  </footer>
-
-  <!-- Modais -->
-  <div id="modalTermos" class="modal">
-    <div class="modal-content p-5">
-      <span class="close" id="closeTermos">&times;</span>
-      <h2 class="text-lg font-bold text-vs-orange mb-3">Termos de Uso</h2>
-      <p class="text-xs text-gray-400"><strong>Última atualização:</strong> 07/10/2025</p>
-      <div class="mt-3 text-sm text-gray-300 space-y-2.5 leading-relaxed">
-        <p><strong>1. Introdução</strong><br>O "Consultor FIPE – VS LOCAR" é uma ferramenta gratuita desenvolvida por Kelvin Batista que exibe dados públicos da Tabela FIPE. Não é afiliado à FIPE, governo ou montadoras.</p>
-        <p><strong>2. Natureza do Serviço</strong><br>O serviço atua como agregador de dados públicos. O desenvolvedor não produz, modifica ou armazena os dados exibidos.</p>
-        <p><strong>3. Isenção de Responsabilidade</strong><br>Os valores são apenas de referência. O desenvolvedor não se responsabiliza por erros nas APIs de terceiros, decisões baseadas nos dados ou danos decorrentes do uso.</p>
-        <p><strong>4. Propriedade Intelectual</strong><br>Direitos dos dados pertencem à FIPE. A interface é de Kelvin Batista.</p>
-        <p><strong>5. Legislação</strong><br>Estes termos regem-se pelas leis da República Federativa do Brasil. Qualquer disputa será submetida ao <strong>foro da comarca de Camaçari/BA</strong>, com renúncia a qualquer outro.</p>
-      </div>
-    </div>
-  </div>
-
-  <div id="modalPrivacidade" class="modal">
-    <div class="modal-content p-5">
-      <span class="close" id="closePrivacidade">&times;</span>
-      <h2 class="text-lg font-bold text-vs-orange mb-3">Política de Privacidade</h2>
-      <p class="text-xs text-gray-400"><strong>Última atualização:</strong> 07/10/2025</p>
-      <div class="mt-3 text-sm text-gray-300 space-y-2.5 leading-relaxed">
-        <p><strong>1. Coleta de Dados</strong><br>O serviço <strong>NÃO coleta, armazena ou processa nenhum dado pessoal</strong>. Nenhum dado de navegação, IP ou identificação é registrado.</p>
-        <p><strong>2. APIs de Terceiros</strong><br>Requisições às APIs públicas não incluem dados identificáveis. O desenvolvedor não tem acesso a logs externos.</p>
-        <p><strong>3. LGPD</strong><br>Por não tratar dados pessoais, o serviço está isento das obrigações da LGPD (Lei 13.709/2018).</p>
-        <p><strong>4. Links Externos</strong><br>Eventuais links externos são fornecidos apenas para referência. Não há responsabilidade sobre seu conteúdo.</p>
-        <p><strong>5. Contato</strong><br>Dúvidas podem ser tratadas diretamente com o desenvolvedor. Nenhum dado será solicitado.</p>
-      </div>
-    </div>
-  </div>
-
   <script>
     const el = {
       placa: document.getElementById('placa'),
+      btn: document.getElementById('btnConsultar'),
       resultado: document.getElementById('resultado'),
       valor: document.getElementById('valorFipe'),
       desc: document.getElementById('descricaoFipe'),
-      infoPlaca: document.getElementById('infoPlaca'),
       erro: document.getElementById('erro'),
-      loading: document.getElementById('loading'),
-      loadingText: document.getElementById('loadingText')
+      loading: document.getElementById('loading')
     };
 
-    document.getElementById('btnTermos').onclick = () => document.getElementById('modalTermos').style.display = 'flex';
-    document.getElementById('btnPrivacidade').onclick = () => document.getElementById('modalPrivacidade').style.display = 'flex';
-    document.getElementById('closeTermos').onclick = () => document.getElementById('modalTermos').style.display = 'none';
-    document.getElementById('closePrivacidade').onclick = () => document.getElementById('modalPrivacidade').style.display = 'none';
-    window.onclick = (e) => {
-      if (e.target.id === 'modalTermos') document.getElementById('modalTermos').style.display = 'none';
-      if (e.target.id === 'modalPrivacidade') document.getElementById('modalPrivacidade').style.display = 'none';
-    };
+    // Formatação de placa em tempo real
+    el.placa.addEventListener('input', (e) => {
+      let v = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+      if (v.length > 7) v = v.slice(0, 7);
+      e.target.value = v;
+    });
 
-    function mostrarErro(msg) {
-      el.erro.textContent = msg;
-      el.erro.classList.remove('hidden');
-      setTimeout(() => el.erro.classList.add('hidden'), 7000);
-    }
-
-    function toggleLoading(show, text = 'Carregando...') {
-      el.loadingText.textContent = text;
-      el.loading.classList.toggle('hidden', !show);
-      document.getElementById('btnConsultarPlacaInline').disabled = show;
-    }
-
-    document.getElementById('btnConsultarPlacaInline').addEventListener('click', async () => {
-      const placa = el.placa.value.trim().replace(/[^A-Z0-9]/g, '').toUpperCase();
-      const antiga = /^[A-Z]{3}[0-9]{4}$/;
-      const mercosul = /^[A-Z]{3}[0-9][A-Z][0-9]{2}$/;
-
-      if (!antiga.test(placa) && !mercosul.test(placa)) {
-        mostrarErro('⚠️ Formato inválido. Use ABC1234 ou ABC1D23.');
+    // Consulta ao clicar no botão
+    el.btn.addEventListener('click', async () => {
+      const placa = el.placa.value.trim();
+      if (!placa || placa.length !== 7) {
+        mostrarErro('⚠️ Digite uma placa válida (7 caracteres)');
         return;
       }
 
-      toggleLoading(true, 'Consultando placa...');
+      toggleLoading(true);
+      esconderErro();
       el.resultado.classList.add('hidden');
 
       try {
-        // ✅ Chama o backend normal
-        const res = await fetch('/api/placa?placa=' + placa);
-        const data = await res.json();
+        const res = await fetch(`/api/placa?placa=${placa}`);
+        const dados = await res.json();
 
-        if (!res.ok) throw new Error(data.error || 'Erro desconhecido');
+        if (!res.ok) throw new Error(dados.error || 'Erro desconhecido');
 
-        el.valor.textContent = data.valor || 'R$ —';
-        el.desc.textContent = `${data.marca || '—'} ${data.modelo || '—'} - ${data.ano_modelo || '—'} (${data.combustivel || '—'})`;
-        el.infoPlaca.textContent = `Placa: ${data.placa}`;
+        el.valor.textContent = dados.valor || 'R$ —';
+        el.desc.textContent = `${dados.marca || '—'} ${dados.modelo || '—'} - ${dados.ano || '—'} (${dados.combustivel || '—'})`;
         el.resultado.classList.remove('hidden');
 
       } catch (err) {
@@ -272,11 +192,21 @@
       }
     });
 
-    el.placa.addEventListener('input', (e) => {
-      let v = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-      if (v.length > 7) v = v.slice(0, 7);
-      e.target.value = v;
-    });
+    // Funções auxiliares
+    function toggleLoading(show) {
+      el.loading.classList.toggle('hidden', !show);
+      el.btn.disabled = show;
+    }
+
+    function mostrarErro(msg) {
+      el.erro.textContent = msg;
+      el.erro.classList.remove('hidden');
+      setTimeout(() => el.erro.classList.add('hidden'), 7000);
+    }
+
+    function esconderErro() {
+      el.erro.classList.add('hidden');
+    }
   </script>
 </body>
 </html>
