@@ -22,6 +22,7 @@ export default async function handler(req, res) {
   }
 
   try {
+    // 1. Scraping para obter o código FIPE
     const url = `https://www.tabelafipebrasil.com/placa?placa=${clean}`;
     const response = await fetch(url);
 
@@ -31,28 +32,35 @@ export default async function handler(req, res) {
 
     const html = await response.text();
 
-    const valorMatch = html.match(/R\$[\s\d\.,]+/);
-    const marcaMatch = html.match(/Marca:<\/strong>\s*([^<]+)/);
-    const modeloMatch = html.match(/Modelo:<\/strong>\s*([^<]+)/);
-    const anoMatch = html.match(/Ano:<\/strong>\s*([^<]+)/);
-    const combustivelMatch = html.match(/Combustível:<\/strong>\s*([^<]+)/);
-
-    const valor = valorMatch ? valorMatch[0].trim() : null;
-    const marca = marcaMatch ? marcaMatch[1].trim() : null;
-    const modelo = modeloMatch ? modeloMatch[1].trim() : null;
-    const ano_modelo = anoMatch ? anoMatch[1].trim() : null;
-    const combustivel = combustivelMatch ? combustivelMatch[1].trim() : null;
-
-    if (!valor) {
-      return res.status(404).json({ error: 'Placa não encontrada' });
+    // Extrai o código FIPE
+    const fipeCodeMatch = html.match(/Código FIPE:<\/strong>\s*([^<\s]+)/);
+    if (!fipeCodeMatch) {
+      return res.status(404).json({ error: 'Placa não encontrada ou sem código FIPE' });
     }
 
+    const fipeCode = fipeCodeMatch[1].trim();
+
+    // 2. Busca o valor oficial usando o código FIPE
+    const fipeApiUrl = `https://fipe.parallelum.com.br/api/v2/lookup/${fipeCode}`;
+    const fipeResponse = await fetch(fipeApiUrl);
+
+    if (!fipeResponse.ok) {
+      return res.status(500).json({ error: 'Erro ao obter dados da FIPE' });
+    }
+
+    const fipeData = await fipeResponse.json();
+
+    if (!fipeData || !fipeData.price) {
+      return res.status(404).json({ error: 'Dados da FIPE não encontrados' });
+    }
+
+    // Retorna os dados completos
     res.status(200).json({
-      valor,
-      marca,
-      modelo,
-      ano_modelo,
-      combustivel,
+      valor: fipeData.price || 'R$ —',
+      marca: fipeData.brand || '—',
+      modelo: fipeData.model || '—',
+      ano_modelo: fipeData.modelYear || '—',
+      combustivel: fipeData.fuel || '—',
       placa: clean
     });
 
