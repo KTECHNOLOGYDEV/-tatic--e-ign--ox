@@ -21,37 +21,62 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Formato de placa inválido' });
   }
 
+  // === TENTA BRASILAPI PRIMEIRO ===
   try {
-    // ✅ CONSULTA DIRETA POR PLACA VIA BRASILAPI
-    const url = `https://brasilapi.com.br/api/fipe/v1/${clean}`;
-    const response = await fetch(url);
+    const brasilApiUrl = `https://brasilapi.com.br/api/fipe/v1/${clean}`;
+    const response = await fetch(brasilApiUrl);
 
-    if (!response.ok) {
-      if (response.status === 404) {
-        return res.status(404).json({ error: 'Placa não encontrada' });
+    if (response.ok) {
+      const data = await response.json();
+      if (data && data.valor) {
+        return res.status(200).json({
+          placa: clean,
+          marca: data.marca || '—',
+          modelo: data.modelo || '—',
+          ano_modelo: data.ano_modelo || '—',
+          combustivel: data.combustivel || '—',
+          valor: data.valor || 'R$ —',
+          codigo_fipe: data.fipe_codigo || '—',
+          referencia: data.referencia || '—'
+        });
       }
-      return res.status(500).json({ error: 'Serviço temporariamente indisponível' });
     }
+  } catch (err) {
+    console.warn('[BRASILAPI FAILED]', err.message);
+  }
 
-    const data = await response.json();
+  // === TENTA FIPE.ONLINE COMO FALLBACK ===
+  try {
+    // ⚠️ Substitua 'SEU_TOKEN_AQUI' pelo seu token real da fipe.online
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI4NjRmNTkwOC0xMDc1LTQ3ODItYjg5NC1iMjU0YmNlMGIzMWUiLCJlbWFpbCI6ImNvbWVyY2lhbGt0ZWNobm9sb2d5LmRldkBnbWFpbC5jb20iLCJpYXQiOjE3NTk5NzIxMDl9.97CV6a3tbOlCYRK03paR0ZKNneJjvZ6G-BJWXKZPCfE'; // <- COLOQUE SEU TOKEN AQUI
+    const fipeOnlineUrl = `https://fipe.online/api/fipe/vehicle?plate=${clean}`;
 
-    if (!data || !data.valor) {
-      return res.status(404).json({ error: 'Dados da placa incompletos' });
-    }
-
-    res.status(200).json({
-      placa: clean,
-      marca: data.marca || '—',
-      modelo: data.modelo || '—',
-      ano_modelo: data.ano_modelo || '—',
-      combustivel: data.combustivel || '—',
-      valor: data.valor || 'R$ —',
-      codigo_fipe: data.fipe_codigo || '—',
-      referencia: data.referencia || '—'
+    const response = await fetch(fipeOnlineUrl, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'User-Agent': 'ConsultorFipe-VSLocar/1.0'
+      }
     });
 
+    if (response.ok) {
+      const data = await response.json();
+      if (data && data.price) {
+        return res.status(200).json({
+          placa: clean,
+          marca: data.brand || '—',
+          modelo: data.model || '—',
+          ano_modelo: data.modelYear || '—',
+          combustivel: data.fuel || '—',
+          valor: data.price || 'R$ —',
+          codigo_fipe: data.codeFipe || '—',
+          referencia: data.referenceMonth || '—'
+        });
+      }
+    }
   } catch (err) {
-    console.error('[BRASILAPI ERROR]', err);
-    res.status(500).json({ error: 'Erro interno ao consultar placa' });
+    console.warn('[FIPE.ONLINE FAILED]', err.message);
   }
+
+  // === NENHUMA FUNCIONOU ===
+  return res.status(404).json({ error: 'Placa não encontrada nas bases oficiais' });
 }
