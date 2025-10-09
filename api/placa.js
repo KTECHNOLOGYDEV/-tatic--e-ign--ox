@@ -38,6 +38,10 @@ export default async function handler(req, res) {
     // === EXTRAÇÃO DOS DADOS COM REGEX ===
     const dados = {};
 
+    // Valor FIPE
+    const valorMatch = html.match(/<td>R\$\s*([\d\.,]+)<\/td>/);
+    dados.valor = valorMatch ? `R$ ${valorMatch[1].trim()}` : 'R$ —';
+
     // Marca
     const marcaMatch = html.match(/<td>\s*Marca:\s*<\/td>\s*<td>([^<]+)<\/td>/i);
     dados.marca = marcaMatch ? marcaMatch[1].trim() : '—';
@@ -61,10 +65,6 @@ export default async function handler(req, res) {
     // Chassi
     const chassiMatch = html.match(/<td>\s*Chassi:\s*<\/td>\s*<td>\s*\*+([^<\s]+)\s*<\/td>/i);
     dados.chassi = chassiMatch ? `...${chassiMatch[1].slice(-6)}` : '—';
-
-    // Valor FIPE
-    const valorMatch = html.match(/<td>R\$\s*([\d\.,]+)<\/td>/);
-    dados.valor = valorMatch ? `R$ ${valorMatch[1].trim()}` : 'R$ —';
 
     // Código FIPE
     const codFipeMatch = html.match(/Código FIPE\s*<\/td>\s*<td>([^<]+)<\/td>/i);
