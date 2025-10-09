@@ -14,6 +14,9 @@
     .br-flag-gradient {
       background: linear-gradient(135deg, #009C3B 0%, #FFDF00 100%);
     }
+    .section-divider {
+      @apply border-t border-gray-200 my-6;
+    }
   </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
@@ -25,7 +28,7 @@
   </header>
 
   <main class="container mx-auto px-4 py-8">
-    <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-6">
+    <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-6">
       <div class="mb-6">
         <label for="cnpjInput" class="block text-lg font-medium text-gray-700">Digite o CNPJ</label>
         <div class="flex mt-2">
@@ -49,25 +52,79 @@
       </div>
 
       <div id="result" class="mt-6 hidden">
-        <h2 class="text-xl font-bold mb-4">Dados da Empresa</h2>
-        <div class="space-y-3">
-          <p><span class="font-semibold">Razão Social:</span> <span id="nome"></span></p>
-          <p><span class="font-semibold">Nome Fantasia:</span> <span id="fantasia"></span></p>
-          <p><span class="font-semibold">CNPJ:</span> <span id="cnpj"></span></p>
-          <p><span class="font-semibold">UF:</span> <span id="uf"></span></p>
-          <p><span class="font-semibold">Município:</span> <span id="municipio"></span></p>
-          <p><span class="font-semibold">Logradouro:</span> <span id="logradouro"></span></p>
-          <p><span class="font-semibold">Número:</span> <span id="numero"></span></p>
-          <p><span class="font-semibold">CEP:</span> <span id="cep"></span></p>
-          <p><span class="font-semibold">Telefone:</span> <span id="telefone"></span></p>
-          <p><span class="font-semibold">Email:</span> <span id="email"></span></p>
-          <p><span class="font-semibold">Situação Cadastral:</span> <span id="situacao"></span></p>
-          <p><span class="font-semibold">Data de Início de Atividade:</span> <span id="data_inicio"></span></p>
-          <p><span class="font-semibold">Porte:</span> <span id="porte"></span></p>
-          <p><span class="font-semibold">Natureza Jurídica:</span> <span id="natureza_juridica"></span></p>
-          <p><span class="font-semibold">CNAE Fiscal:</span> <span id="cnae_fiscal"></span></p>
-          <p><span class="font-semibold">CNAE Fiscal Descrição:</span> <span id="cnae_fiscal_descricao"></span></p>
-          <p><span class="font-semibold">Sócios:</span> <span id="qsa"></span></p>
+        <!-- Dados Principais -->
+        <div>
+          <h2 class="text-xl font-bold mb-4">Dados da Empresa</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <p><span class="font-semibold">Razão Social:</span> <span id="nome"></span></p>
+            <p><span class="font-semibold">Nome Fantasia:</span> <span id="fantasia"></span></p>
+            <p><span class="font-semibold">CNPJ:</span> <span id="cnpj"></span></p>
+            <p><span class="font-semibold">UF:</span> <span id="uf"></span></p>
+            <p><span class="font-semibold">Município:</span> <span id="municipio"></span></p>
+            <p><span class="font-semibold">Logradouro:</span> <span id="logradouro"></span></p>
+            <p><span class="font-semibold">Número:</span> <span id="numero"></span></p>
+            <p><span class="font-semibold">Complemento:</span> <span id="complemento"></span></p>
+            <p><span class="font-semibold">Bairro:</span> <span id="bairro"></span></p>
+            <p><span class="font-semibold">CEP:</span> <span id="cep"></span></p>
+            <p><span class="font-semibold">Telefone:</span> <span id="telefone"></span></p>
+            <p><span class="font-semibold">Email:</span> <span id="email"></span></p>
+            <p><span class="font-semibold">Situação Cadastral:</span> <span id="situacao"></span></p>
+            <p><span class="font-semibold">Data de Início de Atividade:</span> <span id="data_inicio"></span></p>
+            <p><span class="font-semibold">Porte:</span> <span id="porte"></span></p>
+            <p><span class="font-semibold">Natureza Jurídica:</span> <span id="natureza_juridica"></span></p>
+            <p><span class="font-semibold">CNAE Fiscal:</span> <span id="cnae_fiscal"></span></p>
+            <p><span class="font-semibold">CNAE Fiscal Descrição:</span> <span id="cnae_fiscal_descricao"></span></p>
+          </div>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <!-- Sócios -->
+        <div>
+          <h2 class="text-xl font-bold mb-4">Quadro de Sócios (QSA)</h2>
+          <div id="qsa" class="space-y-2">
+            <!-- Será preenchido dinamicamente -->
+          </div>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <!-- CNAEs Secundários -->
+        <div>
+          <h2 class="text-xl font-bold mb-4">CNAEs Secundários</h2>
+          <ul id="cnaes_secundarios" class="list-disc pl-5 space-y-1">
+            <!-- Será preenchido dinamicamente -->
+          </ul>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <!-- Regime Tributário -->
+        <div>
+          <h2 class="text-xl font-bold mb-4">Regime Tributário</h2>
+          <ul id="regime_tributario" class="list-disc pl-5 space-y-1">
+            <!-- Será preenchido dinamicamente -->
+          </ul>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <!-- Outras Informações -->
+        <div>
+          <h2 class="text-xl font-bold mb-4">Outras Informações</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <p><span class="font-semibold">Capital Social:</span> <span id="capital_social"></span></p>
+            <p><span class="font-semibold">Situação Especial:</span> <span id="situacao_especial"></span></p>
+            <p><span class="font-semibold">Data da Situação Especial:</span> <span id="data_situacao_especial"></span></p>
+            <p><span class="font-semibold">Opção pelo Simples:</span> <span id="opcao_pelo_simples"></span></p>
+            <p><span class="font-semibold">Data Opção Simples:</span> <span id="data_opcao_pelo_simples"></span></p>
+            <p><span class="font-semibold">Data Exclusão Simples:</span> <span id="data_exclusao_simples"></span></p>
+            <p><span class="font-semibold">Opção pelo MEI:</span> <span id="opcao_pelo_mei"></span></p>
+            <p><span class="font-semibold">Data Opção MEI:</span> <span id="data_opcao_mei"></span></p>
+            <p><span class="font-semibold">Data Exclusão MEI:</span> <span id="data_exclusao_mei"></span></p>
+            <p><span class="font-semibold">Motivo da Situação Cadastral:</span> <span id="motivo_situacao"></span></p>
+            <p><span class="font-semibold">Ente Federativo Responsável:</span> <span id="ente_federativo"></span></p>
+          </div>
         </div>
       </div>
 
@@ -135,13 +192,16 @@
       };
 
       const fillResult = (data) => {
+        // Dados principais
         document.getElementById("nome").textContent = data.razao_social || "Não informado";
         document.getElementById("fantasia").textContent = data.nome_fantasia || "Não informado";
         document.getElementById("cnpj").textContent = formatCNPJ(data.cnpj) || "Não informado";
         document.getElementById("uf").textContent = data.uf || "Não informado";
         document.getElementById("municipio").textContent = data.municipio || "Não informado";
-        document.getElementById("logradouro").textContent = `${data.descricao_tipo_de_logradouro} ${data.logradouro}` || "Não informado";
+        document.getElementById("logradouro").textContent = `${data.descricao_tipo_de_logradouro || ''} ${data.logradouro || ''}`.trim() || "Não informado";
         document.getElementById("numero").textContent = data.numero || "Não informado";
+        document.getElementById("complemento").textContent = data.complemento || "Não informado";
+        document.getElementById("bairro").textContent = data.bairro || "Não informado";
         document.getElementById("cep").textContent = data.cep || "Não informado";
         document.getElementById("telefone").textContent = data.ddd_telefone_1 ? `(${data.ddd_telefone_1}) ${data.telefone_1 || ''}` : "Não informado";
         document.getElementById("email").textContent = data.email || "Não informado";
@@ -152,13 +212,57 @@
         document.getElementById("cnae_fiscal").textContent = data.cnae_fiscal || "Não informado";
         document.getElementById("cnae_fiscal_descricao").textContent = data.cnae_fiscal_descricao || "Não informado";
 
-        // Exibir sócios
+        // Sócios
+        const qsaDiv = document.getElementById("qsa");
+        qsaDiv.innerHTML = "";
         if (data.qsa && data.qsa.length > 0) {
-          const socios = data.qsa.map(socio => socio.nome_socio).join(", ");
-          document.getElementById("qsa").textContent = socios;
+          data.qsa.forEach(socio => {
+            const p = document.createElement("p");
+            p.textContent = `${socio.nome_socio} - ${socio.qualificacao_socio} (${socio.faixa_etaria})`;
+            qsaDiv.appendChild(p);
+          });
         } else {
-          document.getElementById("qsa").textContent = "Não informado";
+          qsaDiv.innerHTML = "<p>Não informado</p>";
         }
+
+        // CNAEs Secundários
+        const cnaesList = document.getElementById("cnaes_secundarios");
+        cnaesList.innerHTML = "";
+        if (data.cnaes_secundarios && data.cnaes_secundarios.length > 0) {
+          data.cnaes_secundarios.forEach(cnae => {
+            const li = document.createElement("li");
+            li.textContent = `${cnae.codigo} - ${cnae.descricao}`;
+            cnaesList.appendChild(li);
+          });
+        } else {
+          cnaesList.innerHTML = "<li>Não informado</li>";
+        }
+
+        // Regime Tributário
+        const regimeList = document.getElementById("regime_tributario");
+        regimeList.innerHTML = "";
+        if (data.regime_tributario && data.regime_tributario.length > 0) {
+          data.regime_tributario.forEach(tributo => {
+            const li = document.createElement("li");
+            li.textContent = `${tributo.ano}: ${tributo.forma_de_tributacao}`;
+            regimeList.appendChild(li);
+          });
+        } else {
+          regimeList.innerHTML = "<li>Não informado</li>";
+        }
+
+        // Outras informações
+        document.getElementById("capital_social").textContent = data.capital_social ? `R$ ${data.capital_social.toLocaleString('pt-BR')}` : "Não informado";
+        document.getElementById("situacao_especial").textContent = data.situacao_especial || "Não informado";
+        document.getElementById("data_situacao_especial").textContent = data.data_situacao_especial || "Não informado";
+        document.getElementById("opcao_pelo_simples").textContent = data.opcao_pelo_simples !== null ? (data.opcao_pelo_simples ? "Sim" : "Não") : "Não informado";
+        document.getElementById("data_opcao_pelo_simples").textContent = data.data_opcao_pelo_simples || "Não informado";
+        document.getElementById("data_exclusao_simples").textContent = data.data_exclusao_do_simples || "Não informado";
+        document.getElementById("opcao_pelo_mei").textContent = data.opcao_pelo_mei !== null ? (data.opcao_pelo_mei ? "Sim" : "Não") : "Não informado";
+        document.getElementById("data_opcao_mei").textContent = data.data_opcao_pelo_mei || "Não informado";
+        document.getElementById("data_exclusao_mei").textContent = data.data_exclusao_do_mei || "Não informado";
+        document.getElementById("motivo_situacao").textContent = data.descricao_motivo_situacao_cadastral || "Não informado";
+        document.getElementById("ente_federativo").textContent = data.ente_federativo_responsavel || "Não informado";
       };
 
       const formatCNPJ = (cnpj) => {
