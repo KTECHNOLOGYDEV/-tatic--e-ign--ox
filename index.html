@@ -12,14 +12,7 @@
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(-45deg, #009C3B, #FFDF00, #0070AD, #FFDF00, #009C3B);
-      background-size: 400% 400%;
-      animation: gradientBG 15s ease infinite;
-    }
-    @keyframes gradientBG {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+      overflow-x: hidden; /* Evita rolagem horizontal com o vídeo */
     }
     .br-flag-gradient {
       background: linear-gradient(135deg, #009C3B 0%, #FFDF00 100%);
@@ -62,14 +55,30 @@
     #pdfContent {
       display: none;
     }
+    /* Estilo do vídeo de fundo */
+    #backgroundVideo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+      /* Opcional: Adiciona um leve efeito de desfoque */
+      filter: brightness(0.7);
+    }
   </style>
 </head>
-<body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col">
-  <!-- Overlay de Loading -->
-  <div id="loadingOverlay" class="loading-overlay hidden">
-    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white mb-4"></div>
-    <p>Consultando dados...</p>
-  </div>
+<body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col relative"> <!-- Adicionado 'relative' -->
+
+  <!-- Vídeo de Fundo -->
+  <video id="backgroundVideo" autoplay muted loop playsinline>
+    <source src="https://res.cloudinary.com/degs0c0bo/video/upload/v1760112901/green-fields-and-peaks.3840x2160_gfzhem.mp4" type="video/mp4">
+    Seu navegador não suporta vídeos.
+  </video>
+
+  <!-- Overlay opcional para melhor contraste do conteúdo -->
+  <div class="absolute inset-0 bg-black/20 pointer-events-none"></div>
 
   <header class="br-flag-gradient text-white shadow-lg sticky top-0 z-40">
     <div class="container mx-auto px-4 py-6 flex flex-col items-center">
@@ -78,7 +87,7 @@
     </div>
   </header>
 
-  <main class="container mx-auto px-4 py-8 flex-grow">
+  <main class="container mx-auto px-4 py-8 flex-grow relative z-10"> <!-- Z-index para garantir que o conteúdo fique acima do vídeo -->
     <div class="max-w-4xl mx-auto">
       <div class="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-6 mb-6 transition-all duration-300 hover:shadow-xl">
         <div class="mb-6">
@@ -180,7 +189,7 @@
     <div id="pdfDados"></div>
   </div>
 
-  <footer class="py-6 text-center text-gray-600 bg-white/90 mt-8 border-t">
+  <footer class="py-6 text-center text-gray-600 bg-white/90 mt-8 border-t relative z-10">
     <p>© EmpreendaCheck - Todos os direitos reservados</p>
   </footer>
 
@@ -351,75 +360,4 @@
         errorDiv.classList.remove("hidden");
       };
 
-      const fillResult = (data) => {
-        const dadosPrincipais = document.getElementById("dadosPrincipais");
-        const qsaDiv = document.getElementById("qsa");
-        const cnaesList = document.getElementById("cnaes_secundarios");
-        const regimeList = document.getElementById("regime_tributario");
-        const outrasInfo = document.getElementById("outrasInfo");
-
-        // Limpar conteúdo anterior
-        dadosPrincipais.innerHTML = "";
-        qsaDiv.innerHTML = "";
-        cnaesList.innerHTML = "";
-        regimeList.innerHTML = "";
-        outrasInfo.innerHTML = "";
-
-        // Dados principais
-        const camposPrincipais = [
-          { label: "Razão Social", value: data.razao_social },
-          { label: "Nome Fantasia", value: data.nome_fantasia },
-          { label: "CNPJ", value: formatCNPJ(data.cnpj) },
-          { label: "UF", value: data.uf },
-          { label: "Município", value: data.municipio },
-          { label: "Logradouro", value: `${data.descricao_tipo_de_logradouro || ''} ${data.logradouro || ''}`.trim() },
-          { label: "Número", value: data.numero },
-          { label: "Complemento", value: data.complemento },
-          { label: "Bairro", value: data.bairro },
-          { label: "CEP", value: data.cep },
-          { label: "Telefone", value: data.ddd_telefone_1 ? `(${data.ddd_telefone_1}) ${data.telefone_1 || ''}` : null },
-          { label: "Email", value: data.email },
-          { label: "Situação Cadastral", value: data.descricao_situacao_cadastral },
-          { label: "Data de Início de Atividade", value: data.data_inicio_atividade },
-          { label: "Porte", value: data.porte },
-          { label: "Natureza Jurídica", value: data.natureza_juridica },
-          { label: "CNAE Fiscal", value: data.cnae_fiscal },
-          { label: "CNAE Fiscal Descrição", value: data.cnae_fiscal_descricao },
-        ];
-
-        camposPrincipais.forEach(campo => {
-          if (campo.value) {
-            const div = document.createElement("div");
-            div.classList.add("data-item");
-            div.innerHTML = `<span class="font-semibold">${campo.label}:</span> <span>${campo.value}</span>`;
-            dadosPrincipais.appendChild(div);
-          }
-        });
-
-        // Sócios
-        if (data.qsa && data.qsa.length > 0) {
-          data.qsa.forEach(socio => {
-            const p = document.createElement("p");
-            p.classList.add("data-item");
-            p.textContent = `${socio.nome_socio} - ${socio.qualificacao_socio} (${socio.faixa_etaria})`;
-            qsaDiv.appendChild(p);
-          });
-          document.getElementById("qsaCard").style.display = "block";
-        } else {
-          document.getElementById("qsaCard").style.display = "none";
-        }
-
-        // CNAEs Secundários
-        if (data.cnaes_secundarios && data.cnaes_secundarios.length > 0) {
-          data.cnaes_secundarios.forEach(cnae => {
-            const li = document.createElement("li");
-            li.classList.add("data-item");
-            li.textContent = `${cnae.codigo} - ${cnae.descricao}`;
-            cnaesList.appendChild(li);
-          });
-          document.getElementById("cnaesCard").style.display = "block";
-        } else {
-          document.getElementById("cnaesCard").style.display = "none";
-        }
-
-        //
+      const fillResult = (dat
