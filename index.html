@@ -12,7 +12,14 @@
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(to bottom, #f0f9ff, #e0f2fe);
+      background: linear-gradient(-45deg, #009C3B, #FFDF00, #0070AD, #FFDF00, #009C3B);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+    }
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
     .br-flag-gradient {
       background: linear-gradient(135deg, #009C3B 0%, #FFDF00 100%);
@@ -39,10 +46,10 @@
       display: none;
     }
     .data-card {
-      @apply bg-white p-5 rounded-xl shadow-md border border-gray-100 transition-all duration-300 hover:shadow-lg;
+      @apply bg-white/90 p-5 rounded-xl shadow-md border border-gray-100 transition-all duration-300 hover:shadow-lg;
     }
     .data-item {
-      @apply p-3 bg-gray-50 rounded-lg border border-gray-200 transition-opacity duration-200;
+      @apply p-3 bg-gray-50/80 rounded-lg border border-gray-200 transition-opacity duration-200;
     }
     .fade-in {
       animation: fadeIn 0.5s ease-out forwards;
@@ -51,25 +58,29 @@
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
+    /* Estilo oculto para PDF */
+    #pdfContent {
+      display: none;
+    }
   </style>
 </head>
-<body class="bg-gray-100 text-gray-800">
+<body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col">
   <!-- Overlay de Loading -->
   <div id="loadingOverlay" class="loading-overlay hidden">
     <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white mb-4"></div>
     <p>Consultando dados...</p>
   </div>
 
-  <header class="br-flag-gradient text-white shadow-lg">
+  <header class="br-flag-gradient text-white shadow-lg sticky top-0 z-40">
     <div class="container mx-auto px-4 py-6 flex flex-col items-center">
       <h1 class="text-3xl md:text-4xl font-bold">EmpreendaCheck</h1>
       <p class="mt-2 text-center text-lg">Consulta de CNPJ em tempo real</p>
     </div>
   </header>
 
-  <main class="container mx-auto px-4 py-8">
+  <main class="container mx-auto px-4 py-8 flex-grow">
     <div class="max-w-4xl mx-auto">
-      <div class="bg-white rounded-xl shadow-lg p-6 mb-6 transition-all duration-300 hover:shadow-xl">
+      <div class="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-6 mb-6 transition-all duration-300 hover:shadow-xl">
         <div class="mb-6">
           <label for="cnpjInput" class="block text-lg font-medium text-gray-700">Digite o CNPJ</label>
           <div class="flex mt-2">
@@ -162,7 +173,14 @@
     </div>
   </main>
 
-  <footer class="py-6 text-center text-gray-600 bg-white mt-8 border-t">
+  <!-- Conteúdo oculto para exportação em PDF -->
+  <div id="pdfContent" class="p-6 max-w-4xl mx-auto bg-white text-gray-800">
+    <h1 class="text-3xl font-bold mb-2">EmpreendaCheck - Dados da Empresa</h1>
+    <hr class="my-4">
+    <div id="pdfDados"></div>
+  </div>
+
+  <footer class="py-6 text-center text-gray-600 bg-white/90 mt-8 border-t">
     <p>© EmpreendaCheck - Todos os direitos reservados</p>
   </footer>
 
@@ -199,6 +217,86 @@
       return resultado === parseInt(digitos.charAt(1));
     }
 
+    // Função para converter número para extenso (até quadrilhões)
+    function numeroParaExtenso(numero) {
+      const unidades = ["", " e um", " e dois", " e três", " e quatro", " e cinco", " e seis", " e sete", " e oito", " e nove"];
+      const dezenas = ["", "", "vinte", "trinta", "quarenta", "cinquenta", "sessenta", "setenta", "oitenta", "noventa"];
+      const centenas = ["", "cento", "duzentos", "trezentos", "quatrocentos", "quinhentos", "seiscentos", "setecentos", "oitocentos", "novecentos"];
+      const especiais = ["dez", "onze", "doze", "treze", "quatorze", "quinze", "dezesseis", "dezessete", "dezoito", "dezenove"];
+
+      function converteAteMil(num) {
+        if (num === 0) return "zero";
+        let resultado = "";
+
+        if (num >= 100) {
+          if (num === 100) resultado += "cem";
+          else resultado += centenas[Math.floor(num / 100)];
+          num %= 100;
+          if (num > 0) resultado += " ";
+        }
+
+        if (num >= 10 && num <= 19) {
+          resultado += especiais[num - 10];
+          num = 0;
+        } else if (num >= 20) {
+          resultado += dezenas[Math.floor(num / 10)];
+          num %= 10;
+          if (num > 0) resultado += unidades[num];
+        } else if (num > 0) {
+          resultado += unidades[num];
+        }
+        return resultado.trim();
+      }
+
+      if (numero === 0) return converteAteMil(0);
+
+      let resultado = "";
+      const partes = [];
+      let escala = ["", " mil", " milhões", " bilhões", " trilhões", " quadrilhões"];
+
+      // Divide o número em grupos de 3 dígitos da direita para a esquerda
+      let numStr = Math.floor(numero).toString();
+      while (numStr.length > 0) {
+        partes.unshift(numStr.slice(-3));
+        numStr = numStr.slice(0, -3);
+      }
+
+      for (let i = 0; i < partes.length; i++) {
+        const grupo = parseInt(partes[i]);
+        if (grupo > 0) {
+          let grupoExtenso = converteAteMil(grupo);
+          let sufixo = escala[partes.length - 1 - i];
+
+          if (sufixo) {
+            if (grupo === 1 && sufixo === " milhões") grupoExtenso = "um milhão";
+            else if (grupo === 1 && sufixo === " bilhões") grupoExtenso = "um bilhão";
+            else if (grupo === 1 && sufixo === " trilhões") grupoExtenso = "um trilhão";
+            else if (grupo === 1 && sufixo === " quadrilhões") grupoExtenso = "um quadrilhão";
+            else if (grupo === 1 && sufixo === " mil") grupoExtenso = "mil";
+            else grupoExtenso += sufixo;
+          }
+          if (resultado) resultado += ", ";
+          resultado += grupoExtenso;
+        }
+      }
+
+      // Parte decimal (centavos)
+      const centavos = Math.round((numero - Math.floor(numero)) * 100);
+      if (centavos > 0) {
+        const centavosExtenso = converteAteMil(centavos);
+        if (centavos === 1) {
+          resultado += " reais e " + centavosExtenso + " centavo";
+        } else {
+          resultado += " reais e " + centavosExtenso + " centavos";
+        }
+      } else {
+        resultado += " reais";
+      }
+
+      return resultado.charAt(0).toUpperCase() + resultado.slice(1);
+    }
+
+
     document.addEventListener("DOMContentLoaded", () => {
       const input = document.getElementById("cnpjInput");
       const searchBtn = document.getElementById("searchBtn");
@@ -206,6 +304,7 @@
       const errorDiv = document.getElementById("error");
       const loadingOverlay = document.getElementById("loadingOverlay");
       const exportBtn = document.getElementById("exportPdfBtn");
+      const pdfDadosDiv = document.getElementById("pdfDados");
 
       input.addEventListener("input", (e) => {
         let v = e.target.value.replace(/\D/g, "");
@@ -305,6 +404,7 @@
             p.textContent = `${socio.nome_socio} - ${socio.qualificacao_socio} (${socio.faixa_etaria})`;
             qsaDiv.appendChild(p);
           });
+          document.getElementById("qsaCard").style.display = "block";
         } else {
           document.getElementById("qsaCard").style.display = "none";
         }
@@ -317,107 +417,9 @@
             li.textContent = `${cnae.codigo} - ${cnae.descricao}`;
             cnaesList.appendChild(li);
           });
+          document.getElementById("cnaesCard").style.display = "block";
         } else {
           document.getElementById("cnaesCard").style.display = "none";
         }
 
-        // Regime Tributário
-        if (data.regime_tributario && data.regime_tributario.length > 0) {
-          data.regime_tributario.forEach(tributo => {
-            const li = document.createElement("li");
-            li.classList.add("data-item");
-            li.textContent = `${tributo.ano}: ${tributo.forma_de_tributacao}`;
-            regimeList.appendChild(li);
-          });
-        } else {
-          document.getElementById("regimeCard").style.display = "none";
-        }
-
-        // Outras informações
-        const outrosCampos = [
-          { label: "Capital Social", value: data.capital_social ? `R$ ${data.capital_social.toLocaleString('pt-BR')}` : null },
-          { label: "Situação Especial", value: data.situacao_especial },
-          { label: "Data da Situação Especial", value: data.data_situacao_especial },
-          { label: "Opção pelo Simples", value: data.opcao_pelo_simples !== null ? (data.opcao_pelo_simples ? "Sim" : "Não") : null },
-          { label: "Data Opção Simples", value: data.data_opcao_pelo_simples },
-          { label: "Data Exclusão Simples", value: data.data_exclusao_do_simples },
-          { label: "Opção pelo MEI", value: data.opcao_pelo_mei !== null ? (data.opcao_pelo_mei ? "Sim" : "Não") : null },
-          { label: "Data Opção MEI", value: data.data_opcao_pelo_mei },
-          { label: "Data Exclusão MEI", value: data.data_exclusao_do_mei },
-          { label: "Motivo da Situação Cadastral", value: data.descricao_motivo_situacao_cadastral },
-          { label: "Ente Federativo Responsável", value: data.ente_federativo_responsavel },
-        ];
-
-        outrosCampos.forEach(campo => {
-          if (campo.value) {
-            const div = document.createElement("div");
-            div.classList.add("data-item");
-            div.innerHTML = `<span class="font-semibold">${campo.label}:</span> <span>${campo.value}</span>`;
-            outrasInfo.appendChild(div);
-          }
-        });
-
-        // Ocultar seção se não tiver nenhum campo
-        if (outrasInfo.children.length === 0) {
-          document.getElementById("outrasInfoCard").style.display = "none";
-        } else {
-          document.getElementById("outrasInfoCard").style.display = "block";
-        }
-      };
-
-      const formatCNPJ = (cnpj) => {
-        return cnpj.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5");
-      };
-
-      // Exportar PDF
-      exportBtn.addEventListener("click", async () => {
-        const { jsPDF } = window.jspdf;
-        const element = document.getElementById("result");
-
-        try {
-          const canvas = await html2canvas(element, {
-            scale: 2,
-            useCORS: true,
-            logging: false,
-            // Oculta temporariamente cards vazios para a captura
-            onclone: (clonedDoc) => {
-              const emptyCards = clonedDoc.querySelectorAll('.data-card[style*="display: none"]');
-              emptyCards.forEach(card => card.style.display = 'none');
-            }
-          });
-          const imgData = canvas.toDataURL('image/png');
-          const pdf = new jsPDF('p', 'mm', 'a4');
-          const imgWidth = 190;
-          const pageHeight = 295;
-          const imgHeight = (canvas.height * imgWidth) / canvas.width;
-          let heightLeft = imgHeight;
-          let position = 10;
-
-          pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-          heightLeft -= pageHeight;
-
-          while (heightLeft >= 0) {
-            position = heightLeft - imgHeight;
-            pdf.addPage();
-            pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-            heightLeft -= pageHeight;
-          }
-
-          pdf.save(`dados_empresa_${document.getElementById("cnpj").textContent || "cnpj"}.pdf`);
-        } catch (error) {
-          console.error("Erro ao gerar PDF:", error);
-          alert("Erro ao exportar PDF. Tente novamente.");
-        }
-      });
-
-      searchBtn.addEventListener("click", () => {
-        fetchCNPJ(input.value);
-      });
-
-      input.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") fetchCNPJ(input.value);
-      });
-    });
-  </script>
-</body>
-</html>
+        //
