@@ -3,178 +3,157 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dashboard Financeiro</title>
+  <title>Orbipay – Transforme seu tempo em dinheiro</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
-    .bg-gradient-card {
-      background: linear-gradient(135deg, #e0f7fa, #f3e5f5);
+    .bg-gradient-orbi {
+      background: linear-gradient(135deg, #f5f3ff, #e9e4ff);
+    }
+    .card-hover {
+      transition: all 0.3s ease;
     }
     .card-hover:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-    }
-    .nav-active {
-      background-color: #4F46E5;
-      color: white;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(126, 63, 240, 0.15);
     }
     .pulse {
-      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      animation: pulse 2s infinite;
     }
     @keyframes pulse {
-      0% { opacity: 1; }
-      50% { opacity: 0.7; }
-      100% { opacity: 1; }
+      0% { box-shadow: 0 0 0 0 rgba(126, 63, 240, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(126, 63, 240, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(126, 63, 240, 0); }
+    }
+    .nav-active {
+      color: #7E3FF0;
+      font-weight: 600;
     }
   </style>
 </head>
-<body class="bg-blue-50 min-h-screen pb-20">
+<body class="bg-gray-50 min-h-screen pb-20 font-sans">
 
   <!-- Header -->
   <header class="bg-white p-4 shadow-sm flex justify-between items-center">
     <div class="flex items-center space-x-3">
-      <div class="w-10 h-10 bg-blue-400 rounded-full flex items-center justify-center text-white font-bold">H</div>
+      <div class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold">O</div>
       <div>
-        <p class="text-xs text-gray-500">Good morning</p>
-        <p class="font-semibold">Hazifur Rumen</p>
+        <p class="text-xs text-gray-500">Olá, Kelvin!</p>
+        <p class="font-semibold text-gray-800">Orbipay</p>
       </div>
     </div>
-    <div class="flex items-center space-x-2 text-sm">
-      <span>Limit</span>
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
-        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-      </svg>
-    </div>
+    <button class="text-indigo-600 font-medium text-sm">Perfil</button>
   </header>
 
   <!-- Saldo Principal -->
   <section class="p-4">
-    <div class="bg-gradient-card rounded-3xl p-5 shadow-lg relative overflow-hidden">
-      <div class="absolute top-0 right-0 w-24 h-24 bg-white opacity-20 rounded-full -translate-y-4 translate-x-4"></div>
+    <div class="bg-gradient-orbi rounded-3xl p-6 shadow-lg relative overflow-hidden">
+      <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-100 opacity-30 rounded-full -translate-y-8 translate-x-8"></div>
       <div class="relative z-10">
-        <div class="flex justify-between items-center mb-4">
-          <h1 class="text-3xl font-bold text-gray-800">$12,904.90</h1>
-          <div class="flex items-center space-x-1 text-gray-500">
-            <span class="text-xs">**** 1234</span>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path d="M10 12a2 2 0 100-4h.01a2 2 0 000 4H10z" />
-              <path fill-rule="evenodd" d="M.4 3A2 2 0 012.2 2h15.6a2 2 0 011.8 1.2c1.8 2.8 2.8 5.3 2.8 6.8 0 1.5-1 4-2.8 6.8a2 2 0 01-1.8 1.2H2.2a2 2 0 01-1.8-1.2C.2 13.3-.8 10.8-.8 9.3c0-1.5 1-4 2.8-6.8zm19.2 6.8a8 8 0 11-16 0 8 8 0 0116 0z" clip-rule="evenodd" />
-            </svg>
-          </div>
+        <h2 class="text-lg text-gray-600 mb-1">Seu saldo</h2>
+        <div class="flex items-end space-x-2 mb-5">
+          <h1 class="text-3xl font-bold text-indigo-700">1.240</h1>
+          <span class="text-sm font-medium text-indigo-600">OrbiCoins</span>
         </div>
-        <div class="grid grid-cols-2 gap-3">
-          <button class="flex items-center justify-center space-x-2 p-3 bg-white rounded-xl shadow-sm hover:bg-blue-50 transition">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M10 3a1 1 0 000 2h6a1 1 0 100-2H10zm0 7a1 1 0 000 2h6a1 1 0 100-2H10zm0 7a1 1 0 000 2h6a1 1 0 100-2H10z" clip-rule="evenodd" />
-            </svg>
-            <span class="text-sm font-medium">Top Up</span>
-          </button>
-          <button class="flex items-center justify-center space-x-2 p-3 bg-white rounded-xl shadow-sm hover:bg-blue-50 transition">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" viewBox="0 0 20 20" fill="currentColor">
-              <path d="M8 13a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
-              <path d="M10 5a2 2 0 110-4 2 2 0 010 4zM10 14a2 2 0 110-4 2 2 0 010 4z" />
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm0-2a6 6 0 100-12 6 6 0 000 12z" clip-rule="evenodd" />
-            </svg>
-            <span class="text-sm font-medium">Transfer</span>
-          </button>
-          <button class="flex items-center justify-center space-x-2 p-3 bg-white rounded-xl shadow-sm hover:bg-blue-50 transition">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" viewBox="0 0 20 20" fill="currentColor">
-              <path d="M4 4a2 2 0 00-2 2v1h16v-1a2 2 0 00-2-2H4z" />
-              <path fill-rule="evenodd" d="M18 9H2v9a2 2 0 002 2h12a2 2 0 002-2V9zM4 10a1 1 0 011-1h10v2H5a1 1 0 01-1-1v-1zm0 4a1 1 0 011-1h10v2H5a1 1 0 01-1-1v-1z" clip-rule="evenodd" />
-            </svg>
-            <span class="text-sm font-medium">Send</span>
-          </button>
-          <button class="flex items-center justify-center space-x-2 p-3 bg-white rounded-xl shadow-sm hover:bg-blue-50 transition">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" viewBox="0 0 20 20" fill="currentColor">
-              <path d="M2 11a1 1 0 011-1h14a1 1 0 011 1v7a1 1 0 01-1 1H3a1 1 0 01-1-1v-7z" />
-              <path d="M3 5a1 1 0 011-1h12a1 1 0 011 1v1h2a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2v-8a2 2 0 012-2h2V5z" />
-            </svg>
-            <span class="text-sm font-medium">Analytics</span>
-          </button>
+
+        <!-- Botão principal -->
+        <button class="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold shadow-md pulse hover:bg-indigo-700 transition">
+          <i class="fas fa-play-circle mr-2"></i> Assistir Anúncio e Ganhar
+        </button>
+
+        <!-- Benefícios rápidos -->
+        <div class="mt-5 grid grid-cols-3 gap-3 text-center">
+          <div>
+            <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-2">
+              <i class="fas fa-eye text-indigo-600"></i>
+            </div>
+            <p class="text-xs text-gray-700">Assista</p>
+          </div>
+          <div>
+            <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-2">
+              <i class="fas fa-coins text-indigo-600"></i>
+            </div>
+            <p class="text-xs text-gray-700">Ganhe</p>
+          </div>
+          <div>
+            <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-2">
+              <i class="fas fa-wallet text-indigo-600"></i>
+            </div>
+            <p class="text-xs text-gray-700">Resgate</p>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Botão Adicionar Cartão -->
-  <div class="px-4 py-3">
-    <button class="flex items-center text-blue-600 text-sm font-medium">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-        <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1z" clip-rule="evenodd" />
-        <path fill-rule="evenodd" d="M4 10a1 1 0 011-1h12a1 1 0 110 2H5a1 1 0 01-1-1z" clip-rule="evenodd" />
-      </svg>
-      Add new card
-    </button>
-  </div>
+  <!-- Proposta de valor -->
+  <section class="px-4 py-3">
+    <div class="bg-white rounded-xl p-4 shadow-sm border border-indigo-100">
+      <h3 class="font-bold text-indigo-700 mb-2">💡 Transforme seu tempo em dinheiro!</h3>
+      <p class="text-sm text-gray-600 leading-relaxed">
+        Assista a anúncios de nossos parceiros e ganhe <strong>OrbiCoins</strong>, a moeda virtual do app. 
+        Acumule OrbiCoins e troque por recompensas reais diretamente via <strong>PayPal</strong>. 
+        Quanto mais você assiste, mais você ganha. É simples, rápido e seguro.
+      </p>
+      <button class="mt-3 text-indigo-600 text-sm font-medium flex items-center">
+        Saiba mais <i class="fas fa-chevron-right ml-1 text-xs"></i>
+      </button>
+    </div>
+  </section>
 
-  <!-- Transações -->
+  <!-- Histórico de Ganho -->
   <section class="px-4 py-3">
     <div class="flex justify-between items-center mb-4">
-      <h2 class="text-lg font-semibold text-gray-800">Transactions</h2>
-      <button class="text-blue-500 text-sm font-medium">View all</button>
+      <h2 class="text-lg font-semibold text-gray-800">Histórico de Ganho</h2>
+      <button class="text-indigo-600 text-sm font-medium">Ver tudo</button>
     </div>
 
     <div class="space-y-3">
-      <!-- Transação 1 -->
-      <div class="bg-white rounded-xl p-4 shadow-sm card-hover transition-all duration-300">
+      <!-- Ganho 1 -->
+      <div class="bg-white rounded-xl p-4 shadow-sm card-hover">
         <div class="flex justify-between items-center">
           <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 bg-pink-500 rounded-full flex items-center justify-center text-white font-bold">D</div>
+            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600">
+              <i class="fas fa-tv"></i>
+            </div>
             <div>
-              <p class="font-semibold">$15.00</p>
-              <p class="text-xs text-gray-500">Monthly, Next on 10.24</p>
+              <p class="font-semibold">+25 OrbiCoins</p>
+              <p class="text-xs text-gray-500">Anúncio assistido</p>
             </div>
           </div>
-          <div class="text-right">
-            <p class="font-semibold">Dribbble</p>
-          </div>
+          <div class="text-right text-sm text-gray-500">Hoje, 14:30</div>
         </div>
       </div>
 
-      <!-- Transação 2 -->
-      <div class="bg-white rounded-xl p-4 shadow-sm card-hover transition-all duration-300">
+      <!-- Ganho 2 -->
+      <div class="bg-white rounded-xl p-4 shadow-sm card-hover">
         <div class="flex justify-between items-center">
           <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-bold">S</div>
+            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600">
+              <i class="fas fa-tv"></i>
+            </div>
             <div>
-              <p class="font-semibold">$12.90</p>
-              <p class="text-xs text-gray-500">Monthly, Next on 09.30</p>
+              <p class="font-semibold">+40 OrbiCoins</p>
+              <p class="text-xs text-gray-500">Anúncio premium</p>
             </div>
           </div>
-          <div class="text-right">
-            <p class="font-semibold">Spotify</p>
-          </div>
+          <div class="text-right text-sm text-gray-500">Ontem, 19:15</div>
         </div>
       </div>
 
-      <!-- Transação 3 -->
-      <div class="bg-white rounded-xl p-4 shadow-sm card-hover transition-all duration-300">
+      <!-- Ganho 3 -->
+      <div class="bg-white rounded-xl p-4 shadow-sm card-hover">
         <div class="flex justify-between items-center">
           <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 bg-indigo-500 rounded-full flex items-center justify-center text-white font-bold">T</div>
+            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
+              <i class="fas fa-gift"></i>
+            </div>
             <div>
-              <p class="font-semibold">$14.09</p>
-              <p class="text-xs text-gray-500">Monthly, Next on 10.24</p>
+              <p class="font-semibold">+100 OrbiCoins</p>
+              <p class="text-xs text-gray-500">Bônus de boas-vindas</p>
             </div>
           </div>
-          <div class="text-right">
-            <p class="font-semibold">Twitch</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Transação 4 -->
-      <div class="bg-white rounded-xl p-4 shadow-sm card-hover transition-all duration-300">
-        <div class="flex justify-between items-center">
-          <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold">N</div>
-            <div>
-              <p class="font-semibold">$26.90</p>
-              <p class="text-xs text-gray-500">Yearly, Next on 12.40</p>
-            </div>
-          </div>
-          <div class="text-right">
-            <p class="font-semibold">Netflix</p>
-          </div>
+          <div class="text-right text-sm text-gray-500">10/10/2025</div>
         </div>
       </div>
     </div>
@@ -182,68 +161,49 @@
 
   <!-- Barra de Navegação Inferior -->
   <nav class="fixed bottom-0 left-0 right-0 bg-white shadow-lg border-t px-4 py-3 flex justify-around items-center">
-    <button class="nav-item flex flex-col items-center p-2 rounded-full w-12 h-12 justify-center nav-active">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 001 1h3m-6 0a1 1 0 001-1v-4a1 1 0 00-1-1h-2a1 1 0 00-1 1v4a1 1 0 001 1m3-8a1 1 0 001-1v-4a1 1 0 00-1-1h-2a1 1 0 00-1 1v4a1 1 0 001 1z" />
-      </svg>
-      <span class="text-xs mt-1">Home</span>
+    <button class="flex flex-col items-center text-indigo-600 nav-active">
+      <i class="fas fa-home text-lg"></i>
+      <span class="text-xs mt-1">Início</span>
     </button>
-    <button class="nav-item flex flex-col items-center p-2 rounded-full w-12 h-12 justify-center">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9M9 9a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2z" />
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 117.708 0M12 14.354a4 4 0 117.708 0M12 20.354a4 4 0 117.708 0" />
-      </svg>
-      <span class="text-xs mt-1">Invest</span>
+    <button class="flex flex-col items-center text-gray-500">
+      <i class="fas fa-ad text-lg"></i>
+      <span class="text-xs mt-1">Anúncios</span>
     </button>
-    <button class="nav-item flex flex-col items-center p-2 rounded-full w-12 h-12 justify-center bg-blue-600 text-white">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m-15.356-2a8.001 8.001 0 0115.356 2m-1 0v5h.581m-15.356-2a8.001 8.001 0 0115.356 2m-1 0v5h.581m-15.356-2a8.001 8.001 0 0115.356 2m-1 0v5h-.581" />
-      </svg>
-      <span class="text-xs mt-1">Transfer</span>
+    <button class="flex flex-col items-center text-gray-500">
+      <i class="fas fa-exchange-alt text-lg"></i>
+      <span class="text-xs mt-1">Resgatar</span>
     </button>
-    <button class="nav-item flex flex-col items-center p-2 rounded-full w-12 h-12 justify-center">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.858-.282A5.972 5.972 0 0112 20c1.58 0 3.06-.58 4.212-1.588A5.972 5.972 0 0121 12z" />
-      </svg>
-      <span class="text-xs mt-1">Chat</span>
+    <button class="flex flex-col items-center text-gray-500">
+      <i class="fas fa-headset text-lg"></i>
+      <span class="text-xs mt-1">Suporte</span>
     </button>
-    <button class="nav-item flex flex-col items-center p-2 rounded-full w-12 h-12 justify-center">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-      </svg>
-      <span class="text-xs mt-1">Profile</span>
+    <button class="flex flex-col items-center text-gray-500">
+      <i class="fas fa-user text-lg"></i>
+      <span class="text-xs mt-1">Conta</span>
     </button>
   </nav>
 
   <!-- Script JS -->
   <script>
-    // Animação de entrada dos cards de transações
     document.addEventListener('DOMContentLoaded', function() {
-      const transactionCards = document.querySelectorAll('.card-hover');
-      
-      transactionCards.forEach((card, index) => {
+      const cards = document.querySelectorAll('.card-hover');
+      cards.forEach((card, i) => {
         card.style.opacity = '0';
-        card.style.transform = 'translateY(20px)';
-        card.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
-        
+        card.style.transform = 'translateY(10px)';
         setTimeout(() => {
+          card.style.transition = 'opacity 0.4s, transform 0.4s';
           card.style.opacity = '1';
           card.style.transform = 'translateY(0)';
-        }, 100 + (index * 50));
+        }, 150 * i);
       });
 
-      // Efeito de pulsação no botão ativo
-      const navItems = document.querySelectorAll('.nav-item');
-      navItems.forEach(item => {
-        item.addEventListener('click', () => {
-          navItems.forEach(i => i.classList.remove('nav-active'));
-          item.classList.add('nav-active');
+      // Simulação de clique no botão principal
+      const watchBtn = document.querySelector('.pulse');
+      if (watchBtn) {
+        watchBtn.addEventListener('click', () => {
+          alert('🎉 Anúncio iniciado! Após assistir, você receberá OrbiCoins.');
         });
-      });
-
-      // Efeito de pulsar no cartão principal
-      const mainCard = document.querySelector('.bg-gradient-card');
-      mainCard.classList.add('pulse');
+      }
     });
   </script>
 
