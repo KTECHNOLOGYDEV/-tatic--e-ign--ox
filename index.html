@@ -81,11 +81,24 @@
     .dot-indicator.active {
       background: #7E3FF0;
     }
+
+    /* Título centralizado */
+    .app-title {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      text-align: center;
+      padding-top: 1.5rem;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #4B5563;
+    }
   </style>
 </head>
 <body class="min-h-screen pb-24 text-gray-800 relative">
 
-  <!-- ONBOARDING (corrigido) -->
+  <!-- ONBOARDING (corrigido e redesenhado) -->
   <div id="onboarding" class="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center p-6">
     <div class="w-full max-w-md">
       <!-- Slide 1 -->
@@ -97,9 +110,9 @@
               <circle cx="50" cy="25" r="4" fill="#FFD166" />
             </svg>
           </div>
-          <h2 class="text-2xl font-bold text-gray-800 mb-2">Bem-vindo ao Orbipay!</h2>
+          <h2 class="text-2xl font-bold text-gray-800 mb-2">🌟 Transforme seu tempo em recompensas reais!</h2>
           <p class="text-gray-600 leading-relaxed">
-            Transforme seu tempo em dinheiro. Assista anúncios e ganhe OrbiCoins.
+            Cada minuto que você passa assistindo vale algo. Sem esforço, sem pressa.
           </p>
         </div>
         <div class="flex justify-between mt-8">
@@ -112,11 +125,11 @@
       <div class="onboarding-slide" id="slide2">
         <div class="text-center mb-6">
           <div class="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <i class="fas fa-play-circle text-3xl text-indigo-600"></i>
+            <i class="fas fa-film text-3xl text-indigo-600"></i>
           </div>
-          <h2 class="text-2xl font-bold text-gray-800 mb-2">Cada anúncio = +0,10 OrbiCoins</h2>
+          <h2 class="text-2xl font-bold text-gray-800 mb-2">🎬 Assista anúncios curtos — sem compromisso</h2>
           <p class="text-gray-600 leading-relaxed">
-            Assista vídeos curtos e acumule moedas. Quanto mais você assiste, mais você ganha!
+            Só quando você quiser. Em qualquer lugar. E ainda ganha recompensas!
           </p>
         </div>
         <div class="flex justify-between mt-8">
@@ -129,11 +142,11 @@
       <div class="onboarding-slide" id="slide3">
         <div class="text-center mb-6">
           <div class="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <i class="fab fa-paypal text-3xl text-indigo-600"></i>
+            <i class="fas fa-gift text-3xl text-indigo-600"></i>
           </div>
-          <h2 class="text-2xl font-bold text-gray-800 mb-2">Resgate para PayPal</h2>
+          <h2 class="text-2xl font-bold text-gray-800 mb-2">💸 Resgate por dinheiro, presentes ou experiências!</h2>
           <p class="text-gray-600 leading-relaxed">
-            Troque seus OrbiCoins por dinheiro real. 1 OrbiCoin = R$ 0,10. Mínimo: 100 OrbiCoins.
+            Escolha o que você quer — e receba direto na sua conta. É mágico.
           </p>
         </div>
         <div class="flex justify-between mt-8">
@@ -154,18 +167,18 @@
   <!-- APP PRINCIPAL -->
   <div id="app" class="hidden">
 
-    <!-- Header -->
-    <header class="bg-white p-4 shadow-sm flex justify-between items-center">
+    <!-- Header com Olá, Kelvin! no canto e título centralizado -->
+    <header class="bg-white p-4 shadow-sm flex justify-between items-center relative">
       <div class="flex items-center space-x-3">
         <div class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-lg">O</div>
         <div>
-          <p class="text-xs text-gray-500">Olá, Kelvin!</p>
-          <p class="font-semibold text-gray-800">Orbipay</p>
+          <p class="font-semibold text-gray-800">Olá, Kelvin!</p>
         </div>
       </div>
       <button class="text-indigo-600 font-medium text-sm">
         <i class="fas fa-cog"></i>
       </button>
+      <div class="app-title">Orbipay</div>
     </header>
 
     <!-- Saldo Principal -->
