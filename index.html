@@ -412,7 +412,7 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 150px;
+      max-width: 100px; /* Ajuste para não sobrepor o título */
     }
   </style>
 </head>
@@ -513,7 +513,7 @@
   </div>
 
   <!-- TELA DE TERMOS DE USO -->
-  <div id="termsScreen" class="hidden fixed inset-0 bg-white z-50 p-6 overflow-y-auto">
+  <div id="termsScreen" class="hidden fixed inset-0 bg-white z-50 p-6 pt-16 overflow-y-auto">
     <div class="max-w-2xl mx-auto">
       <div class="flex justify-between items-center mb-6">
         <h2 class="text-xl font-bold">Termos de Uso</h2>
@@ -555,7 +555,7 @@
   </div>
 
   <!-- TELA DE POLÍTICA DE PRIVACIDADE -->
-  <div id="privacyScreen" class="hidden fixed inset-0 bg-white z-50 p-6 overflow-y-auto">
+  <div id="privacyScreen" class="hidden fixed inset-0 bg-white z-50 p-6 pt-16 overflow-y-auto">
     <div class="max-w-2xl mx-auto">
       <div class="flex justify-between items-center mb-6">
         <h2 class="text-xl font-bold">Política de Privacidade</h2>
@@ -619,17 +619,29 @@
     </div>
   </div>
 
+  <!-- TELA DE HISTÓRICO COMPLETO -->
+  <div id="historyScreen" class="hidden fixed inset-0 bg-white z-40 p-6 pt-16 overflow-y-auto">
+    <div class="max-w-md mx-auto">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold">Histórico Completo</h2>
+        <button class="text-gray-500" onclick="closeHistory()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="space-y-3" id="full-history-list">
+        <!-- Os cards serão preenchidos via JS -->
+      </div>
+    </div>
+  </div>
+
   <!-- APP PRINCIPAL -->
   <div id="app" class="hidden">
 
     <!-- Header -->
     <header class="bg-white p-4 shadow-sm flex justify-between items-center relative">
       <div class="header-user">
-        <div class="avatar">O</div>
+        <div class="avatar" id="userInitial">K</div>
         <div class="name" id="welcomeUser">Kelvin</div>
       </div>
       <div class="app-title">Orbipay</div>
-      <!-- Ícone de configuração removido conforme solicitado -->
     </header>
 
     <!-- Saldo Principal -->
@@ -929,7 +941,7 @@
       </div>
 
       <div class="profile-header">
-        <div class="profile-avatar">K</div>
+        <div class="profile-avatar" id="profileInitial">K</div>
         <h3 class="text-xl font-bold" id="profileName">Kelvin</h3>
         <p class="text-sm" id="profileEmail">kelvin@example.com</p>
       </div>
@@ -1089,6 +1101,37 @@
       });
     }
 
+    // Função para atualizar o histórico completo
+    function updateFullHistory() {
+      const user = JSON.parse(localStorage.getItem('orbipay_user'));
+      if (!user) return;
+
+      const history = user.history || [];
+      const historyList = document.getElementById('full-history-list');
+      historyList.innerHTML = '';
+
+      // Exibir todos os itens
+      history.reverse().forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-xl p-4 shadow-sm';
+        card.innerHTML = `
+          <div class="flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600">
+                <i class="fas fa-${item.icon}"></i>
+              </div>
+              <div>
+                <p class="font-semibold">+${item.amount.toFixed(2)} OrbiCoins</p>
+                <p class="text-xs text-gray-500">${item.type}</p>
+              </div>
+            </div>
+            <div class="text-right text-sm text-gray-500">${item.time}</div>
+          </div>
+        `;
+        historyList.appendChild(card);
+      });
+    }
+
     // Função para atualizar o histórico de resgates na tela de conta
     function updateRedeemHistory() {
       const user = JSON.parse(localStorage.getItem('orbipay_user'));
@@ -1184,6 +1227,18 @@
       showLogin();
     }
 
+    // Função para exibir histórico completo
+    function showHistory() {
+      updateFullHistory();
+      hideAllScreens();
+      document.getElementById('historyScreen').classList.remove('hidden');
+    }
+
+    function closeHistory() {
+      document.getElementById('historyScreen').classList.add('hidden');
+      document.getElementById('app').classList.remove('hidden');
+    }
+
     // Splash Screen
     document.addEventListener('DOMContentLoaded', function() {
       setTimeout(() => {
@@ -1195,7 +1250,10 @@
           const user = localStorage.getItem('orbipay_user');
           if (user) {
             const userData = JSON.parse(user);
+            const initial = userData.name.charAt(0).toUpperCase();
+            document.getElementById('userInitial').textContent = initial;
             document.getElementById('welcomeUser').textContent = userData.name;
+            document.getElementById('profileInitial').textContent = initial;
             document.getElementById('profileName').textContent = userData.name;
             document.getElementById('profileEmail').textContent = userData.email;
             updateBalance();
@@ -1272,6 +1330,7 @@
       document.getElementById('redeemScreen').classList.add('hidden');
       document.getElementById('supportScreen').classList.add('hidden');
       document.getElementById('profileScreen').classList.add('hidden');
+      document.getElementById('historyScreen').classList.add('hidden');
       document.getElementById('loginScreen').classList.add('hidden');
       document.getElementById('signupScreen').classList.add('hidden');
       document.getElementById('termsScreen').classList.add('hidden');
@@ -1318,7 +1377,7 @@
 
     function closeTerms() {
       document.getElementById('termsScreen').classList.add('hidden');
-      document.getElementById('signupScreen').classList.remove('hidden');
+      document.getElementById('profileScreen').classList.remove('hidden');
     }
 
     function showPrivacy() {
@@ -1328,7 +1387,7 @@
 
     function closePrivacy() {
       document.getElementById('privacyScreen').classList.add('hidden');
-      document.getElementById('signupScreen').classList.remove('hidden');
+      document.getElementById('profileScreen').classList.remove('hidden');
     }
 
     // Login Form
@@ -1344,7 +1403,10 @@
         localStorage.setItem('orbipay_user', JSON.stringify(user));
         document.getElementById('loginScreen').classList.add('hidden');
         document.getElementById('app').classList.remove('hidden');
+        const initial = user.name.charAt(0).toUpperCase();
+        document.getElementById('userInitial').textContent = initial;
         document.getElementById('welcomeUser').textContent = user.name;
+        document.getElementById('profileInitial').textContent = initial;
         document.getElementById('profileName').textContent = user.name;
         document.getElementById('profileEmail').textContent = user.email;
         updateBalance();
@@ -1406,7 +1468,10 @@
 
       document.getElementById('signupScreen').classList.add('hidden');
       document.getElementById('app').classList.remove('hidden');
+      const initial = newUser.name.charAt(0).toUpperCase();
+      document.getElementById('userInitial').textContent = initial;
       document.getElementById('welcomeUser').textContent = newUser.name;
+      document.getElementById('profileInitial').textContent = initial;
       document.getElementById('profileName').textContent = newUser.name;
       document.getElementById('profileEmail').textContent = newUser.email;
       updateBalance();
