@@ -600,7 +600,7 @@
       <div class="flex items-center space-x-3">
         <div class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-lg">O</div>
         <div>
-          <p class="font-semibold text-gray-800">Olá, Kelvin!</p>
+          <p class="font-semibold text-gray-800" id="welcomeUser">Olá, Kelvin!</p>
         </div>
       </div>
       <button class="text-indigo-600 font-medium text-sm" onclick="showSettings()">
@@ -628,10 +628,10 @@
           </div>
           <div>
             <div class="flex items-baseline space-x-1">
-              <h1 class="text-3xl font-bold text-indigo-700">1.240</h1>
+              <h1 class="text-3xl font-bold text-indigo-700" id="balanceAmount">0</h1>
               <span class="text-sm font-semibold text-indigo-600">OrbiCoins</span>
             </div>
-            <p class="text-xs text-gray-500 mt-1">≈ R$ 124,00</p>
+            <p class="text-xs text-gray-500 mt-1" id="balanceReal">≈ R$ 0,00</p>
           </div>
         </div>
 
@@ -704,7 +704,7 @@
     <section class="px-4 py-3">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-lg font-semibold">Histórico de Ganho</h2>
-        <button class="text-indigo-600 text-sm font-medium">Ver tudo</button>
+        <button class="text-indigo-600 text-sm font-medium" onclick="showHistory()">Ver tudo</button>
       </div>
 
       <div class="space-y-3" id="history-list">
@@ -756,7 +756,7 @@
             <h3 class="font-semibold">Spotify Premium</h3>
             <p class="text-sm text-gray-500">Assista 30 segundos e ganhe 0,10 OrbiCoins</p>
             <div class="ad-reward">+0,10 OrbiCoins</div>
-            <button class="mt-2 btn-primary w-full py-2 rounded-lg text-sm">Assistir Agora</button>
+            <button class="mt-2 btn-primary w-full py-2 rounded-lg text-sm" onclick="watchAd('Spotify Premium', 0.1)">Assistir Agora</button>
           </div>
         </div>
 
@@ -769,7 +769,7 @@
             <h3 class="font-semibold">Netflix Novidades</h3>
             <p class="text-sm text-gray-500">Assista 25 segundos e ganhe 0,10 OrbiCoins</p>
             <div class="ad-reward">+0,10 OrbiCoins</div>
-            <button class="mt-2 btn-primary w-full py-2 rounded-lg text-sm">Assistir Agora</button>
+            <button class="mt-2 btn-primary w-full py-2 rounded-lg text-sm" onclick="watchAd('Netflix Novidades', 0.1)">Assistir Agora</button>
           </div>
         </div>
 
@@ -782,7 +782,7 @@
             <h3 class="font-semibold">Ofertas Amazon</h3>
             <p class="text-sm text-gray-500">Assista 40 segundos e ganhe 0,15 OrbiCoins</p>
             <div class="ad-reward">+0,15 OrbiCoins</div>
-            <button class="mt-2 btn-primary w-full py-2 rounded-lg text-sm">Assistir Agora</button>
+            <button class="mt-2 btn-primary w-full py-2 rounded-lg text-sm" onclick="watchAd('Ofertas Amazon', 0.15)">Assistir Agora</button>
           </div>
         </div>
       </div>
@@ -800,20 +800,20 @@
       <div class="bg-indigo-50 rounded-xl p-4 mb-6">
         <p class="text-sm text-gray-600 mb-2">Saldo disponível:</p>
         <div class="flex items-center space-x-2">
-          <h3 class="text-2xl font-bold text-indigo-700">1.240</h3>
+          <h3 class="text-2xl font-bold text-indigo-700" id="redeemBalance">0</h3>
           <span class="text-sm font-medium text-indigo-600">OrbiCoins</span>
         </div>
-        <p class="text-xs text-gray-500 mt-1">≈ R$ 124,00</p>
+        <p class="text-xs text-gray-500 mt-1" id="redeemReal">≈ R$ 0,00</p>
       </div>
 
       <div class="mb-6">
         <label class="block text-sm font-medium mb-2">E-mail do PayPal</label>
-        <input type="email" placeholder="seu@email.com" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+        <input type="email" id="paypalEmailInput" placeholder="seu@email.com" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
       </div>
 
       <div class="mb-6">
         <label class="block text-sm font-medium mb-2">Valor a resgatar</label>
-        <select class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+        <select id="redeemAmount" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
           <option value="100">R$ 10,00 (100 OrbiCoins)</option>
           <option value="500">R$ 50,00 (500 OrbiCoins)</option>
           <option value="1000">R$ 100,00 (1.000 OrbiCoins)</option>
@@ -827,7 +827,7 @@
         </p>
       </div>
 
-      <button class="btn-primary w-full py-3.5 rounded-xl font-semibold text-white shadow-lg">
+      <button class="btn-primary w-full py-3.5 rounded-xl font-semibold text-white shadow-lg" onclick="confirmRedeem()">
         Confirmar Resgate
       </button>
 
@@ -845,7 +845,7 @@
 
       <div class="mb-6">
         <h3 class="font-semibold mb-4">Entre em contato</h3>
-        <form>
+        <form id="supportForm">
           <div class="mb-4">
             <label class="block text-sm font-medium mb-2">Nome</label>
             <input type="text" placeholder="Seu nome" class="w-full p-3 border border-gray-300 rounded-lg" />
@@ -907,22 +907,21 @@
 
       <div class="profile-header">
         <div class="profile-avatar">K</div>
-        <h3 class="text-xl font-bold">Kelvin</h3>
-        <p class="text-sm">kelvin@example.com</p>
+        <h3 class="text-xl font-bold" id="profileName">Kelvin</h3>
+        <p class="text-sm" id="profileEmail">kelvin@example.com</p>
       </div>
 
       <div class="p-4">
         <div class="mb-4">
           <h4 class="font-semibold mb-2">Saldo</h4>
-          <p class="text-2xl font-bold text-indigo-700">1.240 OrbiCoins</p>
-          <p class="text-sm text-gray-500">≈ R$ 124,00</p>
+          <p class="text-2xl font-bold text-indigo-700" id="profileBalance">0 OrbiCoins</p>
+          <p class="text-sm text-gray-500" id="profileReal">≈ R$ 0,00</p>
         </div>
 
         <div class="mb-4">
           <h4 class="font-semibold mb-2">Histórico de Resgates</h4>
-          <div class="bg-gray-50 rounded-lg p-3">
-            <p class="text-sm">R$ 50,00 - 10/10/2025</p>
-            <p class="text-sm text-gray-500">Status: Concluído</p>
+          <div class="bg-gray-50 rounded-lg p-3" id="redeemHistory">
+            <p class="text-sm">Nenhum resgate realizado ainda.</p>
           </div>
         </div>
 
@@ -936,7 +935,7 @@
           <button class="w-full text-left p-3 border border-gray-300 rounded-lg text-sm">Adicionar Conta PayPal</button>
         </div>
 
-        <button class="w-full mt-4 text-red-600 font-medium">Sair da Conta</button>
+        <button class="w-full mt-4 text-red-600 font-medium" onclick="logout()">Sair da Conta</button>
       </div>
     </div>
   </div>
@@ -1012,36 +1011,44 @@
 
   <!-- Script JS -->
   <script>
-    // Splash Screen
-    document.addEventListener('DOMContentLoaded', function() {
-      setTimeout(() => {
-        document.getElementById('splash').style.opacity = '0';
-        document.getElementById('splash').style.transition = 'opacity 0.5s ease';
-        setTimeout(() => {
-          document.getElementById('splash').style.display = 'none';
-          // Verificar se o usuário está logado
-          const user = localStorage.getItem('orbipay_user');
-          if (user) {
-            document.getElementById('app').classList.remove('hidden');
-          } else {
-            showLogin();
-          }
-        }, 500);
-      }, 2000);
+    // Função para atualizar o saldo e valores reais em todas as telas
+    function updateBalance() {
+      const user = JSON.parse(localStorage.getItem('orbipay_user'));
+      if (!user) return;
 
-      // Histórico de ganhos
+      const balance = user.balance || 0;
+      const realValue = (balance * 0.1).toFixed(2);
+
+      // Atualizar na tela principal
+      document.getElementById('balanceAmount').textContent = balance;
+      document.getElementById('balanceReal').textContent = `≈ R$ ${realValue}`;
+
+      // Atualizar na tela de resgate
+      document.getElementById('redeemBalance').textContent = balance;
+      document.getElementById('redeemReal').textContent = `≈ R$ ${realValue}`;
+
+      // Atualizar na tela de conta
+      document.getElementById('profileBalance').textContent = `${balance} OrbiCoins`;
+      document.getElementById('profileReal').textContent = `≈ R$ ${realValue}`;
+
+      // Atualizar no localStorage
+      user.balance = balance;
+      localStorage.setItem('orbipay_user', JSON.stringify(user));
+    }
+
+    // Função para atualizar o histórico de ganhos
+    function updateHistory() {
+      const user = JSON.parse(localStorage.getItem('orbipay_user'));
+      if (!user) return;
+
+      const history = user.history || [];
       const historyList = document.getElementById('history-list');
-      
-      // Simulação: cada anúncio = +0.10 OrbiCoins
-      const history = [
-        { amount: 0.1, type: 'Anúncio assistido', time: 'Hoje, 14:30', icon: 'tv' },
-        { amount: 0.1, type: 'Anúncio assistido', time: 'Hoje, 13:45', icon: 'tv' },
-        { amount: 0.1, type: 'Anúncio assistido', time: 'Ontem, 19:15', icon: 'tv' },
-        { amount: 0.1, type: 'Anúncio assistido', time: 'Ontem, 18:30', icon: 'tv' },
-        { amount: 100, type: 'Bônus de boas-vindas', time: '10/10/2025', icon: 'gift' }
-      ];
+      historyList.innerHTML = '';
 
-      history.forEach((item, i) => {
+      // Pegar os últimos 5 itens
+      const recentHistory = history.slice(-5).reverse();
+
+      recentHistory.forEach((item, i) => {
         const card = document.createElement('div');
         card.className = 'bg-white rounded-xl p-4 shadow-sm card-hover opacity-0';
         card.innerHTML = `
@@ -1066,6 +1073,133 @@
           card.style.transform = 'translateY(0)';
         }, 200 * i);
       });
+    }
+
+    // Função para atualizar o histórico de resgates na tela de conta
+    function updateRedeemHistory() {
+      const user = JSON.parse(localStorage.getItem('orbipay_user'));
+      if (!user) return;
+
+      const history = user.redeemHistory || [];
+      const redeemHistoryDiv = document.getElementById('redeemHistory');
+      redeemHistoryDiv.innerHTML = '';
+
+      if (history.length === 0) {
+        redeemHistoryDiv.innerHTML = '<p class="text-sm">Nenhum resgate realizado ainda.</p>';
+        return;
+      }
+
+      history.forEach(item => {
+        const p = document.createElement('p');
+        p.className = 'text-sm';
+        p.textContent = `${item.value} - ${item.date}`;
+        redeemHistoryDiv.appendChild(p);
+
+        const p2 = document.createElement('p');
+        p2.className = 'text-sm text-gray-500';
+        p2.textContent = `Status: ${item.status}`;
+        redeemHistoryDiv.appendChild(p2);
+      });
+    }
+
+    // Função para assistir anúncio
+    function watchAd(title, amount) {
+      const user = JSON.parse(localStorage.getItem('orbipay_user'));
+      if (!user) return;
+
+      user.balance = (user.balance || 0) + amount;
+
+      const newHistoryItem = {
+        amount: amount,
+        type: `Anúncio: ${title}`,
+        time: new Date().toLocaleString('pt-BR'),
+        icon: 'tv'
+      };
+
+      if (!user.history) user.history = [];
+      user.history.push(newHistoryItem);
+
+      localStorage.setItem('orbipay_user', JSON.stringify(user));
+
+      alert(`🎉 Parabéns! Você ganhou ${amount.toFixed(2)} OrbiCoins.`);
+      updateBalance();
+      updateHistory();
+    }
+
+    // Função para confirmar resgate
+    function confirmRedeem() {
+      const user = JSON.parse(localStorage.getItem('orbipay_user'));
+      if (!user) return;
+
+      const paypalEmail = document.getElementById('paypalEmailInput').value;
+      const selectedValue = document.getElementById('redeemAmount').value;
+
+      if (!paypalEmail) {
+        alert('Por favor, informe o e-mail do PayPal.');
+        return;
+      }
+
+      if (user.balance < selectedValue) {
+        alert('Saldo insuficiente para este resgate.');
+        return;
+      }
+
+      user.balance -= selectedValue;
+
+      const newRedeemItem = {
+        value: `R$ ${(selectedValue * 0.1).toFixed(2)}`,
+        date: new Date().toLocaleDateString('pt-BR'),
+        status: 'Pendente'
+      };
+
+      if (!user.redeemHistory) user.redeemHistory = [];
+      user.redeemHistory.push(newRedeemItem);
+
+      localStorage.setItem('orbipay_user', JSON.stringify(user));
+
+      alert(`Resgate de R$ ${(selectedValue * 0.1).toFixed(2)} solicitado com sucesso para ${paypalEmail}.`);
+      closeRedeem();
+      updateBalance();
+      updateRedeemHistory();
+    }
+
+    // Função para sair
+    function logout() {
+      localStorage.removeItem('orbipay_user');
+      document.getElementById('app').classList.add('hidden');
+      showLogin();
+    }
+
+    // Splash Screen
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(() => {
+        document.getElementById('splash').style.opacity = '0';
+        document.getElementById('splash').style.transition = 'opacity 0.5s ease';
+        setTimeout(() => {
+          document.getElementById('splash').style.display = 'none';
+          // Verificar se o usuário está logado
+          const user = localStorage.getItem('orbipay_user');
+          if (user) {
+            const userData = JSON.parse(user);
+            document.getElementById('welcomeUser').textContent = `Olá, ${userData.name}!`;
+            document.getElementById('profileName').textContent = userData.name;
+            document.getElementById('profileEmail').textContent = userData.email;
+            updateBalance();
+            updateHistory();
+            updateRedeemHistory();
+            document.getElementById('app').classList.remove('hidden');
+          } else {
+            showLogin();
+          }
+        }, 500);
+      }, 2000);
+
+      // Configuração do formulário de suporte
+      document.getElementById('supportForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        alert('Mensagem enviada com sucesso. Entraremos em contato em breve!');
+        this.reset();
+      });
     });
 
     // Funções de navegação
@@ -1085,6 +1219,10 @@
     }
 
     function showRedeem() {
+      const user = JSON.parse(localStorage.getItem('orbipay_user'));
+      if (user) {
+        document.getElementById('paypalEmailInput').value = user.paypalEmail || '';
+      }
       hideAllScreens();
       document.getElementById('redeemScreen').classList.remove('hidden');
     }
@@ -1203,6 +1341,12 @@
         localStorage.setItem('orbipay_user', JSON.stringify(user));
         document.getElementById('loginScreen').classList.add('hidden');
         document.getElementById('app').classList.remove('hidden');
+        document.getElementById('welcomeUser').textContent = `Olá, ${user.name}!`;
+        document.getElementById('profileName').textContent = user.name;
+        document.getElementById('profileEmail').textContent = user.email;
+        updateBalance();
+        updateHistory();
+        updateRedeemHistory();
         alert('Login bem-sucedido!');
       } else {
         alert('E-mail ou senha incorretos.');
@@ -1241,7 +1385,16 @@
         paypalEmail,
         password,
         balance: 100, // Bônus de boas-vindas
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        history: [
+          {
+            amount: 100,
+            type: 'Bônus de boas-vindas',
+            time: new Date().toLocaleString('pt-BR'),
+            icon: 'gift'
+          }
+        ],
+        redeemHistory: []
       };
 
       users.push(newUser);
@@ -1250,6 +1403,12 @@
 
       document.getElementById('signupScreen').classList.add('hidden');
       document.getElementById('app').classList.remove('hidden');
+      document.getElementById('welcomeUser').textContent = `Olá, ${newUser.name}!`;
+      document.getElementById('profileName').textContent = newUser.name;
+      document.getElementById('profileEmail').textContent = newUser.email;
+      updateBalance();
+      updateHistory();
+      updateRedeemHistory();
       alert('Cadastro realizado com sucesso!');
     });
 
