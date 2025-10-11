@@ -438,6 +438,128 @@
       overflow-y: auto;
     }
 
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    .admin-header h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .admin-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .admin-card h3 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 1rem;
+    }
+
+    .admin-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .admin-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .admin-input-group label {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #374151;
+    }
+    .admin-input-group input,
+    .admin-input-group textarea,
+    .admin-input-group select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border 0.2s;
+    }
+    .admin-input-group input:focus,
+    .admin-input-group textarea:focus,
+    .admin-input-group select:focus {
+      border-color: #7E3FF0;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(126, 63, 240, 0.1);
+    }
+
+    .admin-buttons {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .admin-btn-primary {
+      background: linear-gradient(135deg, #7E3FF0, #6A30D0);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .admin-btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(126, 63, 240, 0.3);
+    }
+    .admin-btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .admin-btn-secondary {
+      background: #f3f4f6;
+      color: #374151;
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .admin-btn-secondary:hover {
+      background: #e5e7eb;
+    }
+
+    .admin-list {
+      margin-top: 1rem;
+    }
+    .admin-list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+    }
+    .admin-list-item:last-child {
+      margin-bottom: 0;
+    }
+    .admin-list-item .actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
     /* Ad Popup */
     .ad-popup {
       position: fixed;
@@ -478,6 +600,50 @@
     .ad-close-btn {
       display: none;
       margin-top: 1rem;
+    }
+
+    /* Anúncio Global no Dashboard */
+    .global-ad {
+      background: linear-gradient(135deg, #f8f6ff, #ede9fe);
+      border: 2px dashed #7E3FF0;
+      border-radius: 12px;
+      padding: 1rem;
+      margin: 1rem 0;
+      display: none;
+    }
+    .global-ad h3 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 0.5rem;
+    }
+    .global-ad p {
+      font-size: 0.875rem;
+      color: #6b7280;
+      margin-bottom: 1rem;
+    }
+    .global-ad .ad-reward {
+      background: #f3f4f6;
+      padding: 0.5rem;
+      border-radius: 8px;
+      display: inline-block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-right: 0.5rem;
+    }
+    .global-ad button {
+      background: #7E3FF0;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .global-ad button:hover {
+      background: #6A30D0;
     }
   </style>
 </head>
@@ -700,51 +866,122 @@
   <!-- PAINEL ADMIN -->
   <div id="adminPanel" class="hidden admin-panel">
     <div class="admin-container">
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="text-xl font-bold">Painel Administrativo</h2>
+      <div class="admin-header">
+        <h2>Painel Administrativo</h2>
         <button class="text-gray-500" onclick="closeAdminPanel()"><i class="fas fa-times"></i></button>
       </div>
 
-      <div class="mb-6">
-        <h3 class="font-semibold mb-2">Enviar Novo Anúncio</h3>
-        <form id="adminAdForm">
-          <div class="mb-4">
-            <label class="block text-sm font-medium mb-2">Título</label>
-            <input type="text" id="adTitle" class="w-full p-3 border border-gray-300 rounded-lg" required />
+      <div class="admin-card">
+        <h3>Enviar Anúncio Global</h3>
+        <p class="text-sm text-gray-600 mb-4">Este anúncio aparecerá no dashboard inicial de todos os usuários.</p>
+        <form id="adminGlobalAdForm">
+          <div class="admin-input-group">
+            <label>Título</label>
+            <input type="text" id="globalAdTitle" required />
           </div>
-          <div class="mb-4">
-            <label class="block text-sm font-medium mb-2">URL do Vídeo</label>
-            <input type="text" id="adVideoUrl" class="w-full p-3 border border-gray-300 rounded-lg" required />
+          <div class="admin-input-group">
+            <label>URL do Vídeo</label>
+            <input type="text" id="globalAdVideoUrl" required />
           </div>
-          <div class="mb-4">
-            <label class="block text-sm font-medium mb-2">Descrição</label>
-            <textarea id="adDescription" class="w-full p-3 border border-gray-300 rounded-lg" rows="3"></textarea>
+          <div class="admin-input-group">
+            <label>Descrição</label>
+            <textarea id="globalAdDescription" rows="3"></textarea>
           </div>
-          <div class="mb-4">
-            <label class="block text-sm font-medium mb-2">Tempo de Exibição (segundos)</label>
-            <input type="number" id="adDuration" class="w-full p-3 border border-gray-300 rounded-lg" required />
+          <div class="admin-input-group">
+            <label>Tempo de Exibição (segundos)</label>
+            <input type="number" id="globalAdDuration" required />
           </div>
-          <div class="mb-4">
-            <label class="block text-sm font-medium mb-2">URL do Botão de Ação</label>
-            <input type="text" id="adActionUrl" class="w-full p-3 border border-gray-300 rounded-lg" />
+          <div class="admin-input-group">
+            <label>URL do Botão de Ação</label>
+            <input type="text" id="globalAdActionUrl" />
           </div>
-          <div class="mb-4">
-            <label class="block text-sm font-medium mb-2">Recompensa (OrbiCoins)</label>
-            <input type="number" id="adReward" step="0.01" class="w-full p-3 border border-gray-300 rounded-lg" required />
+          <div class="admin-input-group">
+            <label>Recompensa (OrbiCoins)</label>
+            <input type="number" id="globalAdReward" step="0.01" required />
           </div>
-          <button type="submit" class="btn-primary w-full py-3 rounded-lg">Enviar Anúncio</button>
+          <div class="admin-buttons">
+            <button type="submit" class="admin-btn-primary">Enviar Anúncio Global</button>
+          </div>
         </form>
       </div>
 
-      <div class="mb-6">
-        <h3 class="font-semibold mb-2">Controle de Usuários</h3>
-        <button class="w-full text-left p-3 border border-gray-300 rounded-lg text-sm mb-2">Verificar Histórico de Usuários</button>
-        <button class="w-full text-left p-3 border border-gray-300 rounded-lg text-sm mb-2">Editar Saldo de Usuário</button>
-        <button class="w-full text-left p-3 border border-gray-300 rounded-lg text-sm mb-2">Suspender/Reativar Conta</button>
-        <button class="w-full text-left p-3 border border-gray-300 rounded-lg text-sm">Exportar Dados</button>
+      <div class="admin-card">
+        <h3>Enviar Anúncio Normal (na aba Anúncios)</h3>
+        <p class="text-sm text-gray-600 mb-4">Este anúncio aparecerá apenas na aba "Anúncios", onde os usuários escolhem quais assistir.</p>
+        <form id="adminAdForm">
+          <div class="admin-input-group">
+            <label>Título</label>
+            <input type="text" id="adTitle" required />
+          </div>
+          <div class="admin-input-group">
+            <label>URL do Vídeo</label>
+            <input type="text" id="adVideoUrl" required />
+          </div>
+          <div class="admin-input-group">
+            <label>Descrição</label>
+            <textarea id="adDescription" rows="3"></textarea>
+          </div>
+          <div class="admin-input-group">
+            <label>Tempo de Exibição (segundos)</label>
+            <input type="number" id="adDuration" required />
+          </div>
+          <div class="admin-input-group">
+            <label>URL do Botão de Ação</label>
+            <input type="text" id="adActionUrl" />
+          </div>
+          <div class="admin-input-group">
+            <label>Recompensa (OrbiCoins)</label>
+            <input type="number" id="adReward" step="0.01" required />
+          </div>
+          <div class="admin-buttons">
+            <button type="submit" class="admin-btn-primary">Enviar Anúncio</button>
+          </div>
+        </form>
       </div>
 
-      <button class="w-full mt-4 text-red-600 font-medium" onclick="logout()">Sair</button>
+      <div class="admin-card">
+        <h3>Controle de Usuários</h3>
+        <div class="admin-list">
+          <div class="admin-list-item">
+            <span>Verificar Histórico de Usuários</span>
+            <div class="actions">
+              <button class="admin-btn-secondary">Ver</button>
+            </div>
+          </div>
+          <div class="admin-list-item">
+            <span>Editar Saldo de Usuário</span>
+            <div class="actions">
+              <button class="admin-btn-secondary">Editar</button>
+            </div>
+          </div>
+          <div class="admin-list-item">
+            <span>Suspender/Reativar Conta</span>
+            <div class="actions">
+              <button class="admin-btn-secondary">Gerenciar</button>
+            </div>
+          </div>
+          <div class="admin-list-item">
+            <span>Exportar Dados</span>
+            <div class="actions">
+              <button class="admin-btn-secondary">Exportar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6">
+        <button class="w-full admin-btn-primary" onclick="logout()">Sair</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ANÚNCIO GLOBAL NO DASHBOARD -->
+  <div id="globalAd" class="hidden global-ad">
+    <h3 id="globalAdTitle">Título do Anúncio Global</h3>
+    <p id="globalAdDescription">Descrição do anúncio...</p>
+    <div class="flex items-center space-x-2">
+      <span id="globalAdReward" class="ad-reward">+0.00 OrbiCoins</span>
+      <button id="globalAdBtn">Assistir Agora</button>
     </div>
   </div>
 
@@ -776,6 +1013,11 @@
       </div>
       <div class="app-title">Orbipay</div>
     </header>
+
+    <!-- Anúncio Global -->
+    <div id="globalAdContainer" class="p-4">
+      <!-- Anúncio Global será inserido aqui -->
+    </div>
 
     <!-- Saldo Principal -->
     <section class="p-4">
@@ -1423,6 +1665,31 @@
       document.getElementById('app').classList.remove('hidden');
     }
 
+    // Função para mostrar anúncio global no dashboard
+    function showGlobalAd() {
+      const globalAd = JSON.parse(localStorage.getItem('orbipay_global_ad'));
+      const globalAdContainer = document.getElementById('globalAdContainer');
+      globalAdContainer.innerHTML = '';
+
+      if (!globalAd) return;
+
+      const adCard = document.createElement('div');
+      adCard.className = 'global-ad';
+      adCard.innerHTML = `
+        <h3>${globalAd.title}</h3>
+        <p>${globalAd.description}</p>
+        <div class="flex items-center space-x-2">
+          <span class="ad-reward">+${globalAd.reward.toFixed(2)} OrbiCoins</span>
+          <button id="globalAdBtn" class="btn-primary py-1 px-3 text-sm">Assistir Agora</button>
+        </div>
+      `;
+      globalAdContainer.appendChild(adCard);
+
+      document.getElementById('globalAdBtn').addEventListener('click', () => {
+        showAdPopup(globalAd);
+      });
+    }
+
     // Splash Screen
     document.addEventListener('DOMContentLoaded', function() {
       setTimeout(() => {
@@ -1448,6 +1715,7 @@
               updateBalance();
               updateHistory();
               updateRedeemHistory();
+              showGlobalAd(); // Mostrar anúncio global
               document.getElementById('app').classList.remove('hidden');
             }
           } else {
@@ -1463,7 +1731,7 @@
         this.reset();
       });
 
-      // Configuração do formulário de anúncio admin
+      // Configuração do formulário de anúncio admin (normal)
       document.getElementById('adminAdForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const ad = {
@@ -1485,12 +1753,34 @@
         closeAdminPanel();
         showAds();
       });
+
+      // Configuração do formulário de anúncio admin (global)
+      document.getElementById('adminGlobalAdForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const ad = {
+          title: document.getElementById('globalAdTitle').value,
+          videoUrl: document.getElementById('globalAdVideoUrl').value,
+          description: document.getElementById('globalAdDescription').value,
+          duration: parseInt(document.getElementById('globalAdDuration').value),
+          actionUrl: document.getElementById('globalAdActionUrl').value,
+          reward: parseFloat(document.getElementById('globalAdReward').value),
+          createdAt: new Date().toISOString()
+        };
+
+        localStorage.setItem('orbipay_global_ad', JSON.stringify(ad));
+
+        alert('Anúncio Global enviado com sucesso!');
+        this.reset();
+        closeAdminPanel();
+        showGlobalAd(); // Atualizar o anúncio global no dashboard
+      });
     });
 
     // Funções de navegação
     function showHome() {
       hideAllScreens();
       document.getElementById('app').classList.remove('hidden');
+      showGlobalAd(); // Garantir que o anúncio global apareça
     }
 
     function showRedeem() {
@@ -1622,6 +1912,7 @@
           updateBalance();
           updateHistory();
           updateRedeemHistory();
+          showGlobalAd(); // Mostrar anúncio global
         }
       } else {
         alert('E-mail ou senha incorretos.');
@@ -1687,6 +1978,7 @@
       updateBalance();
       updateHistory();
       updateRedeemHistory();
+      showGlobalAd(); // Mostrar anúncio global
       alert('Cadastro realizado com sucesso!');
     });
 
