@@ -50,36 +50,51 @@
       font-weight: 600;
     }
 
-    /* Onboarding */
-    .onboarding-slide {
-      display: none;
-      animation: fadeInUp 0.6s ease-out;
+    /* Splash Screen */
+    .splash {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #f8f6ff, #ede9fe);
+      z-index: 9999;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
     }
-    .onboarding-slide.active {
-      display: block;
-    }
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .dot-indicator {
-      width: 8px;
-      height: 8px;
-      background: #d1d5db;
-      border-radius: 50%;
-      margin: 0 4px;
-      transition: background 0.3s;
-      cursor: pointer;
-    }
-    .dot-indicator.active {
+    .splash-logo {
+      width: 80px;
+      height: 80px;
       background: #7E3FF0;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    .splash-logo svg {
+      width: 40px;
+      height: 40px;
+      fill: white;
+    }
+    .splash-text {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #4B5563;
+      opacity: 0;
+      animation: type 2s steps(10) forwards;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    @keyframes type {
+      from { width: 0; }
+      to { width: 100%; }
     }
 
     /* Título centralizado */
@@ -94,80 +109,144 @@
       font-weight: 600;
       color: #4B5563;
     }
+
+    /* Anúncios */
+    .ad-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      transition: transform 0.2s;
+    }
+    .ad-card:hover {
+      transform: translateY(-2px);
+    }
+    .ad-thumbnail {
+      height: 120px;
+      background: #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: #9ca3af;
+    }
+    .ad-info {
+      padding: 16px;
+    }
+    .ad-reward {
+      background: #f3f4f6;
+      padding: 8px;
+      border-radius: 8px;
+      display: inline-block;
+      margin-top: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    /* Suporte */
+    .faq-item {
+      border-bottom: 1px solid #e5e7eb;
+      padding: 16px 0;
+    }
+    .faq-question {
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .faq-answer {
+      margin-top: 8px;
+      display: none;
+      color: #6b7280;
+    }
+
+    /* Conta */
+    .profile-header {
+      background: linear-gradient(135deg, #7E3FF0, #6A30D0);
+      color: white;
+      padding: 24px 16px;
+      text-align: center;
+    }
+    .profile-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+      font-size: 1.5rem;
+      color: #7E3FF0;
+    }
+
+    /* Configurações */
+    .setting-item {
+      padding: 16px;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .toggle {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 24px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: #7E3FF0;
+    }
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
   </style>
 </head>
 <body class="min-h-screen pb-24 text-gray-800 relative">
 
-  <!-- ONBOARDING (corrigido e redesenhado) -->
-  <div id="onboarding" class="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center p-6">
-    <div class="w-full max-w-md">
-      <!-- Slide 1 -->
-      <div class="onboarding-slide active" id="slide1">
-        <div class="text-center mb-6">
-          <div class="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg width="40" height="40" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="50" cy="50" r="20" fill="#7E3FF0" />
-              <circle cx="50" cy="25" r="4" fill="#FFD166" />
-            </svg>
-          </div>
-          <h2 class="text-2xl font-bold text-gray-800 mb-2">🌟 Transforme seu tempo em recompensas reais!</h2>
-          <p class="text-gray-600 leading-relaxed">
-            Cada minuto que você passa assistindo vale algo. Sem esforço, sem pressa.
-          </p>
-        </div>
-        <div class="flex justify-between mt-8">
-          <button id="skipBtn" class="text-gray-500 text-sm">Pular</button>
-          <button id="nextBtn1" class="bg-indigo-600 text-white px-4 py-2 rounded-lg">Próximo</button>
-        </div>
-      </div>
-
-      <!-- Slide 2 -->
-      <div class="onboarding-slide" id="slide2">
-        <div class="text-center mb-6">
-          <div class="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <i class="fas fa-film text-3xl text-indigo-600"></i>
-          </div>
-          <h2 class="text-2xl font-bold text-gray-800 mb-2">🎬 Assista anúncios curtos — sem compromisso</h2>
-          <p class="text-gray-600 leading-relaxed">
-            Só quando você quiser. Em qualquer lugar. E ainda ganha recompensas!
-          </p>
-        </div>
-        <div class="flex justify-between mt-8">
-          <button id="prevBtn2" class="text-gray-500 text-sm">Voltar</button>
-          <button id="nextBtn2" class="bg-indigo-600 text-white px-4 py-2 rounded-lg">Próximo</button>
-        </div>
-      </div>
-
-      <!-- Slide 3 -->
-      <div class="onboarding-slide" id="slide3">
-        <div class="text-center mb-6">
-          <div class="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <i class="fas fa-gift text-3xl text-indigo-600"></i>
-          </div>
-          <h2 class="text-2xl font-bold text-gray-800 mb-2">💸 Resgate por dinheiro, presentes ou experiências!</h2>
-          <p class="text-gray-600 leading-relaxed">
-            Escolha o que você quer — e receba direto na sua conta. É mágico.
-          </p>
-        </div>
-        <div class="flex justify-between mt-8">
-          <button id="prevBtn3" class="text-gray-500 text-sm">Voltar</button>
-          <button id="finishBtn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg">Começar Agora</button>
-        </div>
-      </div>
-
-      <!-- Indicadores -->
-      <div class="flex justify-center mt-6 space-x-2">
-        <div class="dot-indicator active" id="dot1"></div>
-        <div class="dot-indicator" id="dot2"></div>
-        <div class="dot-indicator" id="dot3"></div>
-      </div>
+  <!-- SPLASH SCREEN -->
+  <div id="splash" class="splash">
+    <div class="splash-logo">
+      <svg width="40" height="40" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="20" fill="white" />
+        <circle cx="50" cy="25" r="4" fill="#FFD166" />
+      </svg>
     </div>
+    <div class="splash-text">Orbipay</div>
   </div>
 
   <!-- APP PRINCIPAL -->
   <div id="app" class="hidden">
 
-    <!-- Header com Olá, Kelvin! no canto e título centralizado -->
+    <!-- Header -->
     <header class="bg-white p-4 shadow-sm flex justify-between items-center relative">
       <div class="flex items-center space-x-3">
         <div class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-lg">O</div>
@@ -314,6 +393,57 @@
 
   </div>
 
+  <!-- TELA DE ANÚNCIOS -->
+  <div id="adsScreen" class="hidden fixed inset-0 bg-white z-40 p-6 pt-16 overflow-y-auto">
+    <div class="max-w-md mx-auto">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold">Anúncios Disponíveis</h2>
+        <button class="text-gray-500" onclick="closeAds()"><i class="fas fa-times"></i></button>
+      </div>
+
+      <div class="space-y-3">
+        <!-- Anúncio 1 -->
+        <div class="ad-card">
+          <div class="ad-thumbnail">
+            <i class="fab fa-spotify text-4xl"></i>
+          </div>
+          <div class="ad-info">
+            <h3 class="font-semibold">Spotify Premium</h3>
+            <p class="text-sm text-gray-500">Assista 30 segundos e ganhe 0,10 OrbiCoins</p>
+            <div class="ad-reward">+0,10 OrbiCoins</div>
+            <button class="mt-2 btn-primary w-full py-2 rounded-lg text-sm">Assistir Agora</button>
+          </div>
+        </div>
+
+        <!-- Anúncio 2 -->
+        <div class="ad-card">
+          <div class="ad-thumbnail">
+            <i class="fab fa-netflix text-4xl"></i>
+          </div>
+          <div class="ad-info">
+            <h3 class="font-semibold">Netflix Novidades</h3>
+            <p class="text-sm text-gray-500">Assista 25 segundos e ganhe 0,10 OrbiCoins</p>
+            <div class="ad-reward">+0,10 OrbiCoins</div>
+            <button class="mt-2 btn-primary w-full py-2 rounded-lg text-sm">Assistir Agora</button>
+          </div>
+        </div>
+
+        <!-- Anúncio 3 -->
+        <div class="ad-card">
+          <div class="ad-thumbnail">
+            <i class="fab fa-amazon text-4xl"></i>
+          </div>
+          <div class="ad-info">
+            <h3 class="font-semibold">Ofertas Amazon</h3>
+            <p class="text-sm text-gray-500">Assista 40 segundos e ganhe 0,15 OrbiCoins</p>
+            <div class="ad-reward">+0,15 OrbiCoins</div>
+            <button class="mt-2 btn-primary w-full py-2 rounded-lg text-sm">Assistir Agora</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- TELA DE RESGATE -->
   <div id="redeemScreen" class="hidden fixed inset-0 bg-white z-40 p-6 pt-16 overflow-y-auto">
     <div class="max-w-md mx-auto">
@@ -360,64 +490,193 @@
     </div>
   </div>
 
+  <!-- TELA DE SUPORTE -->
+  <div id="supportScreen" class="hidden fixed inset-0 bg-white z-40 p-6 pt-16 overflow-y-auto">
+    <div class="max-w-md mx-auto">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold">Suporte ao Cliente</h2>
+        <button class="text-gray-500" onclick="closeSupport()"><i class="fas fa-times"></i></button>
+      </div>
+
+      <div class="mb-6">
+        <h3 class="font-semibold mb-4">Entre em contato</h3>
+        <form>
+          <div class="mb-4">
+            <label class="block text-sm font-medium mb-2">Nome</label>
+            <input type="text" placeholder="Seu nome" class="w-full p-3 border border-gray-300 rounded-lg" />
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-medium mb-2">E-mail</label>
+            <input type="email" placeholder="seu@email.com" class="w-full p-3 border border-gray-300 rounded-lg" />
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-medium mb-2">Mensagem</label>
+            <textarea rows="4" placeholder="Como podemos ajudar?" class="w-full p-3 border border-gray-300 rounded-lg"></textarea>
+          </div>
+          <button type="submit" class="btn-primary w-full py-3 rounded-lg">Enviar Mensagem</button>
+        </form>
+      </div>
+
+      <div class="mb-6">
+        <h3 class="font-semibold mb-4">Perguntas Frequentes</h3>
+        <div class="space-y-4">
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+              Como ganho OrbiCoins?
+              <i class="fas fa-chevron-down text-sm"></i>
+            </div>
+            <div class="faq-answer">
+              Assistindo anúncios curtos. Cada anúncio completo te dá entre 0,10 e 0,20 OrbiCoins.
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+              Quanto tempo leva para receber meu resgate?
+              <i class="fas fa-chevron-down text-sm"></i>
+            </div>
+            <div class="faq-answer">
+              O processamento leva até 24 horas úteis após a confirmação.
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+              Posso usar meu saldo em outras plataformas?
+              <i class="fas fa-chevron-down text-sm"></i>
+            </div>
+            <div class="faq-answer">
+              Por enquanto, apenas via PayPal. Em breve, adicionaremos mais opções!
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TELA DE CONTA -->
+  <div id="profileScreen" class="hidden fixed inset-0 bg-white z-40 p-6 pt-16 overflow-y-auto">
+    <div class="max-w-md mx-auto">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold">Minha Conta</h2>
+        <button class="text-gray-500" onclick="closeProfile()"><i class="fas fa-times"></i></button>
+      </div>
+
+      <div class="profile-header">
+        <div class="profile-avatar">K</div>
+        <h3 class="text-xl font-bold">Kelvin</h3>
+        <p class="text-sm">kelvin@example.com</p>
+      </div>
+
+      <div class="p-4">
+        <div class="mb-4">
+          <h4 class="font-semibold mb-2">Saldo</h4>
+          <p class="text-2xl font-bold text-indigo-700">1.240 OrbiCoins</p>
+          <p class="text-sm text-gray-500">≈ R$ 124,00</p>
+        </div>
+
+        <div class="mb-4">
+          <h4 class="font-semibold mb-2">Histórico de Resgates</h4>
+          <div class="bg-gray-50 rounded-lg p-3">
+            <p class="text-sm">R$ 50,00 - 10/10/2025</p>
+            <p class="text-sm text-gray-500">Status: Concluído</p>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <h4 class="font-semibold mb-2">Segurança</h4>
+          <button class="w-full text-left p-3 border border-gray-300 rounded-lg text-sm">Alterar Senha</button>
+        </div>
+
+        <div class="mb-4">
+          <h4 class="font-semibold mb-2">Métodos de Pagamento</h4>
+          <button class="w-full text-left p-3 border border-gray-300 rounded-lg text-sm">Adicionar Conta PayPal</button>
+        </div>
+
+        <button class="w-full mt-4 text-red-600 font-medium">Sair da Conta</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TELA DE CONFIGURAÇÕES -->
+  <div id="settingsScreen" class="hidden fixed inset-0 bg-white z-40 p-6 pt-16 overflow-y-auto">
+    <div class="max-w-md mx-auto">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold">Configurações</h2>
+        <button class="text-gray-500" onclick="closeSettings()"><i class="fas fa-times"></i></button>
+      </div>
+
+      <div class="mb-4">
+        <h3 class="font-semibold mb-4">Notificações</h3>
+        <div class="setting-item">
+          <span>Anúncios disponíveis</span>
+          <label class="toggle">
+            <input type="checkbox" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="setting-item">
+          <span>Novas recompensas</span>
+          <label class="toggle">
+            <input type="checkbox" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="setting-item">
+          <span>Atualizações do app</span>
+          <label class="toggle">
+            <input type="checkbox" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <h3 class="font-semibold mb-4">Idioma</h3>
+        <div class="setting-item">
+          <span>Português (Brasil)</span>
+          <i class="fas fa-check text-green-500"></i>
+        </div>
+        <div class="setting-item">
+          <span>Inglês</span>
+          <i class="fas fa-chevron-right text-gray-400"></i>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <h3 class="font-semibold mb-4">Legal</h3>
+        <div class="setting-item">
+          <span>Termos de Uso</span>
+          <i class="fas fa-chevron-right text-gray-400"></i>
+        </div>
+        <div class="setting-item">
+          <span>Política de Privacidade</span>
+          <i class="fas fa-chevron-right text-gray-400"></i>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <h3 class="font-semibold mb-4">Versão do App</h3>
+        <div class="setting-item">
+          <span>v1.0.0</span>
+          <i class="fas fa-sync text-gray-400"></i>
+        </div>
+      </div>
+
+      <button class="w-full mt-4 text-indigo-600 font-medium">Voltar</button>
+    </div>
+  </div>
+
   <!-- Script JS -->
   <script>
-    // Variável global para controlar o slide atual
-    let currentSlide = 1;
-
-    // Função para mostrar um slide específico
-    function showSlide(slideNumber) {
-      document.querySelectorAll('.onboarding-slide').forEach(slide => {
-        slide.classList.remove('active');
-      });
-      document.getElementById(`slide${slideNumber}`).classList.add('active');
-
-      // Atualiza os pontos indicadores
-      document.querySelectorAll('.dot-indicator').forEach((dot, i) => {
-        dot.classList.toggle('active', i + 1 === slideNumber);
-      });
-
-      currentSlide = slideNumber;
-    }
-
-    // Event listeners para os botões
+    // Splash Screen
     document.addEventListener('DOMContentLoaded', function() {
-      // Botão "Pular"
-      document.getElementById('skipBtn').addEventListener('click', function() {
-        document.getElementById('onboarding').style.display = 'none';
-        document.getElementById('app').classList.remove('hidden');
-      });
-
-      // Botão "Próximo" do Slide 1
-      document.getElementById('nextBtn1').addEventListener('click', function() {
-        showSlide(2);
-      });
-
-      // Botão "Voltar" do Slide 2
-      document.getElementById('prevBtn2').addEventListener('click', function() {
-        showSlide(1);
-      });
-
-      // Botão "Próximo" do Slide 2
-      document.getElementById('nextBtn2').addEventListener('click', function() {
-        showSlide(3);
-      });
-
-      // Botão "Voltar" do Slide 3
-      document.getElementById('prevBtn3').addEventListener('click', function() {
-        showSlide(2);
-      });
-
-      // Botão "Começar Agora" do Slide 3
-      document.getElementById('finishBtn').addEventListener('click', function() {
-        document.getElementById('onboarding').style.display = 'none';
-        document.getElementById('app').classList.remove('hidden');
-      });
-
-      // Clique nos pontos indicadores
-      document.getElementById('dot1').addEventListener('click', () => showSlide(1));
-      document.getElementById('dot2').addEventListener('click', () => showSlide(2));
-      document.getElementById('dot3').addEventListener('click', () => showSlide(3));
+      setTimeout(() => {
+        document.getElementById('splash').style.opacity = '0';
+        document.getElementById('splash').style.transition = 'opacity 0.5s ease';
+        setTimeout(() => {
+          document.getElementById('splash').style.display = 'none';
+          document.getElementById('app').classList.remove('hidden');
+        }, 500);
+      }, 2000);
 
       // Histórico de ganhos
       const historyList = document.getElementById('history-list');
@@ -472,14 +731,24 @@
       });
     });
 
-    // Funções de navegação do app
+    // Funções de navegação
     function showHome() {
-      document.getElementById('redeemScreen').classList.add('hidden');
+      hideAllScreens();
+      document.getElementById('app').classList.remove('hidden');
+    }
+
+    function showAds() {
+      hideAllScreens();
+      document.getElementById('adsScreen').classList.remove('hidden');
+    }
+
+    function closeAds() {
+      document.getElementById('adsScreen').classList.add('hidden');
       document.getElementById('app').classList.remove('hidden');
     }
 
     function showRedeem() {
-      document.getElementById('app').classList.add('hidden');
+      hideAllScreens();
       document.getElementById('redeemScreen').classList.remove('hidden');
     }
 
@@ -488,16 +757,59 @@
       document.getElementById('app').classList.remove('hidden');
     }
 
-    function showAds() {
-      alert('Tela de anúncios em desenvolvimento!');
+    function showSupport() {
+      hideAllScreens();
+      document.getElementById('supportScreen').classList.remove('hidden');
     }
 
-    function showSupport() {
-      alert('Entre em contato com nosso suporte via chat!');
+    function closeSupport() {
+      document.getElementById('supportScreen').classList.add('hidden');
+      document.getElementById('app').classList.remove('hidden');
     }
 
     function showProfile() {
-      alert('Tela de perfil em desenvolvimento!');
+      hideAllScreens();
+      document.getElementById('profileScreen').classList.remove('hidden');
+    }
+
+    function closeProfile() {
+      document.getElementById('profileScreen').classList.add('hidden');
+      document.getElementById('app').classList.remove('hidden');
+    }
+
+    function showSettings() {
+      hideAllScreens();
+      document.getElementById('settingsScreen').classList.remove('hidden');
+    }
+
+    function closeSettings() {
+      document.getElementById('settingsScreen').classList.add('hidden');
+      document.getElementById('app').classList.remove('hidden');
+    }
+
+    function hideAllScreens() {
+      document.getElementById('app').classList.add('hidden');
+      document.getElementById('adsScreen').classList.add('hidden');
+      document.getElementById('redeemScreen').classList.add('hidden');
+      document.getElementById('supportScreen').classList.add('hidden');
+      document.getElementById('profileScreen').classList.add('hidden');
+      document.getElementById('settingsScreen').classList.add('hidden');
+    }
+
+    // Toggle FAQ
+    function toggleFAQ(element) {
+      const answer = element.nextElementSibling;
+      const icon = element.querySelector('i');
+      
+      if (answer.style.display === 'block') {
+        answer.style.display = 'none';
+        icon.classList.remove('fa-chevron-up');
+        icon.classList.add('fa-chevron-down');
+      } else {
+        answer.style.display = 'block';
+        icon.classList.remove('fa-chevron-down');
+        icon.classList.add('fa-chevron-up');
+      }
     }
   </script>
 
