@@ -10,6 +10,7 @@
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     body {
       font-family: 'Inter', system-ui, sans-serif;
+      background-color: #f9fafb;
     }
 
     .bg-gradient-orbi {
@@ -48,199 +49,375 @@
       color: #7E3FF0;
       font-weight: 600;
     }
+
+    /* Onboarding */
+    .onboarding-slide {
+      display: none;
+      animation: fadeInUp 0.6s ease-out;
+    }
+    .onboarding-slide.active {
+      display: block;
+    }
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .dot-indicator {
+      width: 8px;
+      height: 8px;
+      background: #d1d5db;
+      border-radius: 50%;
+      margin: 0 4px;
+      transition: background 0.3s;
+    }
+    .dot-indicator.active {
+      background: #7E3FF0;
+    }
   </style>
 </head>
-<body class="bg-gray-50 min-h-screen pb-24 text-gray-800">
+<body class="min-h-screen pb-24 text-gray-800 relative">
 
-  <!-- Header -->
-  <header class="bg-white p-4 shadow-sm flex justify-between items-center">
-    <div class="flex items-center space-x-3">
-      <div class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-lg">O</div>
-      <div>
-        <p class="text-xs text-gray-500">Olá, Kelvin!</p>
-        <p class="font-semibold text-gray-800">Orbipay</p>
-      </div>
-    </div>
-    <button class="text-indigo-600 font-medium text-sm">
-      <i class="fas fa-cog"></i>
-    </button>
-  </header>
-
-  <!-- Saldo Principal -->
-  <section class="p-4">
-    <div class="bg-gradient-orbi rounded-3xl p-6 relative overflow-hidden">
-      <div class="absolute top-0 right-0 w-40 h-40 bg-indigo-50 opacity-20 rounded-full -translate-y-10 translate-x-6"></div>
-      
-      <h2 class="text-sm font-medium text-gray-600 mb-2">Seu saldo</h2>
-      
-      <div class="flex items-center space-x-3 mb-6">
-        <!-- Ícone OrbiCoin Personalizado -->
-        <div class="pulse-coin">
-          <svg width="40" height="40" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="50" cy="50" r="30" fill="#7E3FF0" opacity="0.2" />
-            <circle cx="50" cy="50" r="20" fill="#7E3FF0" />
-            <circle cx="50" cy="25" r="5" fill="#FFD166" />
-            <path d="M50 10 A40 40 0 0 1 90 50" fill="none" stroke="#7E3FF0" stroke-width="2" stroke-dasharray="5,5" opacity="0.6"/>
-          </svg>
-        </div>
-        <div>
-          <div class="flex items-baseline space-x-1">
-            <h1 class="text-3xl font-bold text-indigo-700">1.240</h1>
-            <span class="text-sm font-semibold text-indigo-600">OrbiCoins</span>
-          </div>
-          <p class="text-xs text-gray-500 mt-1">≈ $12,40 USD</p>
-        </div>
-      </div>
-
-      <!-- Botão Principal -->
-      <button id="watchBtn" class="btn-primary w-full py-3.5 rounded-xl font-semibold text-white shadow-lg flex items-center justify-center space-x-2">
-        <i class="fas fa-play-circle text-lg"></i>
-        <span>Assistir Anúncio e Ganhar</span>
-      </button>
-
-      <!-- Benefícios -->
-      <div class="mt-6 grid grid-cols-3 gap-3 text-center">
-        <div class="flex flex-col items-center">
-          <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mb-2">
-            <i class="fas fa-eye text-indigo-600"></i>
-          </div>
-          <span class="text-xs font-medium text-gray-700">Assista</span>
-        </div>
-        <div class="flex flex-col items-center">
-          <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mb-2">
-            <svg width="20" height="20" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- ONBOARDING (oculto por padrão, aparece se for primeira vez) -->
+  <div id="onboarding" class="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center p-6">
+    <div class="w-full max-w-md">
+      <!-- Slide 1 -->
+      <div class="onboarding-slide active" id="slide1">
+        <div class="text-center mb-6">
+          <div class="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg width="40" height="40" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
               <circle cx="50" cy="50" r="20" fill="#7E3FF0" />
               <circle cx="50" cy="25" r="4" fill="#FFD166" />
             </svg>
           </div>
-          <span class="text-xs font-medium text-gray-700">Ganhe</span>
-        </div>
-        <div class="flex flex-col items-center">
-          <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mb-2">
-            <i class="fas fa-wallet text-indigo-600"></i>
-          </div>
-          <span class="text-xs font-medium text-gray-700">Resgate</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Proposta de Valor -->
-  <section class="px-4 py-3">
-    <div class="bg-white rounded-xl p-4 border border-indigo-100 shadow-sm">
-      <div class="flex items-start space-x-3">
-        <div class="mt-0.5 w-2 h-2 bg-indigo-500 rounded-full"></div>
-        <div>
-          <h3 class="font-bold text-indigo-700 mb-1">💡 Transforme seu tempo em dinheiro!</h3>
-          <p class="text-sm text-gray-600 leading-relaxed">
-            Assista a anúncios de nossos parceiros e ganhe <strong>OrbiCoins</strong>. 
-            Troque por recompensas reais via <strong>PayPal</strong>. 
-            Quanto mais você assiste, mais você ganha. 
-            É simples, rápido e seguro.
+          <h2 class="text-2xl font-bold text-gray-800 mb-2">Bem-vindo ao Orbipay!</h2>
+          <p class="text-gray-600 leading-relaxed">
+            Transforme seu tempo em dinheiro. Assista anúncios e ganhe OrbiCoins.
           </p>
         </div>
+        <div class="flex justify-between mt-8">
+          <button class="text-gray-500 text-sm" onclick="skipOnboarding()">Pular</button>
+          <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg" onclick="nextSlide(1)">Próximo</button>
+        </div>
+      </div>
+
+      <!-- Slide 2 -->
+      <div class="onboarding-slide" id="slide2">
+        <div class="text-center mb-6">
+          <div class="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-play-circle text-3xl text-indigo-600"></i>
+          </div>
+          <h2 class="text-2xl font-bold text-gray-800 mb-2">Cada anúncio = +0,10 OrbiCoins</h2>
+          <p class="text-gray-600 leading-relaxed">
+            Assista vídeos curtos e acumule moedas. Quanto mais você assiste, mais você ganha!
+          </p>
+        </div>
+        <div class="flex justify-between mt-8">
+          <button class="text-gray-500 text-sm" onclick="prevSlide(2)">Voltar</button>
+          <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg" onclick="nextSlide(2)">Próximo</button>
+        </div>
+      </div>
+
+      <!-- Slide 3 -->
+      <div class="onboarding-slide" id="slide3">
+        <div class="text-center mb-6">
+          <div class="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fab fa-paypal text-3xl text-indigo-600"></i>
+          </div>
+          <h2 class="text-2xl font-bold text-gray-800 mb-2">Resgate para PayPal</h2>
+          <p class="text-gray-600 leading-relaxed">
+            Troque seus OrbiCoins por dinheiro real. 1 OrbiCoin = R$ 0,10. Mínimo: 100 OrbiCoins.
+          </p>
+        </div>
+        <div class="flex justify-between mt-8">
+          <button class="text-gray-500 text-sm" onclick="prevSlide(3)">Voltar</button>
+          <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg" onclick="finishOnboarding()">Começar Agora</button>
+        </div>
+      </div>
+
+      <!-- Indicadores -->
+      <div class="flex justify-center mt-6 space-x-2">
+        <div class="dot-indicator active" onclick="goToSlide(1)"></div>
+        <div class="dot-indicator" onclick="goToSlide(2)"></div>
+        <div class="dot-indicator" onclick="goToSlide(3)"></div>
       </div>
     </div>
-  </section>
+  </div>
 
-  <!-- Histórico -->
-  <section class="px-4 py-3">
-    <div class="flex justify-between items-center mb-4">
-      <h2 class="text-lg font-semibold">Histórico de Ganho</h2>
-      <button class="text-indigo-600 text-sm font-medium">Ver tudo</button>
+  <!-- APP PRINCIPAL (oculto até finalizar onboarding) -->
+  <div id="app" class="hidden">
+
+    <!-- Header -->
+    <header class="bg-white p-4 shadow-sm flex justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-lg">O</div>
+        <div>
+          <p class="text-xs text-gray-500">Olá, Kelvin!</p>
+          <p class="font-semibold text-gray-800">Orbipay</p>
+        </div>
+      </div>
+      <button class="text-indigo-600 font-medium text-sm">
+        <i class="fas fa-cog"></i>
+      </button>
+    </header>
+
+    <!-- Saldo Principal -->
+    <section class="p-4">
+      <div class="bg-gradient-orbi rounded-3xl p-6 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-40 h-40 bg-indigo-50 opacity-20 rounded-full -translate-y-10 translate-x-6"></div>
+        
+        <h2 class="text-sm font-medium text-gray-600 mb-2">Seu saldo</h2>
+        
+        <div class="flex items-center space-x-3 mb-6">
+          <!-- Ícone OrbiCoin Personalizado -->
+          <div class="pulse-coin">
+            <svg width="40" height="40" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="50" cy="50" r="30" fill="#7E3FF0" opacity="0.2" />
+              <circle cx="50" cy="50" r="20" fill="#7E3FF0" />
+              <circle cx="50" cy="25" r="5" fill="#FFD166" />
+              <path d="M50 10 A40 40 0 0 1 90 50" fill="none" stroke="#7E3FF0" stroke-width="2" stroke-dasharray="5,5" opacity="0.6"/>
+            </svg>
+          </div>
+          <div>
+            <div class="flex items-baseline space-x-1">
+              <h1 class="text-3xl font-bold text-indigo-700">1.240</h1>
+              <span class="text-sm font-semibold text-indigo-600">OrbiCoins</span>
+            </div>
+            <p class="text-xs text-gray-500 mt-1">≈ R$ 124,00</p>
+          </div>
+        </div>
+
+        <!-- Botão Principal -->
+        <button id="watchBtn" class="btn-primary w-full py-3.5 rounded-xl font-semibold text-white shadow-lg flex items-center justify-center space-x-2">
+          <i class="fas fa-play-circle text-lg"></i>
+          <span>Assistir Anúncio e Ganhar</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Proposta de Valor -->
+    <section class="px-4 py-3">
+      <div class="bg-white rounded-xl p-4 border border-indigo-100 shadow-sm">
+        <div class="flex items-start space-x-3">
+          <div class="mt-0.5 w-2 h-2 bg-indigo-500 rounded-full"></div>
+          <div>
+            <h3 class="font-bold text-indigo-700 mb-1">💡 Transforme seu tempo em dinheiro!</h3>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              Assista a anúncios de nossos parceiros e ganhe <strong>OrbiCoins</strong>. 
+              Troque por recompensas reais via <strong>PayPal</strong>. 
+              Quanto mais você assiste, mais você ganha. 
+              É simples, rápido e seguro.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Recompensas Disponíveis -->
+    <section class="px-4 py-3">
+      <h2 class="text-lg font-semibold mb-4">Recompensas Disponíveis</h2>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="bg-white rounded-xl p-4 shadow-sm card-hover flex items-center space-x-3">
+          <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600">
+            <i class="fas fa-gift"></i>
+          </div>
+          <div>
+            <p class="font-semibold">R$ 10,00</p>
+            <p class="text-xs text-gray-500">100 OrbiCoins</p>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl p-4 shadow-sm card-hover flex items-center space-x-3">
+          <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
+            <i class="fas fa-gift"></i>
+          </div>
+          <div>
+            <p class="font-semibold">R$ 50,00</p>
+            <p class="text-xs text-gray-500">500 OrbiCoins</p>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl p-4 shadow-sm card-hover flex items-center space-x-3">
+          <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center text-purple-600">
+            <i class="fas fa-gift"></i>
+          </div>
+          <div>
+            <p class="font-semibold">R$ 100,00</p>
+            <p class="text-xs text-gray-500">1.000 OrbiCoins</p>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl p-4 shadow-sm card-hover flex items-center space-x-3">
+          <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center text-orange-600">
+            <i class="fas fa-gift"></i>
+          </div>
+          <div>
+            <p class="font-semibold">R$ 200,00</p>
+            <p class="text-xs text-gray-500">2.000 OrbiCoins</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Histórico -->
+    <section class="px-4 py-3">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-semibold">Histórico de Ganho</h2>
+        <button class="text-indigo-600 text-sm font-medium">Ver tudo</button>
+      </div>
+
+      <div class="space-y-3" id="history-list">
+        <!-- Os cards serão animados via JS -->
+      </div>
+    </section>
+
+    <!-- Barra de Navegação -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 flex justify-around">
+      <button class="flex flex-col items-center text-indigo-600 nav-item active" onclick="showHome()">
+        <i class="fas fa-home text-lg"></i>
+        <span class="text-xs mt-1">Início</span>
+      </button>
+      <button class="flex flex-col items-center text-gray-500 nav-item" onclick="showAds()">
+        <i class="fas fa-ad text-lg"></i>
+        <span class="text-xs mt-1">Anúncios</span>
+      </button>
+      <button class="flex flex-col items-center text-gray-500 nav-item" onclick="showRedeem()">
+        <i class="fas fa-exchange-alt text-lg"></i>
+        <span class="text-xs mt-1">Resgatar</span>
+      </button>
+      <button class="flex flex-col items-center text-gray-500 nav-item" onclick="showSupport()">
+        <i class="fas fa-headset text-lg"></i>
+        <span class="text-xs mt-1">Suporte</span>
+      </button>
+      <button class="flex flex-col items-center text-gray-500 nav-item" onclick="showProfile()">
+        <i class="fas fa-user text-lg"></i>
+        <span class="text-xs mt-1">Conta</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <!-- TELA DE RESGATE -->
+  <div id="redeemScreen" class="hidden fixed inset-0 bg-white z-40 p-6 pt-16 overflow-y-auto">
+    <div class="max-w-md mx-auto">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold">Resgatar para PayPal</h2>
+        <button class="text-gray-500" onclick="closeRedeem()"><i class="fas fa-times"></i></button>
+      </div>
+
+      <div class="bg-indigo-50 rounded-xl p-4 mb-6">
+        <p class="text-sm text-gray-600 mb-2">Saldo disponível:</p>
+        <div class="flex items-center space-x-2">
+          <h3 class="text-2xl font-bold text-indigo-700">1.240</h3>
+          <span class="text-sm font-medium text-indigo-600">OrbiCoins</span>
+        </div>
+        <p class="text-xs text-gray-500 mt-1">≈ R$ 124,00</p>
+      </div>
+
+      <div class="mb-6">
+        <label class="block text-sm font-medium mb-2">E-mail do PayPal</label>
+        <input type="email" placeholder="seu@email.com" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+      </div>
+
+      <div class="mb-6">
+        <label class="block text-sm font-medium mb-2">Valor a resgatar</label>
+        <select class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+          <option value="100">R$ 10,00 (100 OrbiCoins)</option>
+          <option value="500">R$ 50,00 (500 OrbiCoins)</option>
+          <option value="1000">R$ 100,00 (1.000 OrbiCoins)</option>
+          <option value="1240">R$ 124,00 (1.240 OrbiCoins)</option>
+        </select>
+      </div>
+
+      <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+        <p class="text-sm text-yellow-800">
+          ⚠️ Mínimo de resgate: 100 OrbiCoins (R$ 10,00). Taxa zero. Processamento em até 24h.
+        </p>
+      </div>
+
+      <button class="btn-primary w-full py-3.5 rounded-xl font-semibold text-white shadow-lg">
+        Confirmar Resgate
+      </button>
+
+      <button class="w-full mt-4 text-indigo-600 font-medium" onclick="closeRedeem()">Cancelar</button>
     </div>
-
-    <div class="space-y-3" id="history-list">
-      <!-- Os cards serão animados via JS -->
-    </div>
-  </section>
-
-  <!-- Barra de Navegação -->
-  <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 flex justify-around">
-    <button class="flex flex-col items-center text-indigo-600 nav-item active">
-      <i class="fas fa-home text-lg"></i>
-      <span class="text-xs mt-1">Início</span>
-    </button>
-    <button class="flex flex-col items-center text-gray-500 nav-item">
-      <i class="fas fa-ad text-lg"></i>
-      <span class="text-xs mt-1">Anúncios</span>
-    </button>
-    <button class="flex flex-col items-center text-gray-500 nav-item">
-      <i class="fas fa-exchange-alt text-lg"></i>
-      <span class="text-xs mt-1">Resgatar</span>
-    </button>
-    <button class="flex flex-col items-center text-gray-500 nav-item">
-      <i class="fas fa-headset text-lg"></i>
-      <span class="text-xs mt-1">Suporte</span>
-    </button>
-    <button class="flex flex-col items-center text-gray-500 nav-item">
-      <i class="fas fa-user text-lg"></i>
-      <span class="text-xs mt-1">Conta</span>
-    </button>
-  </nav>
+  </div>
 
   <!-- Script JS -->
   <script>
+    // Onboarding
+    let currentSlide = 1;
+
+    function nextSlide(slide) {
+      document.getElementById(`slide${slide}`).classList.remove('active');
+      document.getElementById(`slide${slide + 1}`).classList.add('active');
+      updateDots(slide + 1);
+      currentSlide = slide + 1;
+    }
+
+    function prevSlide(slide) {
+      document.getElementById(`slide${slide}`).classList.remove('active');
+      document.getElementById(`slide${slide - 1}`).classList.add('active');
+      updateDots(slide - 1);
+      currentSlide = slide - 1;
+    }
+
+    function goToSlide(slide) {
+      document.querySelectorAll('.onboarding-slide').forEach(s => s.classList.remove('active'));
+      document.getElementById(`slide${slide}`).classList.add('active');
+      updateDots(slide);
+      currentSlide = slide;
+    }
+
+    function updateDots(active) {
+      document.querySelectorAll('.dot-indicator').forEach((dot, i) => {
+        dot.classList.toggle('active', i + 1 === active);
+      });
+    }
+
+    function skipOnboarding() {
+      document.getElementById('onboarding').style.display = 'none';
+      document.getElementById('app').classList.remove('hidden');
+    }
+
+    function finishOnboarding() {
+      document.getElementById('onboarding').style.display = 'none';
+      document.getElementById('app').classList.remove('hidden');
+    }
+
+    // App Principal
+    function showHome() {
+      document.getElementById('redeemScreen').classList.add('hidden');
+      document.getElementById('app').classList.remove('hidden');
+    }
+
+    function showRedeem() {
+      document.getElementById('app').classList.add('hidden');
+      document.getElementById('redeemScreen').classList.remove('hidden');
+    }
+
+    function closeRedeem() {
+      document.getElementById('redeemScreen').classList.add('hidden');
+      document.getElementById('app').classList.remove('hidden');
+    }
+
+    function showAds() {
+      alert('Tela de anúncios em desenvolvimento!');
+    }
+
+    function showSupport() {
+      alert('Entre em contato com nosso suporte via chat!');
+    }
+
+    function showProfile() {
+      alert('Tela de perfil em desenvolvimento!');
+    }
+
+    // Histórico de ganhos
     document.addEventListener('DOMContentLoaded', function() {
-      // Dados de exemplo
-      const history = [
-        { amount: 25, type: 'Anúncio assistido', time: 'Hoje, 14:30', icon: 'tv', color: 'green' },
-        { amount: 40, type: 'Anúncio premium', time: 'Ontem, 19:15', icon: 'star', color: 'purple' },
-        { amount: 100, type: 'Bônus de boas-vindas', time: '10/10/2025', icon: 'gift', color: 'blue' },
-        { amount: 15, type: 'Anúncio rápido', time: '10/10/2025', icon: 'clock', color: 'amber' }
-      ];
-
       const historyList = document.getElementById('history-list');
-      history.forEach((item, i) => {
-        const card = document.createElement('div');
-        card.className = 'bg-white rounded-xl p-4 shadow-sm card-hover opacity-0';
-        card.innerHTML = `
-          <div class="flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-              <div class="w-10 h-10 bg-${item.color}-100 rounded-full flex items-center justify-center text-${item.color}-600">
-                <i class="fas fa-${item.icon}"></i>
-              </div>
-              <div>
-                <p class="font-semibold">+${item.amount} OrbiCoins</p>
-                <p class="text-xs text-gray-500">${item.type}</p>
-              </div>
-            </div>
-            <div class="text-right text-sm text-gray-500">${item.time}</div>
-          </div>
-        `;
-        historyList.appendChild(card);
-
-        // Animação de entrada
-        setTimeout(() => {
-          card.style.transition = 'opacity 0.5s, transform 0.5s';
-          card.style.opacity = '1';
-          card.style.transform = 'translateY(0)';
-        }, 200 * i);
-      });
-
-      // Botão principal com feedback
-      const watchBtn = document.getElementById('watchBtn');
-      watchBtn.addEventListener('click', function() {
-        const originalText = watchBtn.innerHTML;
-        watchBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> Carregando anúncio...`;
-        watchBtn.disabled = true;
-
-        setTimeout(() => {
-          alert('🎉 Anúncio iniciado! Após assistir, você receberá OrbiCoins.');
-          watchBtn.innerHTML = originalText;
-          watchBtn.disabled = false;
-        }, 1500);
-      });
-
-      // Navegação
-      document.querySelectorAll('.nav-item').forEach(btn => {
-        btn.addEventListener('click', () => {
-          document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-        });
-      });
-    });
-  </script>
-
-</body>
-</html>
+      
+     
