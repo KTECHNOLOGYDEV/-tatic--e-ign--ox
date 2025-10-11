@@ -430,7 +430,7 @@
     }
     .admin-container {
       width: 90%;
-      max-width: 800px;
+      max-width: 1000px;
       background: white;
       border-radius: 16px;
       padding: 2rem;
@@ -644,6 +644,39 @@
     }
     .global-ad button:hover {
       background: #6A30D0;
+    }
+
+    /* Admin Dashboard */
+    .admin-dashboard {
+      display: none;
+    }
+    .admin-dashboard .admin-title {
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+    .admin-dashboard .admin-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .admin-stats-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      text-align: center;
+    }
+    .admin-stats-card h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #7E3FF0;
+    }
+    .admin-stats-card p {
+      font-size: 0.875rem;
+      color: #6b7280;
     }
   </style>
 </head>
@@ -877,11 +910,11 @@
         <form id="adminGlobalAdForm">
           <div class="admin-input-group">
             <label>Título</label>
-            <input type="text" id="globalAdTitle" required />
+            <input type="text" id="globalAdTitle" />
           </div>
           <div class="admin-input-group">
             <label>URL do Vídeo</label>
-            <input type="text" id="globalAdVideoUrl" required />
+            <input type="text" id="globalAdVideoUrl" />
           </div>
           <div class="admin-input-group">
             <label>Descrição</label>
@@ -889,7 +922,7 @@
           </div>
           <div class="admin-input-group">
             <label>Tempo de Exibição (segundos)</label>
-            <input type="number" id="globalAdDuration" required />
+            <input type="number" id="globalAdDuration" />
           </div>
           <div class="admin-input-group">
             <label>URL do Botão de Ação</label>
@@ -897,7 +930,7 @@
           </div>
           <div class="admin-input-group">
             <label>Recompensa (OrbiCoins)</label>
-            <input type="number" id="globalAdReward" step="0.01" required />
+            <input type="number" id="globalAdReward" step="0.01" />
           </div>
           <div class="admin-buttons">
             <button type="submit" class="admin-btn-primary">Enviar Anúncio Global</button>
@@ -911,11 +944,11 @@
         <form id="adminAdForm">
           <div class="admin-input-group">
             <label>Título</label>
-            <input type="text" id="adTitle" required />
+            <input type="text" id="adTitle" />
           </div>
           <div class="admin-input-group">
             <label>URL do Vídeo</label>
-            <input type="text" id="adVideoUrl" required />
+            <input type="text" id="adVideoUrl" />
           </div>
           <div class="admin-input-group">
             <label>Descrição</label>
@@ -923,7 +956,7 @@
           </div>
           <div class="admin-input-group">
             <label>Tempo de Exibição (segundos)</label>
-            <input type="number" id="adDuration" required />
+            <input type="number" id="adDuration" />
           </div>
           <div class="admin-input-group">
             <label>URL do Botão de Ação</label>
@@ -931,7 +964,7 @@
           </div>
           <div class="admin-input-group">
             <label>Recompensa (OrbiCoins)</label>
-            <input type="number" id="adReward" step="0.01" required />
+            <input type="number" id="adReward" step="0.01" />
           </div>
           <div class="admin-buttons">
             <button type="submit" class="admin-btn-primary">Enviar Anúncio</button>
@@ -969,10 +1002,90 @@
         </div>
       </div>
 
+      <div class="admin-card">
+        <h3>Controle de Anúncios</h3>
+        <div class="admin-list">
+          <div class="admin-list-item">
+            <span>Ver Anúncios Ativos</span>
+            <div class="actions">
+              <button class="admin-btn-secondary">Listar</button>
+            </div>
+          </div>
+          <div class="admin-list-item">
+            <span>Editar Anúncio</span>
+            <div class="actions">
+              <button class="admin-btn-secondary">Editar</button>
+            </div>
+          </div>
+          <div class="admin-list-item">
+            <span>Remover Anúncio</span>
+            <div class="actions">
+              <button class="admin-btn-secondary">Remover</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="mt-6">
         <button class="w-full admin-btn-primary" onclick="logout()">Sair</button>
       </div>
     </div>
+  </div>
+
+  <!-- DASHBOARD ADMIN -->
+  <div id="adminDashboard" class="admin-dashboard">
+    <div class="p-4">
+      <h1 class="admin-title">Painel Administrativo</h1>
+      <div class="admin-stats">
+        <div class="admin-stats-card">
+          <h3 id="adminUsersCount">0</h3>
+          <p>Usuários Ativos</p>
+        </div>
+        <div class="admin-stats-card">
+          <h3 id="adminAdsCount">0</h3>
+          <p>Anúncios Ativos</p>
+        </div>
+        <div class="admin-stats-card">
+          <h3 id="adminTotalBalance">0</h3>
+          <p>Saldo Total (OrbiCoins)</p>
+        </div>
+        <div class="admin-stats-card">
+          <h3 id="adminTotalRedeems">0</h3>
+          <p>Resgates Solicitados</p>
+        </div>
+      </div>
+
+      <div class="admin-card">
+        <h3>Últimas Ações do Admin</h3>
+        <div class="admin-list" id="adminActionsList">
+          <p class="text-sm text-gray-500">Nenhuma ação registrada.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Barra de Navegação Admin -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 flex justify-around">
+      <button class="flex flex-col items-center text-indigo-600 nav-item active" onclick="showAdminHome()">
+        <i class="fas fa-home text-lg"></i>
+        <span class="text-xs mt-1">Início</span>
+      </button>
+      <button class="flex flex-col items-center text-gray-500 nav-item" onclick="showAdminAds()">
+        <i class="fas fa-ad text-lg"></i>
+        <span class="text-xs mt-1">Anúncios</span>
+      </button>
+      <button class="flex flex-col items-center text-gray-500 nav-item" onclick="showAdminUsers()">
+        <i class="fas fa-users text-lg"></i>
+        <span class="text-xs mt-1">Usuários</span>
+      </button>
+      <button class="flex flex-col items-center text-gray-500 nav-item" onclick="showAdminSettings()">
+        <i class="fas fa-cog text-lg"></i>
+        <span class="text-xs mt-1">Configurações</span>
+      </button>
+      <button class="flex flex-col items-center text-gray-500 nav-item" onclick="logout()">
+        <i class="fas fa-sign-out-alt text-lg"></i>
+        <span class="text-xs mt-1">Sair</span>
+      </button>
+    </nav>
   </div>
 
   <!-- ANÚNCIO GLOBAL NO DASHBOARD -->
@@ -1562,6 +1675,7 @@
     function logout() {
       localStorage.removeItem('orbipay_user');
       document.getElementById('app').classList.add('hidden');
+      document.getElementById('adminDashboard').classList.add('hidden');
       showLogin();
     }
 
@@ -1690,6 +1804,76 @@
       });
     }
 
+    // Função para atualizar o dashboard do admin
+    function updateAdminDashboard() {
+      const users = JSON.parse(localStorage.getItem('orbipay_users')) || [];
+      const ads = JSON.parse(localStorage.getItem('orbipay_ads')) || [];
+      const globalAd = JSON.parse(localStorage.getItem('orbipay_global_ad'));
+
+      document.getElementById('adminUsersCount').textContent = users.length;
+      document.getElementById('adminAdsCount').textContent = ads.length + (globalAd ? 1 : 0);
+
+      let totalBalance = 0;
+      users.forEach(u => totalBalance += u.balance || 0);
+      document.getElementById('adminTotalBalance').textContent = totalBalance.toFixed(2);
+
+      let totalRedeems = 0;
+      users.forEach(u => {
+        if (u.redeemHistory) totalRedeems += u.redeemHistory.length;
+      });
+      document.getElementById('adminTotalRedeems').textContent = totalRedeems;
+
+      // Atualizar ações do admin
+      const actions = JSON.parse(localStorage.getItem('orbipay_admin_actions')) || [];
+      const actionsList = document.getElementById('adminActionsList');
+      actionsList.innerHTML = '';
+
+      if (actions.length === 0) {
+        actionsList.innerHTML = '<p class="text-sm text-gray-500">Nenhuma ação registrada.</p>';
+        return;
+      }
+
+      actions.reverse().slice(0, 5).forEach(action => {
+        const item = document.createElement('div');
+        item.className = 'admin-list-item';
+        item.innerHTML = `
+          <span>${action.action} - ${action.date}</span>
+          <div class="actions">
+            <button class="admin-btn-secondary text-xs">Ver</button>
+          </div>
+        `;
+        actionsList.appendChild(item);
+      });
+    }
+
+    // Função para registrar ação do admin
+    function logAdminAction(action) {
+      let actions = JSON.parse(localStorage.getItem('orbipay_admin_actions')) || [];
+      actions.push({
+        action: action,
+        date: new Date().toLocaleString('pt-BR')
+      });
+      localStorage.setItem('orbipay_admin_actions', JSON.stringify(actions));
+    }
+
+    // Funções de navegação do admin
+    function showAdminHome() {
+      document.getElementById('adminDashboard').classList.remove('hidden');
+      hideAllScreens();
+    }
+
+    function showAdminAds() {
+      openAdminPanel();
+    }
+
+    function showAdminUsers() {
+      openAdminPanel();
+    }
+
+    function showAdminSettings() {
+      openAdminPanel();
+    }
+
     // Splash Screen
     document.addEventListener('DOMContentLoaded', function() {
       setTimeout(() => {
@@ -1710,7 +1894,9 @@
 
             // Verificar se é admin
             if (userData.email === 'batistaakelvin@gmail.com') {
-              openAdminPanel();
+              document.getElementById('app').classList.add('hidden');
+              document.getElementById('adminDashboard').classList.remove('hidden');
+              updateAdminDashboard();
             } else {
               updateBalance();
               updateHistory();
@@ -1738,20 +1924,21 @@
           title: document.getElementById('adTitle').value,
           videoUrl: document.getElementById('adVideoUrl').value,
           description: document.getElementById('adDescription').value,
-          duration: parseInt(document.getElementById('adDuration').value),
+          duration: parseInt(document.getElementById('adDuration').value) || 0,
           actionUrl: document.getElementById('adActionUrl').value,
-          reward: parseFloat(document.getElementById('adReward').value),
+          reward: parseFloat(document.getElementById('adReward').value) || 0,
           createdAt: new Date().toISOString()
         };
 
         let ads = JSON.parse(localStorage.getItem('orbipay_ads')) || [];
         ads.push(ad);
         localStorage.setItem('orbipay_ads', JSON.stringify(ads));
+        logAdminAction(`Anúncio normal "${ad.title}" enviado.`);
 
         alert('Anúncio enviado com sucesso!');
         this.reset();
         closeAdminPanel();
-        showAds();
+        updateAdminDashboard();
       });
 
       // Configuração do formulário de anúncio admin (global)
@@ -1761,18 +1948,20 @@
           title: document.getElementById('globalAdTitle').value,
           videoUrl: document.getElementById('globalAdVideoUrl').value,
           description: document.getElementById('globalAdDescription').value,
-          duration: parseInt(document.getElementById('globalAdDuration').value),
+          duration: parseInt(document.getElementById('globalAdDuration').value) || 0,
           actionUrl: document.getElementById('globalAdActionUrl').value,
-          reward: parseFloat(document.getElementById('globalAdReward').value),
+          reward: parseFloat(document.getElementById('globalAdReward').value) || 0,
           createdAt: new Date().toISOString()
         };
 
         localStorage.setItem('orbipay_global_ad', JSON.stringify(ad));
+        logAdminAction(`Anúncio global "${ad.title}" enviado.`);
 
         alert('Anúncio Global enviado com sucesso!');
         this.reset();
         closeAdminPanel();
         showGlobalAd(); // Atualizar o anúncio global no dashboard
+        updateAdminDashboard();
       });
     });
 
@@ -1897,7 +2086,6 @@
       if (user) {
         localStorage.setItem('orbipay_user', JSON.stringify(user));
         document.getElementById('loginScreen').classList.add('hidden');
-        document.getElementById('app').classList.remove('hidden');
         const initial = user.name.charAt(0).toUpperCase();
         document.getElementById('userInitial').textContent = initial;
         document.getElementById('welcomeUser').textContent = user.name;
@@ -1907,8 +2095,11 @@
 
         // Verificar se é admin
         if (user.email === 'batistaakelvin@gmail.com') {
-          openAdminPanel();
+          document.getElementById('app').classList.add('hidden');
+          document.getElementById('adminDashboard').classList.remove('hidden');
+          updateAdminDashboard();
         } else {
+          document.getElementById('app').classList.remove('hidden');
           updateBalance();
           updateHistory();
           updateRedeemHistory();
@@ -1950,11 +2141,11 @@
         email,
         paypalEmail,
         password,
-        balance: 100, // Bônus de boas-vindas
+        balance: 10, // Bônus de novo usuário reduzido para 10
         createdAt: new Date().toISOString(),
         history: [
           {
-            amount: 100,
+            amount: 10,
             type: 'Bônus de boas-vindas',
             time: new Date().toLocaleString('pt-BR'),
             icon: 'gift'
@@ -1968,18 +2159,24 @@
       localStorage.setItem('orbipay_user', JSON.stringify(newUser));
 
       document.getElementById('signupScreen').classList.add('hidden');
-      document.getElementById('app').classList.remove('hidden');
       const initial = newUser.name.charAt(0).toUpperCase();
       document.getElementById('userInitial').textContent = initial;
       document.getElementById('welcomeUser').textContent = newUser.name;
       document.getElementById('profileInitial').textContent = initial;
       document.getElementById('profileName').textContent = newUser.name;
       document.getElementById('profileEmail').textContent = newUser.email;
-      updateBalance();
-      updateHistory();
-      updateRedeemHistory();
-      showGlobalAd(); // Mostrar anúncio global
-      alert('Cadastro realizado com sucesso!');
+      if (newUser.email === 'batistaakelvin@gmail.com') {
+        document.getElementById('app').classList.add('hidden');
+        document.getElementById('adminDashboard').classList.remove('hidden');
+        updateAdminDashboard();
+      } else {
+        document.getElementById('app').classList.remove('hidden');
+        updateBalance();
+        updateHistory();
+        updateRedeemHistory();
+        showGlobalAd(); // Mostrar anúncio global
+        alert('Cadastro realizado com sucesso!');
+      }
     });
 
     // Forgot Password Form
