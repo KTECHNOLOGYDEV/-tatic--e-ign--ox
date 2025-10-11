@@ -76,6 +76,7 @@
       border-radius: 50%;
       margin: 0 4px;
       transition: background 0.3s;
+      cursor: pointer;
     }
     .dot-indicator.active {
       background: #7E3FF0;
@@ -84,7 +85,7 @@
 </head>
 <body class="min-h-screen pb-24 text-gray-800 relative">
 
-  <!-- ONBOARDING (oculto por padrão, aparece se for primeira vez) -->
+  <!-- ONBOARDING (corrigido) -->
   <div id="onboarding" class="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center p-6">
     <div class="w-full max-w-md">
       <!-- Slide 1 -->
@@ -102,8 +103,8 @@
           </p>
         </div>
         <div class="flex justify-between mt-8">
-          <button class="text-gray-500 text-sm" onclick="skipOnboarding()">Pular</button>
-          <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg" onclick="nextSlide(1)">Próximo</button>
+          <button id="skipBtn" class="text-gray-500 text-sm">Pular</button>
+          <button id="nextBtn1" class="bg-indigo-600 text-white px-4 py-2 rounded-lg">Próximo</button>
         </div>
       </div>
 
@@ -119,8 +120,8 @@
           </p>
         </div>
         <div class="flex justify-between mt-8">
-          <button class="text-gray-500 text-sm" onclick="prevSlide(2)">Voltar</button>
-          <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg" onclick="nextSlide(2)">Próximo</button>
+          <button id="prevBtn2" class="text-gray-500 text-sm">Voltar</button>
+          <button id="nextBtn2" class="bg-indigo-600 text-white px-4 py-2 rounded-lg">Próximo</button>
         </div>
       </div>
 
@@ -136,21 +137,21 @@
           </p>
         </div>
         <div class="flex justify-between mt-8">
-          <button class="text-gray-500 text-sm" onclick="prevSlide(3)">Voltar</button>
-          <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg" onclick="finishOnboarding()">Começar Agora</button>
+          <button id="prevBtn3" class="text-gray-500 text-sm">Voltar</button>
+          <button id="finishBtn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg">Começar Agora</button>
         </div>
       </div>
 
       <!-- Indicadores -->
       <div class="flex justify-center mt-6 space-x-2">
-        <div class="dot-indicator active" onclick="goToSlide(1)"></div>
-        <div class="dot-indicator" onclick="goToSlide(2)"></div>
-        <div class="dot-indicator" onclick="goToSlide(3)"></div>
+        <div class="dot-indicator active" id="dot1"></div>
+        <div class="dot-indicator" id="dot2"></div>
+        <div class="dot-indicator" id="dot3"></div>
       </div>
     </div>
   </div>
 
-  <!-- APP PRINCIPAL (oculto até finalizar onboarding) -->
+  <!-- APP PRINCIPAL -->
   <div id="app" class="hidden">
 
     <!-- Header -->
@@ -348,47 +349,117 @@
 
   <!-- Script JS -->
   <script>
-    // Onboarding
+    // Variável global para controlar o slide atual
     let currentSlide = 1;
 
-    function nextSlide(slide) {
-      document.getElementById(`slide${slide}`).classList.remove('active');
-      document.getElementById(`slide${slide + 1}`).classList.add('active');
-      updateDots(slide + 1);
-      currentSlide = slide + 1;
-    }
-
-    function prevSlide(slide) {
-      document.getElementById(`slide${slide}`).classList.remove('active');
-      document.getElementById(`slide${slide - 1}`).classList.add('active');
-      updateDots(slide - 1);
-      currentSlide = slide - 1;
-    }
-
-    function goToSlide(slide) {
-      document.querySelectorAll('.onboarding-slide').forEach(s => s.classList.remove('active'));
-      document.getElementById(`slide${slide}`).classList.add('active');
-      updateDots(slide);
-      currentSlide = slide;
-    }
-
-    function updateDots(active) {
-      document.querySelectorAll('.dot-indicator').forEach((dot, i) => {
-        dot.classList.toggle('active', i + 1 === active);
+    // Função para mostrar um slide específico
+    function showSlide(slideNumber) {
+      document.querySelectorAll('.onboarding-slide').forEach(slide => {
+        slide.classList.remove('active');
       });
+      document.getElementById(`slide${slideNumber}`).classList.add('active');
+
+      // Atualiza os pontos indicadores
+      document.querySelectorAll('.dot-indicator').forEach((dot, i) => {
+        dot.classList.toggle('active', i + 1 === slideNumber);
+      });
+
+      currentSlide = slideNumber;
     }
 
-    function skipOnboarding() {
-      document.getElementById('onboarding').style.display = 'none';
-      document.getElementById('app').classList.remove('hidden');
-    }
+    // Event listeners para os botões
+    document.addEventListener('DOMContentLoaded', function() {
+      // Botão "Pular"
+      document.getElementById('skipBtn').addEventListener('click', function() {
+        document.getElementById('onboarding').style.display = 'none';
+        document.getElementById('app').classList.remove('hidden');
+      });
 
-    function finishOnboarding() {
-      document.getElementById('onboarding').style.display = 'none';
-      document.getElementById('app').classList.remove('hidden');
-    }
+      // Botão "Próximo" do Slide 1
+      document.getElementById('nextBtn1').addEventListener('click', function() {
+        showSlide(2);
+      });
 
-    // App Principal
+      // Botão "Voltar" do Slide 2
+      document.getElementById('prevBtn2').addEventListener('click', function() {
+        showSlide(1);
+      });
+
+      // Botão "Próximo" do Slide 2
+      document.getElementById('nextBtn2').addEventListener('click', function() {
+        showSlide(3);
+      });
+
+      // Botão "Voltar" do Slide 3
+      document.getElementById('prevBtn3').addEventListener('click', function() {
+        showSlide(2);
+      });
+
+      // Botão "Começar Agora" do Slide 3
+      document.getElementById('finishBtn').addEventListener('click', function() {
+        document.getElementById('onboarding').style.display = 'none';
+        document.getElementById('app').classList.remove('hidden');
+      });
+
+      // Clique nos pontos indicadores
+      document.getElementById('dot1').addEventListener('click', () => showSlide(1));
+      document.getElementById('dot2').addEventListener('click', () => showSlide(2));
+      document.getElementById('dot3').addEventListener('click', () => showSlide(3));
+
+      // Histórico de ganhos
+      const historyList = document.getElementById('history-list');
+      
+      // Simulação: cada anúncio = +0.10 OrbiCoins
+      const history = [
+        { amount: 0.1, type: 'Anúncio assistido', time: 'Hoje, 14:30', icon: 'tv' },
+        { amount: 0.1, type: 'Anúncio assistido', time: 'Hoje, 13:45', icon: 'tv' },
+        { amount: 0.1, type: 'Anúncio assistido', time: 'Ontem, 19:15', icon: 'tv' },
+        { amount: 0.1, type: 'Anúncio assistido', time: 'Ontem, 18:30', icon: 'tv' },
+        { amount: 100, type: 'Bônus de boas-vindas', time: '10/10/2025', icon: 'gift' }
+      ];
+
+      history.forEach((item, i) => {
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-xl p-4 shadow-sm card-hover opacity-0';
+        card.innerHTML = `
+          <div class="flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600">
+                <i class="fas fa-${item.icon}"></i>
+              </div>
+              <div>
+                <p class="font-semibold">+${item.amount.toFixed(2)} OrbiCoins</p>
+                <p class="text-xs text-gray-500">${item.type}</p>
+              </div>
+            </div>
+            <div class="text-right text-sm text-gray-500">${item.time}</div>
+          </div>
+        `;
+        historyList.appendChild(card);
+
+        setTimeout(() => {
+          card.style.transition = 'opacity 0.5s, transform 0.5s';
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(0)';
+        }, 200 * i);
+      });
+
+      // Botão principal
+      const watchBtn = document.getElementById('watchBtn');
+      watchBtn.addEventListener('click', function() {
+        const originalText = watchBtn.innerHTML;
+        watchBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> Carregando anúncio...`;
+        watchBtn.disabled = true;
+
+        setTimeout(() => {
+          alert('🎉 Anúncio iniciado! Você ganhou +0,10 OrbiCoins.');
+          watchBtn.innerHTML = originalText;
+          watchBtn.disabled = false;
+        }, 1500);
+      });
+    });
+
+    // Funções de navegação do app
     function showHome() {
       document.getElementById('redeemScreen').classList.add('hidden');
       document.getElementById('app').classList.remove('hidden');
@@ -415,9 +486,7 @@
     function showProfile() {
       alert('Tela de perfil em desenvolvimento!');
     }
+  </script>
 
-    // Histórico de ganhos
-    document.addEventListener('DOMContentLoaded', function() {
-      const historyList = document.getElementById('history-list');
-      
-     
+</body>
+</html>
