@@ -229,24 +229,97 @@
       transform: translateX(26px);
     }
 
-    /* Login / Cadastro */
+    /* Login / Cadastro - Design Refinado */
     .auth-container {
       max-width: 400px;
       margin: 0 auto;
       padding: 2rem;
       background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      animation: fadeIn 0.5s ease;
     }
-    .auth-form input {
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .auth-header h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #111827;
+    }
+    .auth-header p {
+      color: #6b7280;
+      margin-top: 0.5rem;
+    }
+
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .input-group {
+      position: relative;
+    }
+
+    .input-group input {
       width: 100%;
-      padding: 12px;
-      margin: 8px 0;
-      border: 1px solid #d1d5db;
+      padding: 12px 16px;
+      border: 2px solid #d1d5db;
       border-radius: 8px;
       font-size: 1rem;
+      transition: all 0.2s;
+      outline: none;
     }
-    .auth-form button {
+
+    .input-group input:focus {
+      border-color: #7E3FF0;
+      box-shadow: 0 0 0 3px rgba(126, 63, 240, 0.1);
+    }
+
+    .input-group label {
+      position: absolute;
+      left: 16px;
+      top: 12px;
+      color: #9ca3b0;
+      font-size: 0.875rem;
+      pointer-events: none;
+      transition: all 0.2s;
+    }
+
+    .input-group input:focus ~ label,
+    .input-group input:not(:placeholder-shown) ~ label {
+      top: -8px;
+      left: 8px;
+      font-size: 0.75rem;
+      background: white;
+      padding: 0 4px;
+      color: #7E3FF0;
+      font-weight: 600;
+    }
+
+    .auth-footer {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.875rem;
+    }
+    .auth-footer a {
+      color: #7E3FF0;
+      text-decoration: underline;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    .auth-footer a:hover {
+      color: #6A30D0;
+    }
+
+    .auth-button {
       width: 100%;
       padding: 12px;
       background: linear-gradient(135deg, #7E3FF0, #6A30D0);
@@ -258,18 +331,26 @@
       cursor: pointer;
       transition: all 0.2s;
     }
-    .auth-form button:hover {
+    .auth-button:hover {
       transform: translateY(-1px);
       box-shadow: 0 4px 8px rgba(126, 63, 240, 0.3);
     }
-    .auth-footer {
-      text-align: center;
-      margin-top: 1rem;
-      font-size: 0.875rem;
+    .auth-button:active {
+      transform: translateY(0);
     }
-    .auth-footer a {
-      color: #7E3FF0;
-      text-decoration: underline;
+
+    .error-message {
+      color: #dc2626;
+      font-size: 0.75rem;
+      margin-top: 4px;
+      display: none;
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1rem;
     }
   </style>
 </head>
@@ -289,11 +370,22 @@
   <!-- LOGIN SCREEN -->
   <div id="loginScreen" class="hidden fixed inset-0 bg-white z-40 p-6 pt-16 overflow-y-auto">
     <div class="auth-container">
-      <h2 class="text-xl font-bold mb-6">Entrar na sua conta</h2>
+      <div class="auth-header">
+        <h2>Entrar na sua conta</h2>
+        <p>Acesse seu saldo e comece a ganhar OrbiCoins</p>
+      </div>
       <form id="loginForm">
-        <input type="email" placeholder="E-mail" required />
-        <input type="password" placeholder="Senha" required />
-        <button type="submit">Entrar</button>
+        <div class="input-group">
+          <input type="email" id="loginEmail" placeholder=" " required />
+          <label for="loginEmail">E-mail</label>
+        </div>
+        <div class="input-group">
+          <input type="password" id="loginPassword" placeholder=" " required />
+          <label for="loginPassword">Senha</label>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="auth-button">Entrar</button>
+        </div>
       </form>
       <div class="auth-footer">
         Não tem conta? <a href="#" onclick="showSignup()">Cadastre-se</a>
@@ -304,14 +396,34 @@
   <!-- CADASTRO SCREEN -->
   <div id="signupScreen" class="hidden fixed inset-0 bg-white z-40 p-6 pt-16 overflow-y-auto">
     <div class="auth-container">
-      <h2 class="text-xl font-bold mb-6">Crie sua conta</h2>
+      <div class="auth-header">
+        <h2>Crie sua conta</h2>
+        <p>Complete seus dados e comece a monetizar seu tempo hoje mesmo</p>
+      </div>
       <form id="signupForm">
-        <input type="text" placeholder="Nome completo" required />
-        <input type="email" placeholder="E-mail para login" required />
-        <input type="email" placeholder="E-mail do PayPal (para pagamentos)" required />
-        <input type="password" placeholder="Senha" required />
-        <input type="password" placeholder="Confirmar senha" required />
-        <button type="submit">Cadastrar</button>
+        <div class="input-group">
+          <input type="text" id="signupName" placeholder=" " required />
+          <label for="signupName">Nome completo</label>
+        </div>
+        <div class="input-group">
+          <input type="email" id="signupEmail" placeholder=" " required />
+          <label for="signupEmail">E-mail para login</label>
+        </div>
+        <div class="input-group">
+          <input type="email" id="paypalEmail" placeholder=" " required />
+          <label for="paypalEmail">E-mail do PayPal (para pagamentos)</label>
+        </div>
+        <div class="input-group">
+          <input type="password" id="signupPassword" placeholder=" " required />
+          <label for="signupPassword">Senha</label>
+        </div>
+        <div class="input-group">
+          <input type="password" id="confirmPassword" placeholder=" " required />
+          <label for="confirmPassword">Confirmar senha</label>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="auth-button">Cadastrar</button>
+        </div>
       </form>
       <div class="auth-footer">
         Já tem conta? <a href="#" onclick="showLogin()">Entrar</a>
@@ -892,8 +1004,8 @@
     // Login Form
     document.getElementById('loginForm').addEventListener('submit', function(e) {
       e.preventDefault();
-      const email = this.querySelector('input[type="email"]').value;
-      const password = this.querySelector('input[type="password"]').value;
+      const email = this.querySelector('#loginEmail').value;
+      const password = this.querySelector('#loginPassword').value;
 
       const users = JSON.parse(localStorage.getItem('orbipay_users')) || [];
       const user = users.find(u => u.email === email && u.password === password);
@@ -911,11 +1023,11 @@
     // Signup Form
     document.getElementById('signupForm').addEventListener('submit', function(e) {
       e.preventDefault();
-      const name = this.querySelector('input:nth-child(1)').value;
-      const email = this.querySelector('input:nth-child(2)').value;
-      const paypalEmail = this.querySelector('input:nth-child(3)').value;
-      const password = this.querySelector('input:nth-child(4)').value;
-      const confirmPassword = this.querySelector('input:nth-child(5)').value;
+      const name = this.querySelector('#signupName').value;
+      const email = this.querySelector('#signupEmail').value;
+      const paypalEmail = this.querySelector('#paypalEmail').value;
+      const password = this.querySelector('#signupPassword').value;
+      const confirmPassword = this.querySelector('#confirmPassword').value;
 
       if (password !== confirmPassword) {
         alert('As senhas não coincidem.');
