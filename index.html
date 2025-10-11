@@ -228,6 +228,49 @@
     input:checked + .slider:before {
       transform: translateX(26px);
     }
+
+    /* Login / Cadastro */
+    .auth-container {
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 2rem;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .auth-form input {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    .auth-form button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #7E3FF0, #6A30D0);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .auth-form button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(126, 63, 240, 0.3);
+    }
+    .auth-footer {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.875rem;
+    }
+    .auth-footer a {
+      color: #7E3FF0;
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body class="min-h-screen pb-24 text-gray-800 relative">
@@ -243,6 +286,39 @@
     <div class="splash-text">Orbipay</div>
   </div>
 
+  <!-- LOGIN SCREEN -->
+  <div id="loginScreen" class="hidden fixed inset-0 bg-white z-40 p-6 pt-16 overflow-y-auto">
+    <div class="auth-container">
+      <h2 class="text-xl font-bold mb-6">Entrar na sua conta</h2>
+      <form id="loginForm">
+        <input type="email" placeholder="E-mail" required />
+        <input type="password" placeholder="Senha" required />
+        <button type="submit">Entrar</button>
+      </form>
+      <div class="auth-footer">
+        Não tem conta? <a href="#" onclick="showSignup()">Cadastre-se</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- CADASTRO SCREEN -->
+  <div id="signupScreen" class="hidden fixed inset-0 bg-white z-40 p-6 pt-16 overflow-y-auto">
+    <div class="auth-container">
+      <h2 class="text-xl font-bold mb-6">Crie sua conta</h2>
+      <form id="signupForm">
+        <input type="text" placeholder="Nome completo" required />
+        <input type="email" placeholder="E-mail para login" required />
+        <input type="email" placeholder="E-mail do PayPal (para pagamentos)" required />
+        <input type="password" placeholder="Senha" required />
+        <input type="password" placeholder="Confirmar senha" required />
+        <button type="submit">Cadastrar</button>
+      </form>
+      <div class="auth-footer">
+        Já tem conta? <a href="#" onclick="showLogin()">Entrar</a>
+      </div>
+    </div>
+  </div>
+
   <!-- APP PRINCIPAL -->
   <div id="app" class="hidden">
 
@@ -254,7 +330,7 @@
           <p class="font-semibold text-gray-800">Olá, Kelvin!</p>
         </div>
       </div>
-      <button class="text-indigo-600 font-medium text-sm">
+      <button class="text-indigo-600 font-medium text-sm" onclick="showSettings()">
         <i class="fas fa-cog"></i>
       </button>
       <div class="app-title">Orbipay</div>
@@ -286,11 +362,7 @@
           </div>
         </div>
 
-        <!-- Botão Principal -->
-        <button id="watchBtn" class="btn-primary w-full py-3.5 rounded-xl font-semibold text-white shadow-lg flex items-center justify-center space-x-2">
-          <i class="fas fa-play-circle text-lg"></i>
-          <span>Assistir Anúncio e Ganhar</span>
-        </button>
+        <!-- Botão Principal REMOVIDO conforme solicitado -->
       </div>
     </section>
 
@@ -661,7 +733,7 @@
         </div>
       </div>
 
-      <button class="w-full mt-4 text-indigo-600 font-medium">Voltar</button>
+      <button class="w-full mt-4 text-indigo-600 font-medium" onclick="closeSettings()">Voltar</button>
     </div>
   </div>
 
@@ -674,7 +746,13 @@
         document.getElementById('splash').style.transition = 'opacity 0.5s ease';
         setTimeout(() => {
           document.getElementById('splash').style.display = 'none';
-          document.getElementById('app').classList.remove('hidden');
+          // Verificar se o usuário está logado
+          const user = localStorage.getItem('orbipay_user');
+          if (user) {
+            document.getElementById('app').classList.remove('hidden');
+          } else {
+            showLogin();
+          }
         }, 500);
       }, 2000);
 
@@ -714,20 +792,6 @@
           card.style.opacity = '1';
           card.style.transform = 'translateY(0)';
         }, 200 * i);
-      });
-
-      // Botão principal
-      const watchBtn = document.getElementById('watchBtn');
-      watchBtn.addEventListener('click', function() {
-        const originalText = watchBtn.innerHTML;
-        watchBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> Carregando anúncio...`;
-        watchBtn.disabled = true;
-
-        setTimeout(() => {
-          alert('🎉 Anúncio iniciado! Você ganhou +0,10 OrbiCoins.');
-          watchBtn.innerHTML = originalText;
-          watchBtn.disabled = false;
-        }, 1500);
       });
     });
 
@@ -794,6 +858,8 @@
       document.getElementById('supportScreen').classList.add('hidden');
       document.getElementById('profileScreen').classList.add('hidden');
       document.getElementById('settingsScreen').classList.add('hidden');
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('signupScreen').classList.add('hidden');
     }
 
     // Toggle FAQ
@@ -811,6 +877,74 @@
         icon.classList.add('fa-chevron-up');
       }
     }
+
+    // Login / Cadastro
+    function showLogin() {
+      hideAllScreens();
+      document.getElementById('loginScreen').classList.remove('hidden');
+    }
+
+    function showSignup() {
+      hideAllScreens();
+      document.getElementById('signupScreen').classList.remove('hidden');
+    }
+
+    // Login Form
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = this.querySelector('input[type="email"]').value;
+      const password = this.querySelector('input[type="password"]').value;
+
+      const users = JSON.parse(localStorage.getItem('orbipay_users')) || [];
+      const user = users.find(u => u.email === email && u.password === password);
+
+      if (user) {
+        localStorage.setItem('orbipay_user', JSON.stringify(user));
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('app').classList.remove('hidden');
+        alert('Login bem-sucedido!');
+      } else {
+        alert('E-mail ou senha incorretos.');
+      }
+    });
+
+    // Signup Form
+    document.getElementById('signupForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = this.querySelector('input:nth-child(1)').value;
+      const email = this.querySelector('input:nth-child(2)').value;
+      const paypalEmail = this.querySelector('input:nth-child(3)').value;
+      const password = this.querySelector('input:nth-child(4)').value;
+      const confirmPassword = this.querySelector('input:nth-child(5)').value;
+
+      if (password !== confirmPassword) {
+        alert('As senhas não coincidem.');
+        return;
+      }
+
+      const users = JSON.parse(localStorage.getItem('orbipay_users')) || [];
+      if (users.some(u => u.email === email)) {
+        alert('E-mail já cadastrado.');
+        return;
+      }
+
+      const newUser = {
+        name,
+        email,
+        paypalEmail,
+        password,
+        balance: 100, // Bônus de boas-vindas
+        createdAt: new Date().toISOString()
+      };
+
+      users.push(newUser);
+      localStorage.setItem('orbipay_users', JSON.stringify(users));
+      localStorage.setItem('orbipay_user', JSON.stringify(newUser));
+
+      document.getElementById('signupScreen').classList.add('hidden');
+      document.getElementById('app').classList.remove('hidden');
+      alert('Cadastro realizado com sucesso!');
+    });
   </script>
 
 </body>
