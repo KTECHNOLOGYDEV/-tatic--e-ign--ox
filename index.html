@@ -387,6 +387,33 @@
       text-decoration: underline;
       font-weight: 600;
     }
+
+    /* Header com nome do usuário */
+    .header-user {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .header-user .avatar {
+      width: 40px;
+      height: 40px;
+      background: #7E3FF0;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 1.25rem;
+    }
+    .header-user .name {
+      font-weight: 600;
+      color: #111827;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 150px;
+    }
   </style>
 </head>
 <body class="min-h-screen pb-24 text-gray-800 relative">
@@ -597,16 +624,12 @@
 
     <!-- Header -->
     <header class="bg-white p-4 shadow-sm flex justify-between items-center relative">
-      <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-lg">O</div>
-        <div>
-          <p class="font-semibold text-gray-800" id="welcomeUser">Olá, Kelvin!</p>
-        </div>
+      <div class="header-user">
+        <div class="avatar">O</div>
+        <div class="name" id="welcomeUser">Kelvin</div>
       </div>
-      <button class="text-indigo-600 font-medium text-sm" onclick="showSettings()">
-        <i class="fas fa-cog"></i>
-      </button>
       <div class="app-title">Orbipay</div>
+      <!-- Ícone de configuração removido conforme solicitado -->
     </header>
 
     <!-- Saldo Principal -->
@@ -628,7 +651,7 @@
           </div>
           <div>
             <div class="flex items-baseline space-x-1">
-              <h1 class="text-3xl font-bold text-indigo-700" id="balanceAmount">0</h1>
+              <h1 class="text-3xl font-bold text-indigo-700" id="balanceAmount">0.00</h1>
               <span class="text-sm font-semibold text-indigo-600">OrbiCoins</span>
             </div>
             <p class="text-xs text-gray-500 mt-1" id="balanceReal">≈ R$ 0,00</p>
@@ -800,7 +823,7 @@
       <div class="bg-indigo-50 rounded-xl p-4 mb-6">
         <p class="text-sm text-gray-600 mb-2">Saldo disponível:</p>
         <div class="flex items-center space-x-2">
-          <h3 class="text-2xl font-bold text-indigo-700" id="redeemBalance">0</h3>
+          <h3 class="text-2xl font-bold text-indigo-700" id="redeemBalance">0.00</h3>
           <span class="text-sm font-medium text-indigo-600">OrbiCoins</span>
         </div>
         <p class="text-xs text-gray-500 mt-1" id="redeemReal">≈ R$ 0,00</p>
@@ -914,7 +937,7 @@
       <div class="p-4">
         <div class="mb-4">
           <h4 class="font-semibold mb-2">Saldo</h4>
-          <p class="text-2xl font-bold text-indigo-700" id="profileBalance">0 OrbiCoins</p>
+          <p class="text-2xl font-bold text-indigo-700" id="profileBalance">0.00 OrbiCoins</p>
           <p class="text-sm text-gray-500" id="profileReal">≈ R$ 0,00</p>
         </div>
 
@@ -935,77 +958,65 @@
           <button class="w-full text-left p-3 border border-gray-300 rounded-lg text-sm">Adicionar Conta PayPal</button>
         </div>
 
+        <div class="mb-4">
+          <h4 class="font-semibold mb-2">Notificações</h4>
+          <div class="setting-item">
+            <span>Anúncios disponíveis</span>
+            <label class="toggle">
+              <input type="checkbox" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="setting-item">
+            <span>Novas recompensas</span>
+            <label class="toggle">
+              <input type="checkbox" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="setting-item">
+            <span>Atualizações do app</span>
+            <label class="toggle">
+              <input type="checkbox" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <h4 class="font-semibold mb-2">Idioma</h4>
+          <div class="setting-item">
+            <span>Português (Brasil)</span>
+            <i class="fas fa-check text-green-500"></i>
+          </div>
+          <div class="setting-item">
+            <span>Inglês</span>
+            <i class="fas fa-chevron-right text-gray-400"></i>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <h4 class="font-semibold mb-2">Legal</h4>
+          <div class="setting-item">
+            <span>Termos de Uso</span>
+            <i class="fas fa-chevron-right text-gray-400" onclick="showTerms()"></i>
+          </div>
+          <div class="setting-item">
+            <span>Política de Privacidade</span>
+            <i class="fas fa-chevron-right text-gray-400" onclick="showPrivacy()"></i>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <h4 class="font-semibold mb-2">Versão do App</h4>
+          <div class="setting-item">
+            <span>v1.0.0</span>
+            <i class="fas fa-sync text-gray-400"></i>
+          </div>
+        </div>
+
         <button class="w-full mt-4 text-red-600 font-medium" onclick="logout()">Sair da Conta</button>
       </div>
-    </div>
-  </div>
-
-  <!-- TELA DE CONFIGURAÇÕES -->
-  <div id="settingsScreen" class="hidden fixed inset-0 bg-white z-40 p-6 pt-16 overflow-y-auto">
-    <div class="max-w-md mx-auto">
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="text-xl font-bold">Configurações</h2>
-        <button class="text-gray-500" onclick="closeSettings()"><i class="fas fa-times"></i></button>
-      </div>
-
-      <div class="mb-4">
-        <h3 class="font-semibold mb-4">Notificações</h3>
-        <div class="setting-item">
-          <span>Anúncios disponíveis</span>
-          <label class="toggle">
-            <input type="checkbox" checked>
-            <span class="slider"></span>
-          </label>
-        </div>
-        <div class="setting-item">
-          <span>Novas recompensas</span>
-          <label class="toggle">
-            <input type="checkbox" checked>
-            <span class="slider"></span>
-          </label>
-        </div>
-        <div class="setting-item">
-          <span>Atualizações do app</span>
-          <label class="toggle">
-            <input type="checkbox" checked>
-            <span class="slider"></span>
-          </label>
-        </div>
-      </div>
-
-      <div class="mb-4">
-        <h3 class="font-semibold mb-4">Idioma</h3>
-        <div class="setting-item">
-          <span>Português (Brasil)</span>
-          <i class="fas fa-check text-green-500"></i>
-        </div>
-        <div class="setting-item">
-          <span>Inglês</span>
-          <i class="fas fa-chevron-right text-gray-400"></i>
-        </div>
-      </div>
-
-      <div class="mb-4">
-        <h3 class="font-semibold mb-4">Legal</h3>
-        <div class="setting-item">
-          <span>Termos de Uso</span>
-          <i class="fas fa-chevron-right text-gray-400" onclick="showTerms()"></i>
-        </div>
-        <div class="setting-item">
-          <span>Política de Privacidade</span>
-          <i class="fas fa-chevron-right text-gray-400" onclick="showPrivacy()"></i>
-        </div>
-      </div>
-
-      <div class="mb-4">
-        <h3 class="font-semibold mb-4">Versão do App</h3>
-        <div class="setting-item">
-          <span>v1.0.0</span>
-          <i class="fas fa-sync text-gray-400"></i>
-        </div>
-      </div>
-
-      <button class="w-full mt-4 text-indigo-600 font-medium" onclick="closeSettings()">Voltar</button>
     </div>
   </div>
 
@@ -1019,20 +1030,23 @@
       const balance = user.balance || 0;
       const realValue = (balance * 0.1).toFixed(2);
 
+      // Arredondar para 2 casas decimais
+      const formattedBalance = parseFloat(balance.toFixed(2));
+
       // Atualizar na tela principal
-      document.getElementById('balanceAmount').textContent = balance;
+      document.getElementById('balanceAmount').textContent = formattedBalance;
       document.getElementById('balanceReal').textContent = `≈ R$ ${realValue}`;
 
       // Atualizar na tela de resgate
-      document.getElementById('redeemBalance').textContent = balance;
+      document.getElementById('redeemBalance').textContent = formattedBalance;
       document.getElementById('redeemReal').textContent = `≈ R$ ${realValue}`;
 
       // Atualizar na tela de conta
-      document.getElementById('profileBalance').textContent = `${balance} OrbiCoins`;
+      document.getElementById('profileBalance').textContent = `${formattedBalance} OrbiCoins`;
       document.getElementById('profileReal').textContent = `≈ R$ ${realValue}`;
 
       // Atualizar no localStorage
-      user.balance = balance;
+      user.balance = formattedBalance;
       localStorage.setItem('orbipay_user', JSON.stringify(user));
     }
 
@@ -1181,7 +1195,7 @@
           const user = localStorage.getItem('orbipay_user');
           if (user) {
             const userData = JSON.parse(user);
-            document.getElementById('welcomeUser').textContent = `Olá, ${userData.name}!`;
+            document.getElementById('welcomeUser').textContent = userData.name;
             document.getElementById('profileName').textContent = userData.name;
             document.getElementById('profileEmail').textContent = userData.email;
             updateBalance();
@@ -1252,23 +1266,12 @@
       document.getElementById('app').classList.remove('hidden');
     }
 
-    function showSettings() {
-      hideAllScreens();
-      document.getElementById('settingsScreen').classList.remove('hidden');
-    }
-
-    function closeSettings() {
-      document.getElementById('settingsScreen').classList.add('hidden');
-      document.getElementById('app').classList.remove('hidden');
-    }
-
     function hideAllScreens() {
       document.getElementById('app').classList.add('hidden');
       document.getElementById('adsScreen').classList.add('hidden');
       document.getElementById('redeemScreen').classList.add('hidden');
       document.getElementById('supportScreen').classList.add('hidden');
       document.getElementById('profileScreen').classList.add('hidden');
-      document.getElementById('settingsScreen').classList.add('hidden');
       document.getElementById('loginScreen').classList.add('hidden');
       document.getElementById('signupScreen').classList.add('hidden');
       document.getElementById('termsScreen').classList.add('hidden');
@@ -1341,7 +1344,7 @@
         localStorage.setItem('orbipay_user', JSON.stringify(user));
         document.getElementById('loginScreen').classList.add('hidden');
         document.getElementById('app').classList.remove('hidden');
-        document.getElementById('welcomeUser').textContent = `Olá, ${user.name}!`;
+        document.getElementById('welcomeUser').textContent = user.name;
         document.getElementById('profileName').textContent = user.name;
         document.getElementById('profileEmail').textContent = user.email;
         updateBalance();
@@ -1403,7 +1406,7 @@
 
       document.getElementById('signupScreen').classList.add('hidden');
       document.getElementById('app').classList.remove('hidden');
-      document.getElementById('welcomeUser').textContent = `Olá, ${newUser.name}!`;
+      document.getElementById('welcomeUser').textContent = newUser.name;
       document.getElementById('profileName').textContent = newUser.name;
       document.getElementById('profileEmail').textContent = newUser.email;
       updateBalance();
