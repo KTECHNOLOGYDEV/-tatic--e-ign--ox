@@ -258,6 +258,22 @@
       margin-top: 0.5rem;
     }
 
+    .auth-logo {
+      width: 64px;
+      height: 64px;
+      background: #7E3FF0;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+    }
+    .auth-logo svg {
+      width: 32px;
+      height: 32px;
+      fill: white;
+    }
+
     .auth-form {
       display: flex;
       flex-direction: column;
@@ -352,6 +368,25 @@
       align-items: center;
       margin-top: 1rem;
     }
+
+    .terms-section {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .terms-section input {
+      margin-top: 0.25rem;
+    }
+    .terms-section label {
+      color: #6b7280;
+      font-size: 0.875rem;
+    }
+    .terms-section a {
+      color: #7E3FF0;
+      text-decoration: underline;
+      font-weight: 600;
+    }
   </style>
 </head>
 <body class="min-h-screen pb-24 text-gray-800 relative">
@@ -370,6 +405,12 @@
   <!-- LOGIN SCREEN -->
   <div id="loginScreen" class="hidden fixed inset-0 bg-white z-40 p-6 pt-16 overflow-y-auto">
     <div class="auth-container">
+      <div class="auth-logo">
+        <svg width="32" height="32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="20" fill="white" />
+          <circle cx="50" cy="25" r="4" fill="#FFD166" />
+        </svg>
+      </div>
       <div class="auth-header">
         <h2>Entrar na sua conta</h2>
         <p>Acesse seu saldo e comece a ganhar OrbiCoins</p>
@@ -382,6 +423,9 @@
         <div class="input-group">
           <input type="password" id="loginPassword" placeholder=" " required />
           <label for="loginPassword">Senha</label>
+        </div>
+        <div class="auth-footer">
+          <a href="#" onclick="showForgotPassword()">Esqueci a senha</a>
         </div>
         <div class="form-actions">
           <button type="submit" class="auth-button">Entrar</button>
@@ -396,6 +440,12 @@
   <!-- CADASTRO SCREEN -->
   <div id="signupScreen" class="hidden fixed inset-0 bg-white z-40 p-6 pt-16 overflow-y-auto">
     <div class="auth-container">
+      <div class="auth-logo">
+        <svg width="32" height="32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="20" fill="white" />
+          <circle cx="50" cy="25" r="4" fill="#FFD166" />
+        </svg>
+      </div>
       <div class="auth-header">
         <h2>Crie sua conta</h2>
         <p>Complete seus dados e comece a monetizar seu tempo hoje mesmo</p>
@@ -421,12 +471,123 @@
           <input type="password" id="confirmPassword" placeholder=" " required />
           <label for="confirmPassword">Confirmar senha</label>
         </div>
+        <div class="terms-section">
+          <input type="checkbox" id="termsCheckbox" required />
+          <label for="termsCheckbox">Li e concordo com os <a href="#" onclick="showTerms()">Termos de Uso</a> e <a href="#" onclick="showPrivacy()">Política de Privacidade</a></label>
+        </div>
         <div class="form-actions">
           <button type="submit" class="auth-button">Cadastrar</button>
         </div>
       </form>
       <div class="auth-footer">
         Já tem conta? <a href="#" onclick="showLogin()">Entrar</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- TELA DE TERMOS DE USO -->
+  <div id="termsScreen" class="hidden fixed inset-0 bg-white z-50 p-6 overflow-y-auto">
+    <div class="max-w-2xl mx-auto">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold">Termos de Uso</h2>
+        <button class="text-gray-500" onclick="closeTerms()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="text-sm text-gray-700 leading-relaxed">
+        <p class="mb-4"><strong>Versão: 1.0 | Data: 12/10/2025</strong></p>
+        <p class="mb-4">Bem-vindo ao Orbipay. Ao acessar e utilizar este aplicativo, você concorda integralmente com os Termos de Uso descritos abaixo.</p>
+
+        <h3 class="font-bold text-lg mt-4 mb-2">1. Aceitação dos Termos</h3>
+        <p class="mb-4">Ao se cadastrar ou utilizar o Orbipay, você afirma que leu, compreendeu e concorda com estes Termos de Uso e com a Política de Privacidade.</p>
+
+        <h3 class="font-bold text-lg mt-4 mb-2">2. Descrição do Serviço</h3>
+        <p class="mb-4">O Orbipay é uma plataforma digital que permite ao usuário assistir a anúncios de parceiros e ganhar OrbiCoins, uma moeda virtual que pode ser convertida em dinheiro real via PayPal. O serviço é destinado exclusivamente a residentes no Brasil.</p>
+
+        <h3 class="font-bold text-lg mt-4 mb-2">3. Cadastro e Segurança</h3>
+        <p class="mb-4">O usuário é responsável por manter a confidencialidade de sua conta e senha. Qualquer atividade realizada com o uso de suas credenciais é de sua inteira responsabilidade.</p>
+
+        <h3 class="font-bold text-lg mt-4 mb-2">4. Uso de OrbiCoins</h3>
+        <p class="mb-4">As OrbiCoins são moedas virtuais exclusivas do Orbipay e não possuem valor monetário real até o momento do resgate. O saldo pode ser resgatado a partir de 100 OrbiCoins (equivalente a R$ 10,00).</p>
+
+        <h3 class="font-bold text-lg mt-4 mb-2">5. Resgate de Recompensas</h3>
+        <p class="mb-4">O resgate é realizado exclusivamente via PayPal. O valor é creditado em até 24 horas úteis após a confirmação. Taxas de transação ou bancos não suportados podem afetar o recebimento.</p>
+
+        <h3 class="font-bold text-lg mt-4 mb-2">6. Limitações de Responsabilidade</h3>
+        <p class="mb-4">O Orbipay não se responsabiliza por atrasos ou falhas no sistema de pagamento do PayPal, nem por perdas de saldo decorrentes de falhas de segurança do usuário. A plataforma não garante a disponibilidade contínua de anúncios.</p>
+
+        <h3 class="font-bold text-lg mt-4 mb-2">7. Alterações nos Termos</h3>
+        <p class="mb-4">Estes termos podem ser atualizados periodicamente. O usuário será notificado sobre alterações significativas. O uso contínuo da plataforma implica aceitação das versões atualizadas.</p>
+
+        <h3 class="font-bold text-lg mt-4 mb-2">8. Lei Aplicável</h3>
+        <p class="mb-4">Estes Termos de Uso são regidos pela legislação brasileira. Quaisquer disputas serão resolvidas nos tribunais do município de São Paulo/SP, com renúncia expressa a qualquer outro.</p>
+
+        <h3 class="font-bold text-lg mt-4 mb-2">9. Contato</h3>
+        <p class="mb-4">Para dúvidas ou reclamações, entre em contato conosco pelo e-mail: <a href="mailto:contato@orbipay.com.br" class="text-indigo-600">contato@orbipay.com.br</a>.</p>
+      </div>
+      <button class="mt-6 btn-primary w-full py-3 rounded-lg" onclick="closeTerms()">Fechar</button>
+    </div>
+  </div>
+
+  <!-- TELA DE POLÍTICA DE PRIVACIDADE -->
+  <div id="privacyScreen" class="hidden fixed inset-0 bg-white z-50 p-6 overflow-y-auto">
+    <div class="max-w-2xl mx-auto">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold">Política de Privacidade</h2>
+        <button class="text-gray-500" onclick="closePrivacy()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="text-sm text-gray-700 leading-relaxed">
+        <p class="mb-4"><strong>Versão: 1.0 | Data: 12/10/2025</strong></p>
+        <p class="mb-4">Esta Política de Privacidade descreve como o Orbipay coleta, utiliza, armazena e protege seus dados pessoais, em conformidade com a Lei Geral de Proteção de Dados (LGPD).</p>
+
+        <h3 class="font-bold text-lg mt-4 mb-2">1. Dados Coletados</h3>
+        <p class="mb-4">Coletamos os seguintes dados: nome completo, e-mail para login, e-mail do PayPal, data de cadastro e histórico de ganhos e resgates.</p>
+
+        <h3 class="font-bold text-lg mt-4 mb-2">2. Finalidade do Tratamento</h3>
+        <p class="mb-4">Os dados são utilizados para autenticação, controle de saldo, processamento de resgates e comunicação com o usuário.</p>
+
+        <h3 class="font-bold text-lg mt-4 mb-2">3. Compartilhamento de Dados</h3>
+        <p class="mb-4">Seus dados não serão compartilhados com terceiros, exceto quando necessário para processamento de resgates via PayPal ou por determinação judicial.</p>
+
+        <h3 class="font-bold text-lg mt-4 mb-2">4. Segurança</h3>
+        <p class="mb-4">Adotamos medidas técnicas e organizacionais para proteger seus dados contra acesso não autorizado, alteração, divulgação ou destruição.</p>
+
+        <h3 class="font-bold text-lg mt-4 mb-2">5. Seus Direitos</h3>
+        <p class="mb-4">Você pode solicitar acesso, retificação, exclusão ou portabilidade dos seus dados. Para isso, entre em contato conosco.</p>
+
+        <h3 class="font-bold text-lg mt-4 mb-2">6. Armazenamento</h3>
+        <p class="mb-4">Os dados são armazenados no Brasil e mantidos enquanto houver relação ativa com o usuário ou conforme exigido por lei.</p>
+
+        <h3 class="font-bold text-lg mt-4 mb-2">7. Alterações na Política</h3>
+        <p class="mb-4">Esta política pode ser atualizada. O usuário será notificado sobre mudanças relevantes.</p>
+
+        <h3 class="font-bold text-lg mt-4 mb-2">8. Contato</h3>
+        <p class="mb-4">Para exercer seus direitos ou tirar dúvidas, envie um e-mail para: <a href="mailto:contato@orbipay.com.br" class="text-indigo-600">contato@orbipay.com.br</a>.</p>
+      </div>
+      <button class="mt-6 btn-primary w-full py-3 rounded-lg" onclick="closePrivacy()">Fechar</button>
+    </div>
+  </div>
+
+  <!-- TELA DE ESQUECI A SENHA -->
+  <div id="forgotPasswordScreen" class="hidden fixed inset-0 bg-white z-50 p-6 overflow-y-auto">
+    <div class="auth-container">
+      <div class="auth-logo">
+        <svg width="32" height="32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="20" fill="white" />
+          <circle cx="50" cy="25" r="4" fill="#FFD166" />
+        </svg>
+      </div>
+      <div class="auth-header">
+        <h2>Recuperar Senha</h2>
+        <p>Envie um e-mail para redefinir sua senha</p>
+      </div>
+      <form id="forgotPasswordForm">
+        <div class="input-group">
+          <input type="email" id="forgotEmail" placeholder=" " required />
+          <label for="forgotEmail">E-mail</label>
+        </div>
+        <button type="submit" class="auth-button mt-4">Enviar link</button>
+      </form>
+      <div class="auth-footer">
+        <a href="#" onclick="showLogin()">Voltar para login</a>
       </div>
     </div>
   </div>
@@ -829,11 +990,11 @@
         <h3 class="font-semibold mb-4">Legal</h3>
         <div class="setting-item">
           <span>Termos de Uso</span>
-          <i class="fas fa-chevron-right text-gray-400"></i>
+          <i class="fas fa-chevron-right text-gray-400" onclick="showTerms()"></i>
         </div>
         <div class="setting-item">
           <span>Política de Privacidade</span>
-          <i class="fas fa-chevron-right text-gray-400"></i>
+          <i class="fas fa-chevron-right text-gray-400" onclick="showPrivacy()"></i>
         </div>
       </div>
 
@@ -972,6 +1133,9 @@
       document.getElementById('settingsScreen').classList.add('hidden');
       document.getElementById('loginScreen').classList.add('hidden');
       document.getElementById('signupScreen').classList.add('hidden');
+      document.getElementById('termsScreen').classList.add('hidden');
+      document.getElementById('privacyScreen').classList.add('hidden');
+      document.getElementById('forgotPasswordScreen').classList.add('hidden');
     }
 
     // Toggle FAQ
@@ -1001,6 +1165,31 @@
       document.getElementById('signupScreen').classList.remove('hidden');
     }
 
+    function showForgotPassword() {
+      hideAllScreens();
+      document.getElementById('forgotPasswordScreen').classList.remove('hidden');
+    }
+
+    function showTerms() {
+      hideAllScreens();
+      document.getElementById('termsScreen').classList.remove('hidden');
+    }
+
+    function closeTerms() {
+      document.getElementById('termsScreen').classList.add('hidden');
+      document.getElementById('signupScreen').classList.remove('hidden');
+    }
+
+    function showPrivacy() {
+      hideAllScreens();
+      document.getElementById('privacyScreen').classList.remove('hidden');
+    }
+
+    function closePrivacy() {
+      document.getElementById('privacyScreen').classList.add('hidden');
+      document.getElementById('signupScreen').classList.remove('hidden');
+    }
+
     // Login Form
     document.getElementById('loginForm').addEventListener('submit', function(e) {
       e.preventDefault();
@@ -1023,6 +1212,12 @@
     // Signup Form
     document.getElementById('signupForm').addEventListener('submit', function(e) {
       e.preventDefault();
+      const termsCheckbox = document.getElementById('termsCheckbox');
+      if (!termsCheckbox.checked) {
+        alert('Você precisa aceitar os Termos de Uso e Política de Privacidade para continuar.');
+        return;
+      }
+
       const name = this.querySelector('#signupName').value;
       const email = this.querySelector('#signupEmail').value;
       const paypalEmail = this.querySelector('#paypalEmail').value;
@@ -1056,6 +1251,15 @@
       document.getElementById('signupScreen').classList.add('hidden');
       document.getElementById('app').classList.remove('hidden');
       alert('Cadastro realizado com sucesso!');
+    });
+
+    // Forgot Password Form
+    document.getElementById('forgotPasswordForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = this.querySelector('#forgotEmail').value;
+      alert(`Link de redefinição enviado para: ${email}`);
+      document.getElementById('forgotPasswordScreen').classList.add('hidden');
+      document.getElementById('loginScreen').classList.remove('hidden');
     });
   </script>
 
